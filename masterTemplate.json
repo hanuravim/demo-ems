@@ -1,0 +1,114 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmRole": {
+      "type": "string"
+    },
+    "objectId":{
+        "type": "string"
+    },
+    "virtualMachineAdminUserName": {
+        "type": "string"
+    },
+    "numberofVMs": {
+        "type": "int"
+    },
+    "virtualNetworkRG": {
+        "type": "string"
+    },
+    "virtualNetworkName": {
+        "type": "string"
+    },
+    "SubnetName": {
+        "type": "string"
+    },
+    "PrivateIP": {
+        "type": "array"
+    },
+    "virtualMachineSize": {
+        "type": "string"
+    },
+    "Password-Or-ssh": {
+        "type": "securestring"
+    },
+    "vmtag":{
+       "type": "object"
+    },
+    "baseUrl":{
+        "type": "string"
+    }
+  },
+  "variables": {
+    "configuration":{
+        "provisioningVMURL": "[concat(parameters('baseUrl'),'ge-aviation/nestedTemplates/virtualmachines.json')]",
+        "keyvaultURL":"[concat(parameters('baseUrl'),'ge-aviation/nestedTemplates/keyvault.json')]",
+        "resourcelocksURL":"[concat(parameters('baseUrl'),'ge-aviation/nestedTemplates/resourcelocks.json')]"
+    },
+    "vmNamePrefix":"[concat('arv', parameters('vmRole'))]",
+    "virtualMachineAdminUserName":"[parameters('virtualMachineAdminUserName')]",
+    "virtualMachineAdminPassword":"[parameters('Password-Or-ssh')]",
+    "virtualNetworkRG":"[parameters('virtualNetworkRG')]",
+    "virtualNetworkName":"[parameters('virtualNetworkName')]",
+    "SubnetName":"[parameters('SubnetName')]",
+    "PrivateIP":"[parameters('PrivateIP')]",
+    "numberofVMs":"[parameters('numberofVMs')]",
+    "virtualMachineSize":"[parameters('virtualMachineSize')]",
+    "Password-Or-ssh":"[parameters('Password-Or-ssh')]",
+    "baseUrl":"[parameters('baseUrl')]"
+  },
+  "resources":[
+    {
+        "type": "Microsoft.Resources/deployments",
+        "name": "ProvisioningVirtualMachine",
+        "apiVersion": "2015-01-01",
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "uri": "[variables('configuration').provisioningVMURL]",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {
+                "vmRole": {
+                  "value":"[parameters('vmRole')]"
+                },
+                "objectId": {
+                    "value":"[parameters('objectId')]"
+                  },
+                "virtualMachineAdminUserName": {
+                    "value":"[variables('virtualMachineAdminUserName')]"
+                },
+                "numberofVMs":{
+                    "value":"[variables('numberofVMs')]"
+                },
+                "virtualNetworkRG":{
+                    "value":"[variables('virtualNetworkRG')]"
+                },
+                "virtualNetworkName":{
+                    "value":"[variables('virtualNetworkName')]"
+                },
+                "SubnetName":{
+                    "value":"[variables('SubnetName')]"
+                },
+                "PrivateIP":{
+                    "value":"[variables('PrivateIP')]"
+                },
+                "virtualMachineSize": {
+                    "value":"[variables('virtualMachineSize')]"
+                },
+                "Password-Or-ssh": {
+                    "value":"[variables('Password-Or-ssh')]"
+                },
+                "vmtag":{
+                    "value": "[parameters('vmtag')]"
+                },
+                "baseUrl":{
+                    "value":"[variables('baseUrl')]"
+                }
+            }
+        }
+        
+    }
+  ],
+  "outputs": {}  
+}
