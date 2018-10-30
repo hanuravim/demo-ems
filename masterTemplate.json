@@ -1,114 +1,126 @@
 {
-  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-  "contentVersion": "1.0.0.0",
-  "parameters": {
-    "vmRole": {
-      "type": "string"
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmRole": {
+            "type": "string"
+        },
+        "virtualMachineAdminUserName": {
+            "type": "string"
+        },
+        "numberofVMs": {
+            "type": "int"
+        },
+        "virtualNetworkRG": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "SubnetName": {
+            "type": "string"
+        },
+        "PrivateIP": {
+            "type": "array"
+        },
+        "virtualMachineSize": {
+            "type": "string"
+        },
+        "VM-Admin-Password": {
+            "type": "securestring"
+        },
+        "vmtags": {
+            "type": "object"
+        },
+        "diagnosticStorageAccountName": {
+            "type": "string"
+        },
+        "storagetags": {
+            "type": "object"
+        },
+        "keyVaultName": {
+            "type": "string"
+        },
+        "keyvaulttags": {
+            "type": "object"
+        },
+        "objectId": {
+            "type": "object"
+        },
+        "workspaceName": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string",
+            "allowedValues": [
+                "Free",
+                "Standalone",
+                "PerNode"
+            ]
+        },
+        "baseUrl": {
+            "type": "string"
+        }
     },
-    "objectId":{
-        "type": "string"
+    "variables": {
+        "configuration": {
+            "provisioningVMURL": "[concat(parameters('baseUrl'),'ge-ems/nestedTemplates/virtualmachine.json')]",
+            "keyvaultURL": "[concat(parameters('baseUrl'),'ge-ems/nestedTemplates/keyvault.json')]",
+            "resourcelocksURL": "[concat(parameters('baseUrl'),'ge-ems/nestedTemplates/resourcelocks.json')]",
+            "diagStorageAccount":"[concat(parameters('baseUrl'),'ge-ems/nestedTemplates/diagStorageAccount.json')]"
+        }
     },
-    "virtualMachineAdminUserName": {
-        "type": "string"
-    },
-    "numberofVMs": {
-        "type": "int"
-    },
-    "virtualNetworkRG": {
-        "type": "string"
-    },
-    "virtualNetworkName": {
-        "type": "string"
-    },
-    "SubnetName": {
-        "type": "string"
-    },
-    "PrivateIP": {
-        "type": "array"
-    },
-    "virtualMachineSize": {
-        "type": "string"
-    },
-    "Password-Or-ssh": {
-        "type": "securestring"
-    },
-    "vmtag":{
-       "type": "object"
-    },
-    "baseUrl":{
-        "type": "string"
-    }
-  },
-  "variables": {
-    "configuration":{
-        "provisioningVMURL": "[concat(parameters('baseUrl'),'ge-aviation/nestedTemplates/virtualmachines.json')]",
-        "keyvaultURL":"[concat(parameters('baseUrl'),'ge-aviation/nestedTemplates/keyvault.json')]",
-        "resourcelocksURL":"[concat(parameters('baseUrl'),'ge-aviation/nestedTemplates/resourcelocks.json')]"
-    },
-    "vmNamePrefix":"[concat('arv', parameters('vmRole'))]",
-    "virtualMachineAdminUserName":"[parameters('virtualMachineAdminUserName')]",
-    "virtualMachineAdminPassword":"[parameters('Password-Or-ssh')]",
-    "virtualNetworkRG":"[parameters('virtualNetworkRG')]",
-    "virtualNetworkName":"[parameters('virtualNetworkName')]",
-    "SubnetName":"[parameters('SubnetName')]",
-    "PrivateIP":"[parameters('PrivateIP')]",
-    "numberofVMs":"[parameters('numberofVMs')]",
-    "virtualMachineSize":"[parameters('virtualMachineSize')]",
-    "Password-Or-ssh":"[parameters('Password-Or-ssh')]",
-    "baseUrl":"[parameters('baseUrl')]"
-  },
-  "resources":[
-    {
-        "type": "Microsoft.Resources/deployments",
-        "name": "ProvisioningVirtualMachine",
-        "apiVersion": "2015-01-01",
-        "properties": {
-            "mode": "Incremental",
-            "templateLink": {
-                "uri": "[variables('configuration').provisioningVMURL]",
-                "contentVersion": "1.0.0.0"
-            },
-            "parameters": {
-                "vmRole": {
-                  "value":"[parameters('vmRole')]"
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "ProvisioningVirtualMachine",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuration').provisioningVMURL]",
+                    "contentVersion": "1.0.0.0"
                 },
-                "objectId": {
-                    "value":"[parameters('objectId')]"
-                  },
-                "virtualMachineAdminUserName": {
-                    "value":"[variables('virtualMachineAdminUserName')]"
-                },
-                "numberofVMs":{
-                    "value":"[variables('numberofVMs')]"
-                },
-                "virtualNetworkRG":{
-                    "value":"[variables('virtualNetworkRG')]"
-                },
-                "virtualNetworkName":{
-                    "value":"[variables('virtualNetworkName')]"
-                },
-                "SubnetName":{
-                    "value":"[variables('SubnetName')]"
-                },
-                "PrivateIP":{
-                    "value":"[variables('PrivateIP')]"
-                },
-                "virtualMachineSize": {
-                    "value":"[variables('virtualMachineSize')]"
-                },
-                "Password-Or-ssh": {
-                    "value":"[variables('Password-Or-ssh')]"
-                },
-                "vmtag":{
-                    "value": "[parameters('vmtag')]"
-                },
-                "baseUrl":{
-                    "value":"[variables('baseUrl')]"
+                "parameters": {
+                    "vmRole": {
+                        "value": "[parameters('vmRole')]"
+                    },
+                    "objectId": {
+                        "value": "[parameters('objectId')]"
+                    },
+                    "virtualMachineAdminUserName": {
+                        "value": "[parameters('virtualMachineAdminUserName')]"
+                    },
+                    "numberofVMs": {
+                        "value": "[parameters('numberofVMs')]"
+                    },
+                    "virtualNetworkRG": {
+                        "value": "[parameters('virtualNetworkRG')]"
+                    },
+                    "virtualNetworkName": {
+                        "value": "[parameters('virtualNetworkName')]"
+                    },
+                    "SubnetName": {
+                        "value": "[parameters('SubnetName')]"
+                    },
+                    "PrivateIP": {
+                        "value": "[parameters('PrivateIP')]"
+                    },
+                    "virtualMachineSize": {
+                        "value": "[parameters('virtualMachineSize')]"
+                    },
+                    "VM-Admin-Password": {
+                        "value": "[parameters('VM-Admin-Password')]"
+                    },
+                    "vmtags": {
+                        "value": "[parameters('vmtags')]"
+                    },
+                    "baseUrl": {
+                        "value": "[parameters('baseUrl')]"
+                    }
                 }
             }
         }
-        
-    }
-  ],
-  "outputs": {}  
+    ],
+    "outputs": {}
 }
