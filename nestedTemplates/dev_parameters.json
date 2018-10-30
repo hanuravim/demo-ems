@@ -1,0 +1,61 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmName": {
+          "value":""
+        },
+        "virtualMachineSize": {
+            "value":"Standard_DS3_v2",
+            "allowedValues": [
+                "Standard_DS11_v2_Promo",
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS5_v2"
+            ]
+        },
+        "virtualMachineAdminUserName": {
+            "value":"azadmin",
+            "metadata": {
+              "description": "Username for local administrator of the VM."
+            }
+        },
+        "virtualMachineAdminPassword": {
+            "value": "Testuser@123"
+        },
+        "virtualNetworkRG":{
+            "value":"hanu-poc-vnetrg",
+            "metadata": {
+                "description": "Resource group of the existing virtual network"
+            } 
+        },
+        "virtualNetworkName":{
+            "value":"hypervasrvnet",
+            "metadata": {
+                "description": "Existing virtual network name"
+            } 
+        },
+        "SubnetName":{
+            "value": "DB"
+        },
+        "PrivateIP":{
+            "value":""
+        },
+        "diagnosticStorageAccountName": {
+            "value": ""
+        },
+        "vmtag":{
+            "value": {
+                "key1":"vmrole","value1":"AD"
+            }
+        },
+        "baseUrl":{
+            "value": "https://raw.githubusercontent.com/hanuravim/ge-ems/master/",
+            "metadata": {
+                "description": "Base URL for the code repository."
+            }
+        }
+          
+    }
+}    

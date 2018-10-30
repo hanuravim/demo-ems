@@ -1,0 +1,50 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "diagnosticStorageAccountName":{
+            "type": "string"
+        },
+        "storagetags":{
+            "type": "object"
+        }
+    },
+    "resources":[
+        {
+            "name": "[parameters('diagnosticStorageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2016-01-01",
+            "sku": {
+              "name": "Standard_GRS"
+            },
+            "dependsOn": [],
+            "tags": {
+                "[parameters('storagetags').key1]": "[parameters('storagetags').value1]"
+            },
+            "kind": "Storage"
+        }        
+    ]
+}    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

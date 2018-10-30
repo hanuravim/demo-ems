@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "keyVaultName":{
+            "type": "string"
+        },
+        "keyvaulttags":{
+            "type": "object"
+        },
+        "objectId":{
+            "type": "object"
+        },
+        "VM-Admin-Password":{
+            "type":"securestring" 
+        }
+    },
+    "variables": {
+        "secretName": "VM-Admin-Password"
+    },
+    "resources":[
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "name": "[parameters('keyVaultName')]",
+            "apiVersion": "2015-06-01",
+            "location": "[resourceGroup().location]",
+            "tags": {
+                "[parameters('keyvaulttags').key1]": "[parameters('keyvaulttags').value1]"
+            },
+            "properties": {
+              "enabledForDeployment": true,
+              "enabledForTemplateDeployment": true,
+              "enabledForDiskEncryption": true,
+              "tenantId": "[subscription().tenantId]",
+              "accessPolicies": [
+                {
+                  "tenantId": "[subscription().tenantId]",
+                  "objectId": "[parameters('objectId')]",
+                  "permissions": {
+                    "keys": ["all" ],
+                    "secrets": [ "all" ]
+                  }
+                }
+              ],
+              "sku": {
+                "name": "standard",
+                "family": "A"
+              }
+            },
+            "resources": [
+              {
+                "type": "secrets",
+                "name": "[variables('secretName')]",
+                "apiVersion": "2015-06-01",
+                "tags": { "displayName": "secret" },
+                "properties": {
+                  "value": "[parameters('VM-Admin-Password')]"
+                },
+                "dependsOn": [
+                  "[concat('Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+                ]
+              }
+            ]
+        }
