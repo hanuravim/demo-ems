@@ -2,60 +2,70 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vmName": {
-          "value":""
-        },
-        "virtualMachineSize": {
-            "value":"Standard_DS3_v2",
-            "allowedValues": [
-                "Standard_DS11_v2_Promo",
-                "Standard_DS2_v2",
-                "Standard_DS3_v2",
-                "Standard_DS4_v2",
-                "Standard_DS5_v2"
-            ]
+        "vmRole": {
+            "value":"web"
         },
         "virtualMachineAdminUserName": {
-            "value":"azadmin",
-            "metadata": {
-              "description": "Username for local administrator of the VM."
-            }
+            "value": "azadmin"
         },
-        "virtualMachineAdminPassword": {
-            "value": "Testuser@123"
+        "numberofVMs": {
+            "value": "1"
         },
-        "virtualNetworkRG":{
-            "value":"hanu-poc-vnetrg",
-            "metadata": {
-                "description": "Resource group of the existing virtual network"
-            } 
+        "virtualNetworkRG": {
+            "value": "hanu-poc-vnetrg"
         },
-        "virtualNetworkName":{
-            "value":"hypervasrvnet",
-            "metadata": {
-                "description": "Existing virtual network name"
-            } 
+        "virtualNetworkName": {
+            "value": "hanu-poc-vnet"
         },
-        "SubnetName":{
-            "value": "DB"
+        "SubnetName": {
+            "value": "default"
         },
-        "PrivateIP":{
-            "value":""
+        "PrivateIP": {
+            "value": "172.23.0.10"
         },
-        "diagnosticStorageAccountName": {
+        "virtualMachineSize": {
+            "value": "Standard_B1S"
+        },
+        "VM-Admin-Password": {
             "value": ""
         },
-        "vmtag":{
+        "vmtags": {
             "value": {
-                "key1":"vmrole","value1":"AD"
+                "key1":"vmrole","value1":"web"
             }
         },
-        "baseUrl":{
-            "value": "https://raw.githubusercontent.com/hanuravim/ge-ems/master/",
-            "metadata": {
-                "description": "Base URL for the code repository."
+        "diagnosticStorageAccountName": {
+            "value": "emsdiagstorg"
+        },
+        "storagetags": {
+            "value": {
+                "key1":"storage","value1":"diagnostics"
             }
+        },
+        "keyVaultName": {
+            "value": "emsdemokeyvault"
+        },
+        "keyvaulttags": {
+            "value": {
+                "key1":"keyvault","value1":"ems"
+            }
+        },
+        "objectId": {
+            "value": "9940a750-2e6f-4ad3-8a1d-5598c36db24e"
+        },
+        "workspaceName": {
+            "value": "emswrksps"
+        },
+        "sku": {
+            "value": "Free",
+            "allowedValues": [
+                "Free",
+                "Standalone",
+                "PerNode"
+            ]
+        },
+        "baseUrl": {
+            "value": "https://raw.githubusercontent.com/hanuravim/ge-ems/master/"
         }
-          
     }
 }    
