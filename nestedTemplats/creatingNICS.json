@@ -36,14 +36,10 @@
               "id": "[parameters('staticSubnetRef')]"
             },
             "loadBalancerBackendAddressPools": [
-              {
-                "id":"[parameters('adBEAddressPoolID')]"
-              }
+             
             ],
             "loadBalancerInboundNatRules": [
-              {
-                "id": "[parameters('adRDPNATRuleID')]"
-              }
+             
             ]
           }
         }
