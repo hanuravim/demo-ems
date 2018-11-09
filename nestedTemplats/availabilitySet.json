@@ -4,10 +4,6 @@
   "parameters": {
     "adAvailabilitySetName": {
       "type": "string"
-    },
-   
-    "location": {
-      "type": "string"
     }
   },
   "resources": [
@@ -15,7 +11,7 @@
 			"type": "Microsoft.Compute/availabilitySets",
 			"name": "[parameters('adAvailabilitySetName')]",
 			"apiVersion": "2015-06-15",
-			"location": "[parameters('location')]"
+			"location": "[resourcegroup().location]"
 		}
 	
   ],
