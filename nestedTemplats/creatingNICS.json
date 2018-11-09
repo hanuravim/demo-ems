@@ -8,7 +8,7 @@
     "adPDCNICIPAddress": {
       "type": "string"
     },
-    "staticSubnetRef": {
+    "adSubnetRef": {
       "type": "string"
     },
    
@@ -33,7 +33,7 @@
             "privateIPAllocationMethod": "Static",
             "privateIPAddress" :"[parameters('adPDCNICIPAddress')]",
             "subnet": {
-              "id": "[parameters('staticSubnetRef')]"
+              "id": "[parameters('adSubnetRef')]"
             },
             "loadBalancerBackendAddressPools": [
              
@@ -59,7 +59,7 @@
             "privateIPAllocationMethod": "Static",
             "privateIPAddress" :"[parameters('adBDCNICIPAddress')]",
             "subnet": {
-              "id": "[parameters('staticSubnetRef')]"
+              "id": "[parameters('adSubnetRef')]"
             }
           }
         }
