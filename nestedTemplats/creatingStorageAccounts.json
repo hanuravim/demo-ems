@@ -4,9 +4,6 @@
   "parameters": {
     "storageAccountNamePrefix" : {
       "type" : "string"
-    },
-    "storageAccountType" : {
-      "type" : "string"
     }
   },
   "resources": [
@@ -20,7 +17,7 @@
       "count": 3
     },
     "properties": {
-    "accountType": "[parameters('storageAccountType')]"
+    "accountType": "Standard_LRS"
     }
   },
   {
