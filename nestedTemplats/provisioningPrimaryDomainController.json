@@ -8,6 +8,9 @@
     "availabilitySet" : {
       "type" : "string"
     },
+    "storageAccountNamePrefix" : {
+      "type" : "string"
+    },
     "adVMSize" : {
       "type" : "string"
     },
