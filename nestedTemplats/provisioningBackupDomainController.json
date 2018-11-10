@@ -5,9 +5,6 @@
     "adBDCVMName": {
       "type": "string"
     },
-    "storageAccountNamePrefix": {
-      "type": "string"
-    },
     "availabilitySet" : {
       "type" : "string"
     },
@@ -104,7 +101,7 @@
       "diagnosticsProfile": {
         "bootDiagnostics": {
           "enabled": "true",
-          "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'4.blob.core.windows.net')]"
+          "storageUri": "[concat('http://',parameters('bdcstorageAccountNamePrefix'),'.blob.core.windows.net')]"
         }
       }
     },
