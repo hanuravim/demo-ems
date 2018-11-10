@@ -8,7 +8,10 @@
     "availabilitySet" : {
       "type" : "string"
     },
-    "storageAccountNamePrefix" : {
+    "pdcstorageAccountNamePrefix" : {
+      "type" : "string"
+    },
+    "bdcstorageAccountNamePrefix" : {
       "type" : "string"
     },
     "adVMSize" : {
@@ -73,7 +76,7 @@
         "osDisk": {
           "name": "osdisk",
           "vhd": {
-            "uri": "[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/',parameters('adPDCVMName'),'-osdisk.vhd')]"
+            "uri": "[concat('http://',parameters('pdcstorageAccountNamePrefix'),'.blob.core.windows.net/',parameters('vmContainerName'),'/',parameters('adPDCVMName'),'-osdisk.vhd')]"
           },
           "caching": "ReadWrite",
           "createOption": "FromImage"
@@ -81,7 +84,7 @@
         "dataDisks": [
           {
             "vhd": {
-              "uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('adPDCVMName'),'data-1.vhd')]"
+              "uri":"[concat('http://',parameters('pdcstorageAccountNamePrefix'),'.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('adPDCVMName'),'data-1.vhd')]"
               },
             "name":"[concat(parameters('adPDCVMName'),'-data-disk1')]",
             "createOption": "Empty",
@@ -101,7 +104,7 @@
       "diagnosticsProfile": {
         "bootDiagnostics": {
           "enabled": "true",
-          "storageUri": "[concat('http://',parameters('storageAccountNamePrefix'),'4.blob.core.windows.net')]"
+          "storageUri": "[concat('http://',parameters('pdcstorageAccountNamePrefix'),'.blob.core.windows.net')]"
         }
       }
     },
