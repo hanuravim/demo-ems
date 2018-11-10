@@ -19,16 +19,8 @@
     "properties": {
     "accountType": "Standard_LRS"
     }
-  },
-  {
-    "type": "Microsoft.Storage/storageAccounts",
-    "name": "[concat(parameters('storageAccountNamePrefix'), '4')]",
-    "apiVersion": "2015-05-01-preview",
-    "location": "[resourcegroup().location]",
-    "properties": {
-    "accountType": "Standard_LRS"
-    }
   }
+ 
   ],
   "outputs": {}
 }
