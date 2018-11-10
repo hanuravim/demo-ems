@@ -11,6 +11,9 @@
     "availabilitySet" : {
       "type" : "string"
     },
+    "bdcstorageAccountNamePrefix" : {
+      "type" : "string"
+    },
     "adVMSize" : {
       "type" : "string"
     },
@@ -73,7 +76,7 @@
         "osDisk": {
           "name": "osdisk",
           "vhd": {
-            "uri": "[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/',parameters('adBDCVMName'),'-osdisk.vhd')]"
+            "uri": "[concat('http://',parameters('bdcstorageAccountNamePrefix'),'.blob.core.windows.net/',parameters('vmContainerName'),'/',parameters('adBDCVMName'),'-osdisk.vhd')]"
           },
           "caching": "ReadWrite",
           "createOption": "FromImage"
@@ -81,7 +84,7 @@
         "dataDisks": [
           {
             "vhd": {
-              "uri":"[concat('http://',parameters('storageAccountNamePrefix'),'1.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('adBDCVMName'),'data-1.vhd')]"
+              "uri":"[concat('http://',parameters('bdcstorageAccountNamePrefix'),'.blob.core.windows.net/',parameters('vmContainerName'),'/', parameters('adBDCVMName'),'data-1.vhd')]"
               },
             "name":"[concat(parameters('adBDCVMName'),'-data-disk1')]",
             "createOption": "Empty",
