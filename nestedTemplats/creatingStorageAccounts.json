@@ -2,20 +2,28 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "storageAccountNamePrefix" : {
+    "pdcstorageAccountNamePrefix" : {
+      "type" : "string"
+    },
+    "bdcstorageAccountNamePrefix" : {
       "type" : "string"
     }
   },
   "resources": [
   {
     "type": "Microsoft.Storage/storageAccounts",
-    "name": "[concat(parameters('storageAccountNamePrefix'), copyindex(1))]",
+    "name": "[parameters('pdcstorageAccountNamePrefix')]",
     "apiVersion": "2015-05-01-preview",
     "location": "[resourcegroup().location]",
-    "copy": {
-      "name": "storageAccountLoop",
-      "count": 2
-    },
+    "properties": {
+    "accountType": "Standard_LRS"
+    }
+  },
+  {
+    "type": "Microsoft.Storage/storageAccounts",
+    "name": "[parameters('bdcstorageAccountNamePrefix')]",
+    "apiVersion": "2015-05-01-preview",
+    "location": "[resourcegroup().location]",
     "properties": {
     "accountType": "Standard_LRS"
     }
