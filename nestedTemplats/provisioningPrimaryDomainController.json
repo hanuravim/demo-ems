@@ -11,9 +11,6 @@
     "pdcstorageAccountNamePrefix" : {
       "type" : "string"
     },
-    "bdcstorageAccountNamePrefix" : {
-      "type" : "string"
-    },
     "adVMSize" : {
       "type" : "string"
     },
