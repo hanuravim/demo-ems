@@ -5,9 +5,6 @@
     "adBDCVMName": {
       "type": "string"
     },
-    "location": {
-      "type": "string"
-    },
     "adminUsername" : {
       "type" : "string"
     },
@@ -29,7 +26,7 @@
         "type": "Microsoft.Compute/virtualMachines/extensions",
         "name": "[concat(parameters('adBDCVMName'),'/CreateBDC')]",
         "apiVersion": "2015-06-15",
-        "location": "[parameters('location')]",
+        "location": "[resourcegroup().location]",
         "properties": {
           "publisher": "Microsoft.Powershell",
           "type": "DSC",
