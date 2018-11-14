@@ -29,23 +29,62 @@
         },
         "virtualNetworkName": {
             "type": "string",
-            "defaultValue": "hypervasrvnet",
             "metadata": {
                 "description": "Name of virtual network"
             }
         },
-        "virtualNetworkAddressRange": {
-            "defaultValue": "192.10.0.0/21",
+        "SubnetName": {
             "type": "string",
             "metadata": {
-                "description": "The address range of the new VNET in CIDR format"
+                "description": "Name of virtual network"
             }
         },
-        "adSubnetPrefix": {
-            "defaultValue": "192.10.2.0/24",
+        "adAvailabilitySetName": {
             "type": "string",
             "metadata": {
-                "description": "The address range of the new VNET in CIDR format"
+                "description": "AV set name for the AD VMs"
+            }
+        },
+        "adloadBalancerName": {
+            "type": "string",
+            "metadata": {
+                "description": "ILB name for the AD VMs"
+            }
+        },
+        "adloadBalancerFEIP": {
+            "type": "string",
+            "metadata": {
+                "description": "Front end IP for the AD ILB"
+            }
+        },
+        "imageSKU": {
+            "type": "string",
+            "metadata": {
+                "description": "eg: 2016-Datacenter, 2012-R2-Datacenter"
+            }
+        },
+        "adVMSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of the AD VM"
+            }
+        },
+        "adPDCNicName": {
+            "type": "string",
+            "metadata": {
+                "description": "network interface name of AD PDC"
+            }
+        },
+        "adBDCNicName": {
+            "type": "string",
+            "metadata": {
+                "description": "network interface name of AD BDC"
+            }
+        },
+        "adDataDiskSize": {
+            "type": "string",
+            "metadata": {
+                "description": "Size of the AD data disk"
             }
         },
         "adPDCVMName": {
@@ -82,46 +121,37 @@
                 "description": "The location of resources, such as templates and DSC modules, that the template depends on"
             },
             "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
-        },
-        "_artifactsLocationSasToken": {
-            "type": "securestring",
-            "metadata": {
-                "description": "Auto-generated token to access _artifactsLocation"
-            },
-            "defaultValue": ""
         }
     },
     "variables": {
-        "storageAccountType": "Premium_LRS",
+        "storageAccountType": "Standard_LRS",
         "imagePublisher": "MicrosoftWindowsServer",
         "imageOffer": "WindowsServer",
-        "imageSKU": "2016-Datacenter",
-        "adLBFE": "LBFE",
-        "adLBBE": "LBBE",
-        "nicTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/nic.json', parameters('_artifactsLocationSasToken'))]",
-        "configureADBDCTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/configureADBDC.json', parameters('_artifactsLocationSasToken'))]",
-        "adPDCModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/CreateADPDC.zip', parameters('_artifactsLocationSasToken'))]",
-        "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
-        "adBDCPreparationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/PrepareADBDC.zip', parameters('_artifactsLocationSasToken'))]",
-        "adBDCPreparationFunction": "PrepareADBDC.ps1\\PrepareADBDC",
-        "adBDCConfigurationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/ConfigureADBDC.zip', parameters('_artifactsLocationSasToken'))]",
-        "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC",
+        "imageSKU": "[parameters('imageSKU')]",
+        "nicTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/nic.json')]",
         "vnetId": "[resourceId(parameters('virtualNetworkRG'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "adPDCModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/CreateADPDC.zip')]",
+        "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
+        "adBDCPreparationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/PrepareADBDC.zip')]",
+        "adBDCPreparationFunction": "PrepareADBDC.ps1\\PrepareADBDC",
+        "configureADBDCTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/configureADBDC.json')]",
+        "adBDCConfigurationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/ConfigureADBDC.zip')]",
+        "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC",
         "adVMSettings": {
-            "adVMSize": "Standard_DS2_v2",
-            "adPDCNicName": "adPDCNic",
-            "adBDCNicName": "adBDCNic",
-            "adDataDiskSize": 1000
+            "adVMSize": "[parameters('adVMSize')]",
+            "adPDCNicName": "[parameters('adPDCNicName')]",
+            "adBDCNicName": "[parameters('adBDCNicName')]",
+            "adDataDiskSize": "[parameters('adDataDiskSize')]"
         },
         "availabilitySets": {
-            "adAvailabilitySetName": "adAvailabilitySet"
+            "adAvailabilitySetName": "[parameters('adAvailabilitySetName')]"
         },
         "loadbalancers": {
-            "adloadBalancerName": "adilb",
-            "adloadBalancerFEIP": "192.10.2.5"
+            "adloadBalancerName": "[parameters('adloadBalancerName')]",
+            "adloadBalancerFEIP": "[parameters('adloadBalancerFEIP')]"
         },
         "subnetNames": {
-            "adSubnetName": "ad"
+            "adSubnetName": "[parameters('subnetName')]"
         },
         "ids": {
             "adsubnetId": "[concat(variables('vnetId'),'/subnets/', variables('subnetNames').adSubnetName)]",
@@ -356,7 +386,6 @@
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "[concat('Microsoft.Network/networkInterfaces/',variables('adVMSettings').adBDCNicName)]"
-                
             ],
             "properties": {
                 "mode": "Incremental",
@@ -383,7 +412,6 @@
                                             "id": "[concat(variables('ids').adlbID, '/backendAddressPools/BackendPool1')]"
                                         }
                                     ]
-                                    
                                 }
                             }
                         ]
@@ -513,7 +541,6 @@
                 }
             }
         }
-       
     ],
     "outputs": {}
 }
