@@ -82,7 +82,7 @@
             }
         },
         "adDataDiskSize": {
-            "type": "string",
+            "type": "int",
             "metadata": {
                 "description": "Size of the AD data disk"
             }
