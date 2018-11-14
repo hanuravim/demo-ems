@@ -23,7 +23,6 @@
         },
         "virtualNetworkRG": {
             "type": "string",
-            "defaultValue": "av-vnet",
             "metadata": {
                 "description": "Name of virtual network resource group"
             }
