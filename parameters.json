@@ -6,40 +6,58 @@
             "value": "adAdministrator"
         },
         "adminPassword": {
-            "value": "## TO BE DEFINED ##"
+            "value": ""
         },
         "domainName": {
-            "value": "test.com"
+            "value": "efoqatest.com"
         },
         "virtualNetworkRG": {
-            "value": "hanu-poc-vnetrg"
+            "value": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
         },
         "virtualNetworkName": {
-            "value": "hypervasrvnet"
+            "value": "efoqavn"
         },
-        "virtualNetworkAddressRange": {
-            "value": "192.10.0.0/21"
+        "SubnetName": {
+            "value": "efoqacommonnet"
         },
-        "adSubnetPrefix": {
-            "value": "192.10.2.0/24"
+        "adAvailabilitySetName": {
+            "value": "efoqaAVSet"
+        },
+        "adloadBalancerName": {
+            "value": "efoqaADILB"
+        },
+        "adloadBalancerFEIP": {
+            "value": "10.7.0.30"
+        },
+        "imageSKU": {
+            "value": "2012-R2-Datacenter"
+        },
+        "adVMSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "adPDCNicName": {
+            "value": "efoqaADPDC-nic"
+        },
+        "adBDCNicName": {
+            "value": "efoqaBDPDC-nic"
+        },
+        "adDataDiskSize": {
+            "value": 1000
         },
         "adPDCVMName": {
-            "value": "adPDC"
-        },
-        "adBDCVMName": {
-            "value": "adBDC"
+            "value": "efoqaPDC-vm"
         },
         "adPDCNICIPAddress": {
-            "value": "192.10.2.10"
+            "value": "10.7.0.31"
+        },
+        "adBDCVMName": {
+            "value": "efoqaBDC-vm"
         },
         "adBDCNICIPAddress": {
-            "value": "192.10.2.11"
+            "value": "10.7.0.32"
         },
         "_artifactsLocation": {
             "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
-        },
-        "_artifactsLocationSasToken": {
-            "value": ""
         }
     }
 }
