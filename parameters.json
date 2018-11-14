@@ -1,0 +1,45 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "adAdministrator"
+        },
+        "adminPassword": {
+            "value": "## TO BE DEFINED ##"
+        },
+        "domainName": {
+            "value": "test.com"
+        },
+        "virtualNetworkRG": {
+            "value": "hanu-poc-vnetrg"
+        },
+        "virtualNetworkName": {
+            "value": "hypervasrvnet"
+        },
+        "virtualNetworkAddressRange": {
+            "value": "192.10.0.0/21"
+        },
+        "adSubnetPrefix": {
+            "value": "192.10.2.0/24"
+        },
+        "adPDCVMName": {
+            "value": "adPDC"
+        },
+        "adBDCVMName": {
+            "value": "adBDC"
+        },
+        "adPDCNICIPAddress": {
+            "value": "192.10.2.10"
+        },
+        "adBDCNICIPAddress": {
+            "value": "192.10.2.11"
+        },
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        }
+    }
+}
