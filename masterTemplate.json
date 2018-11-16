@@ -15,6 +15,12 @@
                 "description": "The password for the Administrator account of the new VM and Domain"
             }
         },
+        "objectId": {
+            "type": "string",
+            "metadata": {
+                "description":"The existing Service Principal Name object ID in Azure AD."
+            }
+        },
         "domainName": {
             "type": "string",
             "metadata": {
@@ -124,24 +130,27 @@
         }
     },
     "variables": {
+        "keyvaultName":"efoqaKeyVault",
         "storageAccountType": "Standard_LRS",
-        "imagePublisher": "MicrosoftWindowsServer",
-        "imageOffer": "WindowsServer",
-        "imageSKU": "[parameters('imageSKU')]",
-        "nicTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/nic.json')]",
-        "vnetId": "[resourceId(parameters('virtualNetworkRG'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
-        "adPDCModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/CreateADPDC.zip')]",
-        "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
-        "adBDCPreparationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/PrepareADBDC.zip')]",
-        "adBDCPreparationFunction": "PrepareADBDC.ps1\\PrepareADBDC",
-        "configureADBDCTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/configureADBDC.json')]",
-        "adBDCConfigurationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/ConfigureADBDC.zip')]",
-        "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC",
+        "configurations": {
+            "keyvaultTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/keyvault.json')]",
+            "nicTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/nic.json')]",
+            "adPDCModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/CreateADPDC.zip')]",
+            "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
+            "adBDCPreparationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/PrepareADBDC.zip')]",
+            "adBDCPreparationFunction": "PrepareADBDC.ps1\\PrepareADBDC",
+            "configureADBDCTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/configureADBDC.json')]",
+            "adBDCConfigurationModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/ConfigureADBDC.zip')]",
+            "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC"
+        },
         "adVMSettings": {
             "adVMSize": "[parameters('adVMSize')]",
             "adPDCNicName": "[parameters('adPDCNicName')]",
             "adBDCNicName": "[parameters('adBDCNicName')]",
-            "adDataDiskSize": "[parameters('adDataDiskSize')]"
+            "adDataDiskSize": "[parameters('adDataDiskSize')]",
+            "imagePublisher": "MicrosoftWindowsServer",
+            "imageOffer": "WindowsServer",
+            "imageSKU": "[parameters('imageSKU')]"
         },
         "availabilitySets": {
             "adAvailabilitySetName": "[parameters('adAvailabilitySetName')]"
@@ -150,6 +159,7 @@
             "adloadBalancerName": "[parameters('adloadBalancerName')]",
             "adloadBalancerFEIP": "[parameters('adloadBalancerFEIP')]"
         },
+        "vnetId": "[resourceId(parameters('virtualNetworkRG'),'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
         "subnetNames": {
             "adSubnetName": "[parameters('subnetName')]"
         },
@@ -162,6 +172,29 @@
         }
     },
     "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "KeyVault",
+            "apiVersion": "2015-01-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configurations').keyvaultTemplateUri]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "keyVaultName": {
+                        "value": "[variables('keyVaultName')]"
+                    },
+                    "objectId": {
+                        "value": "[parameters('objectId')]"
+                    },
+                    "virtualMachineAdminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        },
         {
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/availabilitySets",
