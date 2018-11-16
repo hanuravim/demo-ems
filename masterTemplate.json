@@ -130,7 +130,7 @@
         }
     },
     "variables": {
-        "keyvaultName":"efoqaKeyVault",
+        "keyvaultName":"efoqaKeyVault01",
         "storageAccountType": "Standard_LRS",
         "configurations": {
             "keyvaultTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/keyvault.json')]",
