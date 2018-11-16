@@ -130,7 +130,7 @@
         }
     },
     "variables": {
-        "keyvaultName":"efoqaKeyVault",
+        "keyvaultName":"efoqaKeyVault01",
         "storageAccountType": "Standard_LRS",
         "configurations": {
             "keyvaultTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/keyvault.json')]",
@@ -345,9 +345,9 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('imageSKU')]",
+                        "publisher": "[variables('adVMSettings').imagePublisher]",
+                        "offer": "[variables('adVMSettings').imageOffer]",
+                        "sku": "[variables('adVMSettings').imageSKU]",
                         "version": "latest"
                     },
                     "osDisk": {
@@ -394,8 +394,8 @@
                         "typeHandlerVersion": "2.19",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "ModulesUrl": "[variables('adPDCModulesURL')]",
-                            "ConfigurationFunction": "[variables('adPDCConfigurationFunction')]",
+                            "ModulesUrl": "[variables('configurations').adPDCModulesURL]",
+                            "ConfigurationFunction": "[variables('configurations').adPDCConfigurationFunction]",
                             "Properties": {
                                 "DomainName": "[parameters('domainName')]",
                                 "AdminCreds": {
@@ -423,7 +423,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('nicTemplateUri')]",
+                    "uri": "[variables('configurations').nicTemplateUri]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -481,9 +481,9 @@
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[variables('imagePublisher')]",
-                        "offer": "[variables('imageOffer')]",
-                        "sku": "[variables('imageSKU')]",
+                        "publisher": "[variables('adVMSettings').imagePublisher]",
+                        "offer": "[variables('adVMSettings').imageOffer]",
+                        "sku": "[variables('adVMSettings').imageSKU]",
                         "version": "latest"
                     },
                     "osDisk": {
@@ -530,8 +530,8 @@
                 "typeHandlerVersion": "2.19",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
-                    "ModulesUrl": "[variables('adBDCPreparationModulesURL')]",
-                    "ConfigurationFunction": "[variables('adBDCPreparationFunction')]",
+                    "ModulesUrl": "[variables('configurations').adBDCPreparationModulesURL]",
+                    "ConfigurationFunction": "[variables('configurations').adBDCConfigurationFunction]",
                     "Properties": {
                         "DNSServer": "[parameters('adPDCNicIPAddress')]"
                     }
@@ -549,7 +549,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('configureADBDCTemplateUri')]",
+                    "uri": "[variables('configurations').configureADBDCTemplateUri]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -566,10 +566,10 @@
                         "value": "[parameters('domainName')]"
                     },
                     "adBDCConfigurationFunction": {
-                        "value": "[variables('adBDCConfigurationFunction')]"
+                        "value": "[variables('configurations').adBDCConfigurationFunction]"
                     },
                     "adBDCConfigurationModulesURL": {
-                        "value": "[variables('adBDCConfigurationModulesURL')]"
+                        "value": "[variables('configurations').adBDCConfigurationModulesURL]"
                     }
                 }
             }
