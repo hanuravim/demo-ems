@@ -8,6 +8,9 @@
         "adminPassword": {
             "value": ""
         },
+        "objectId": {
+            "value": "9940a750-2e6f-4ad3-8a1d-5598c36db24e"
+        },
         "domainName": {
             "value": "efoqatest.com"
         },
@@ -48,13 +51,13 @@
             "value": "efoqaPDC-vm"
         },
         "adPDCNICIPAddress": {
-            "value": "10.7.0.31"
+            "value": "10.7.0.4"
         },
         "adBDCVMName": {
             "value": "efoqaBDC-vm"
         },
         "adBDCNICIPAddress": {
-            "value": "10.7.0.32"
+            "value": "10.7.0.5"
         },
         "_artifactsLocation": {
             "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
