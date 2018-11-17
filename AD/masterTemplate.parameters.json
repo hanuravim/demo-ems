@@ -1,0 +1,66 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "adAdministrator"
+        },
+        "adminPassword": {
+            "value": ""
+        },
+        "objectId": {
+            "value": "9940a750-2e6f-4ad3-8a1d-5598c36db24e"
+        },
+        "domainName": {
+            "value": "efoqatest.com"
+        },
+        "virtualNetworkRG": {
+            "value": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+        },
+        "virtualNetworkName": {
+            "value": "efoqavn"
+        },
+        "SubnetName": {
+            "value": "efoqacommonnet"
+        },
+        "adAvailabilitySetName": {
+            "value": "efoqaAVSet"
+        },
+        "adloadBalancerName": {
+            "value": "efoqaADILB"
+        },
+        "adloadBalancerFEIP": {
+            "value": "10.7.0.30"
+        },
+        "imageSKU": {
+            "value": "2012-R2-Datacenter"
+        },
+        "adVMSize": {
+            "value": "Standard_DS2_v2"
+        },
+        "adPDCNicName": {
+            "value": "efoqaADPDC-nic"
+        },
+        "adBDCNicName": {
+            "value": "efoqaBDPDC-nic"
+        },
+        "adDataDiskSize": {
+            "value": 1000
+        },
+        "adPDCVMName": {
+            "value": "efoqaPDC-vm"
+        },
+        "adPDCNICIPAddress": {
+            "value": "10.7.0.4"
+        },
+        "adBDCVMName": {
+            "value": "efoqaBDC-vm"
+        },
+        "adBDCNICIPAddress": {
+            "value": "10.7.0.5"
+        },
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
+        }
+    }
+}
