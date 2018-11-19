@@ -21,7 +21,7 @@
             "type": "securestring"
         },
         "diskType": {
-            "type": "securestring"
+            "type": "string"
         },
         "nicSubnetUri": {
             "type": "string"
@@ -53,10 +53,8 @@
         "sqlDiskSize": 1000,
         "sqlNamePrefix": "ardb",
         "sqlAvailabilitySetName": "[concat(variables('sqlNamePrefix'),'as')]",
-        "sqlLBName": "[concat(variables('sqlNamePrefix'),'ilb')]",
-        "sqlLBId": "[resourceId('Microsoft.Network/loadBalancers',variables('sqlLBName'))]",
         "deploySqlAlwaysOn": "deploySqlAlwaysOn",
-        "deploySqlAlwaysOnTemplateUrl": "[concat(parameters('_artifactsLocation'),'/nested/deploy-sql-alwayson.json')]",
+        "deploySqlAlwaysOnTemplateUrl": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/deploy-sql-alwayson.json')]",
         "sqlAOEPName": "[concat(variables('sqlNamePrefix'),'-agep')]",
         "sqlAOAGName1": "[concat(variables('sqlNamePrefix'),'-ag1')]",
         "sqlAOListener1": "[concat(variables('sqlNamePrefix'),'-agl1')]"
@@ -84,9 +82,7 @@
                 "name": "nicLoop",
                 "count": 2
             },
-            "dependsOn": [
-                "[variables('sqlLBID')]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -95,12 +91,7 @@
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
                                 "id": "[parameters('nicSubnetUri')]"
-                            },
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[variables('sqlLBBEAddressPoolID')]"
-                                }
-                            ]
+                            }
                         }
                     }
                 ]
@@ -184,8 +175,7 @@
             "apiVersion": "2015-01-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Compute/virtualMachines',concat(variables('sqlNamePrefix'),'0'))]",
-                "[resourceId('Microsoft.Compute/virtualMachines',concat(variables('sqlNamePrefix'),'1'))]",
-                "[variables('deploySqlWitnessShareId')]"
+                "[resourceId('Microsoft.Compute/virtualMachines',concat(variables('sqlNamePrefix'),'1'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -199,21 +189,6 @@
                     },
                     "domainName": {
                         "value": "[parameters('domainName')]"
-                    },
-                    "namePrefix": {
-                        "value": "[parameters('namePrefix')]"
-                    },
-                    "sharePath": {
-                        "value": "[variables('sqlWitnessSharePath')]"
-                    },
-                    "sqlWitnessVMName": {
-                        "value": "[variables('sqlWitnessVMName')]"
-                    },
-                    "sqlLBName": {
-                        "value": "[variables('sqlLBName')]"
-                    },
-                    "sqlLBIPAddress": {
-                        "value": "[parameters('sqlLBIPAddress')]"
                     },
                     "dnsServerName": {
                         "value": "[parameters('dnsServerName')]"
@@ -232,9 +207,6 @@
                     },
                     "_artifactsLocation": {
                         "value": "[parameters('_artifactsLocation')]"
-                    },
-                    "_artifactsLocationSasToken": {
-                        "value": "[parameters('_artifactsLocationSasToken')]"
                     },
                     "sqlAlwaysOnEndpointName": {
                         "value": "[variables('sqlAOEPName')]"
