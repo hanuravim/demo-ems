@@ -109,7 +109,7 @@
         "witnessStorageName": "[concat(parameters('namePrefix'),uniqueString(resourceGroup().id),'cw')]",
         "witnessStorageType": "Standard_LRS",
         "vmNamePrefix": "[concat(parameters('namePrefix'),'-fci-')]",
-        "vmAvailabilitySetName": "[concat(variables('vmNamePrefix'),'as')]",
+        
         "clusterName": "[concat(variables('vmNamePrefix'),'c')]",
         "sqlClusterName": "[concat(variables('vmNamePrefix'),'sql')]",
         "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/newVM.json')]",
@@ -175,9 +175,7 @@
                     "vmName": {
                         "value": "[concat(variables('vmNamePrefix'), copyindex())]"
                     },
-                    "vmAvailabilitySetName": {
-                        "value": "[variables('vmAvailabilitySetName')]"
-                    },
+                    
                     "vmSize": {
                         "value": "[parameters('vmSize')]"
                     },
