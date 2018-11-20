@@ -5,9 +5,6 @@
         "vmName": {
             "type": "string"
         },
-        "vmAvailabilitySetName": {
-            "type": "string"
-        },
         "vmSize": {
             "type": "string"
         },
@@ -52,9 +49,6 @@
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
                 },
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets/', parameters('vmAvailabilitySetName'))]"
-                },
                 "osProfile": {
                     "computerName": "[parameters('vmName')]",
                     "adminUsername": "[parameters('adminUsername')]",
@@ -83,7 +77,7 @@
                                 "diskSizeGB": "[parameters('vmDiskSize')]",
                                 "lun": "[copyIndex('dataDisks')]",
                                 "createOption": "Empty",
-                                "caching":"[parameters('diskCaching')]"
+                                "caching": "[parameters('diskCaching')]"
                             }
                         }
                     ]
