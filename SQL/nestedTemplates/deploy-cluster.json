@@ -112,7 +112,7 @@
         "vmAvailabilitySetName": "[concat(variables('vmNamePrefix'),'as')]",
         "clusterName": "[concat(variables('vmNamePrefix'),'c')]",
         "sqlClusterName": "[concat(variables('vmNamePrefix'),'sql')]",
-        "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedtemplates/newVM.json')]",
+        "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/newVM.json')]",
         "sfciPrepModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/prep-sfci.ps1.zip')]",
         "sfciPrepFunction": "PrepSFCI.ps1\\PrepSFCI",
         "sfciConfigModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/config-sfci.ps1.zip')]",
