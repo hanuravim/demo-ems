@@ -116,11 +116,7 @@
         "sfciPrepModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/prep-sfci.ps1.zip')]",
         "sfciPrepFunction": "PrepSFCI.ps1\\PrepSFCI",
         "sfciConfigModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/config-sfci.ps1.zip')]",
-        "sfciConfigFunction": "ConfigSFCI.ps1\\ConfigSFCI",
-        "ilbName": "[concat(parameters('namePrefix'),'-ilb')]",
-        "ilbID": "[resourceId('Microsoft.Network/loadBalancers',variables('ilbName'))]",
-        "ilbBE": "[concat(parameters('namePrefix'),'-ilb-be')]",
-        "ilbBEAddressPoolID": "[concat(variables('ilbID'),'/backendAddressPools/',variables('ilbBE'))]"
+        "sfciConfigFunction": "ConfigSFCI.ps1\\ConfigSFCI"
     },
     "resources": [
         {
@@ -143,9 +139,7 @@
                 "name": "nicLoop",
                 "count": "[parameters('vmCount')]"
             },
-            "dependsOn": [
-                "[variables('ilbID')]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -154,12 +148,8 @@
                             "privateIPAllocationMethod": "Dynamic",
                             "subnet": {
                                 "id": "[parameters('nicSubnetUri')]"
-                            },
-                            "loadBalancerBackendAddressPools": [
-                                {
-                                    "id": "[variables('ilbBEAddressPoolID')]"
-                                }
-                            ]
+                            }
+                           
                         }
                     }
                 ]
