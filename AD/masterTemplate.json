@@ -101,7 +101,6 @@
             }
         },
         "adPDCNICIPAddress": {
-            "defaultValue": "192.10.2.10",
             "type": "string",
             "metadata": {
                 "description": "The IP address of the new AD VM"
@@ -115,7 +114,6 @@
             }
         },
         "adBDCNICIPAddress": {
-            "defaultValue": "192.10.2.11",
             "type": "string",
             "metadata": {
                 "description": "The IP address of the new AD VM"
@@ -125,15 +123,15 @@
             "type": "string",
             "metadata": {
                 "description": "The location of resources, such as templates and DSC modules, that the template depends on"
-            },
-            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
+            }
+           
         }
     },
     "variables": {
         "keyvaultName":"efoqaKeyVault01",
         "storageAccountType": "Standard_LRS",
         "configurations": {
-            "keyvaultTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/keyvault.json')]",
+            "keyvaultTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/keyVault.json')]",
             "nicTemplateUri": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/nic.json')]",
             "adPDCModulesURL": "[concat(parameters('_artifactsLocation'),'/DSC/CreateADPDC.zip')]",
             "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
