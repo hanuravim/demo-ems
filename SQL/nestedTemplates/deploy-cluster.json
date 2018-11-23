@@ -48,6 +48,24 @@
                 "description": "IP Address of the cluster"
             }
         },
+        "existingVirtualNetworkName": {
+            "type": "string",
+            "metadata": {
+                "description": "Name of a pre-existing vNet to connect the SQL Cluster to."
+            }
+        },
+        "VirtualNetworkAddressRange": {
+            "type": "string"
+        },
+        "existingSubnetName": {
+            "type": "string"
+        },
+        "subnetRange": {
+            "type": "string"
+        },
+        "dnsServerPrivateIp": {
+            "type": "string"
+        },
         "nicSubnetUri": {
             "type": "string",
             "metadata": {
@@ -109,10 +127,10 @@
         "witnessStorageName": "[concat(parameters('namePrefix'),uniqueString(resourceGroup().id),'cw')]",
         "witnessStorageType": "Standard_LRS",
         "vmNamePrefix": "[concat(parameters('namePrefix'),'-fci-')]",
-        
         "clusterName": "[concat(variables('vmNamePrefix'),'c')]",
         "sqlClusterName": "[concat(variables('vmNamePrefix'),'sql')]",
         "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/newVM.json')]",
+        "vnetUpdateDNSTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/vnet-with-dns-server.json')]",
         "sfciPrepModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/prep-sfci.ps1.zip')]",
         "sfciPrepFunction": "PrepSFCI.ps1\\PrepSFCI",
         "sfciConfigModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/config-sfci.ps1.zip')]",
@@ -129,6 +147,38 @@
             },
             "kind": "Storage",
             "comments": "The storage account used for the SQL Cloud Witness"
+        },
+        {
+            "apiVersion": "2015-01-01",
+            "type": "Microsoft.Resources/deployments",
+            "name": "updatevnetdns",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vnetUpdateDNSTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualNetworkName": {
+                        "value": "[parameters('existingVirtualNetworkName')]"
+                    },
+                    "virtualNetworkAddressRange": {
+                        "value": "[parameters('VirtualNetworkAddressRange')]"
+                    },
+                    "subnetName": {
+                        "value": "[parameters('existingSubnetName')]"
+                    },
+                    "subnetRange": {
+                        "value": "[parameters('subnetRange')]"
+                    },
+                    "DNSServerAddress": {
+                        "value": [
+                            "[parameters('dnsServerPrivateIp')]"
+                        ]
+                    }
+                }
+            }
         },
         {
             "name": "[concat(variables('vmNamePrefix'), copyindex(), '-nic')]",
@@ -175,7 +225,6 @@
                     "vmName": {
                         "value": "[concat(variables('vmNamePrefix'), copyindex())]"
                     },
-                    
                     "vmSize": {
                         "value": "[parameters('vmSize')]"
                     },
