@@ -130,7 +130,7 @@
         "clusterName": "[concat(variables('vmNamePrefix'),'c')]",
         "sqlClusterName": "[concat(variables('vmNamePrefix'),'sql')]",
         "vmLoopTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/newVM.json')]",
-        "vnetUpdateDNSTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/vnet-with-dns-server.json')]",
+        "vnetUpdateDNSTemplateURL": "[concat(parameters('_artifactsLocation'),'/nestedTemplates/vnet-update-dns.json')]",
         "sfciPrepModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/prep-sfci.ps1.zip')]",
         "sfciPrepFunction": "PrepSFCI.ps1\\PrepSFCI",
         "sfciConfigModulesURL": "[concat(parameters('_artifactsLocation'),'/dsc/config-sfci.ps1.zip')]",
