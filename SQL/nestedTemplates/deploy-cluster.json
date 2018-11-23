@@ -255,6 +255,98 @@
                     }
                 }
             }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('vmNamePrefix'),copyindex(1),'/sfciPrep')]",
+            "apiVersion": "2017-12-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "virtualMachineLoop"
+            ],
+            "copy": {
+                "name": "virtualMachineExtensionLoop",
+                "count": "[sub(parameters('vmCount'),1)]"
+            },
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.20",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesUrl": "[variables('sfciPrepModulesURL')]",
+                    "configurationFunction": "[variables('sfciPrepFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "PrivateSettingsRef:adminPassword"
+                        },
+                        "svcCreds": {
+                            "userName": "[parameters('svcUserName')]",
+                            "password": "PrivateSettingsRef:svcPassword"
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]",
+                        "svcPassword": "[parameters('svcPassword')]"
+                    }
+                }
+            },
+            "comments": "This VM DSC extension prepares the second cluster node"
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('vmNamePrefix'),'0/sfciConfig')]",
+            "apiVersion": "2017-12-01",
+            "location": "[resourceGroup().location]",
+            "dependsOn": [
+                "virtualMachineLoop",
+                "virtualMachineExtensionLoop",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('witnessStorageName'))]"
+            ],
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.20",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesUrl": "[variables('sfciConfigModulesURL')]",
+                    "configurationFunction": "[variables('sfciConfigFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "clusterName": "[variables('clusterName')]",
+                        "sqlClusterName": "[variables('sqlClusterName')]",
+                        "clusterIP": "[parameters('clusterIP')]",
+                        "vmNamePrefix": "[variables('vmNamePrefix')]",
+                        "vmCount": "[parameters('vmCount')]",
+                        "vmDiskSize": "[parameters('vmDiskSize')]",
+                        "witnessStorageName": "[variables('witnessStorageName')]",
+                        "witnessStorageKey": {
+                            "userName": "PLACEHOLDER-DO-NOT-USE",
+                            "password": "PrivateSettingsRef:witnessStorageKey"
+                        },
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "PrivateSettingsRef:adminPassword"
+                        },
+                        "svcCreds": {
+                            "userName": "[parameters('svcUserName')]",
+                            "password": "PrivateSettingsRef:svcPassword"
+                        }
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]",
+                        "svcPassword": "[parameters('svcPassword')]",
+                        "witnessStorageKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts',variables('witnessStorageName')),variables('apiVersionStorage')).keys[0].value]"
+                    }
+                }
+            },
+            "comments": "This VM DSC extension prepares the first cluster node and creates the cluster itself"
         }
     ]
 }
