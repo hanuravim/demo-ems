@@ -3,16 +3,22 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "adminUsername": {
-            "value": "GEN-UNIQUE"
+            "value": "adAdministrator"
         },
         "adminPassword": {
-            "value": "GEN-PASSWORD"
-        },
-        "dnsPrefix": {
-            "value": "GEN-UNIQUE"
+            "value": ""
         },
         "domainName": {
-            "value": "mydomain.local"
+            "value": "efoqa.local"
+        },
+        "_artifactsLocation": {
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/AD"
+        },
+        "_artifactsLocationSasToken": {
+            "value": ""
+        },
+        "location": {
+            "value": "[resourceGroup().location]"
         }
     }
 }
