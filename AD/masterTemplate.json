@@ -21,12 +21,6 @@
                 "description": "The FQDN of the AD Domain created "
             }
         },
-        "dnsPrefix": {
-            "type": "string",
-            "metadata": {
-                "description": "The DNS prefix for the public IP address used by the Load Balancer"
-            }
-        },
         "pdcRDPPort": {
             "type": "int",
             "metadata": {
@@ -106,18 +100,6 @@
     },
     "resources": [
         {
-            "name": "[variables('publicIPAddressName')]",
-            "type": "Microsoft.Network/publicIPAddresses",
-            "apiVersion": "2016-10-01",
-            "location": "[parameters('location')]",
-            "properties": {
-                "publicIPAllocationMethod": "Dynamic",
-                "dnsSettings": {
-                    "domainNameLabel": "[parameters('dnsPrefix')]"
-                }
-            }
-        },
-        {
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/availabilitySets",
             "location": "[parameters('location')]",
@@ -154,58 +136,6 @@
                         "value": "[variables('adSubnet')]"
                     }
                 }
-            }
-        },
-        {
-            "name": "[variables('adLBName')]",
-            "type": "Microsoft.Network/loadBalancers",
-            "apiVersion": "2016-10-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
-            ],
-            "properties": {
-                "frontendIPConfigurations": [
-                    {
-                        "name": "[variables('adLBFE')]",
-                        "properties": {
-                            "publicIPAddress": {
-                                "id": "[resourceId('Microsoft.Network/publicIPAddresses',variables('publicIPAddressName'))]"
-                            }
-                        }
-                    }
-                ],
-                "backendAddressPools": [
-                    {
-                        "name": "[variables('adLBBE')]"
-                    }
-                ],
-                "inboundNatRules": [
-                    {
-                        "name": "[variables('adPDCRDPNAT')]",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[variables('adlbFEConfigID')]"
-                            },
-                            "protocol": "tcp",
-                            "frontendPort": "[parameters('pdcRDPPort')]",
-                            "backendPort": 3389,
-                            "enableFloatingIP": false
-                        }
-                    },
-                    {
-                        "name": "[variables('adBDCRDPNAT')]",
-                        "properties": {
-                            "frontendIPConfiguration": {
-                                "id": "[variables('adlbFEConfigID')]"
-                            },
-                            "protocol": "tcp",
-                            "frontendPort": "[parameters('bdcRDPPort')]",
-                            "backendPort": 3389,
-                            "enableFloatingIP": false
-                        }
-                    }
-                ]
             }
         },
         {
