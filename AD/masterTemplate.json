@@ -288,7 +288,7 @@
                 },
                 "parameters": {
                     "vnetName": {
-                        "value": "[parameters('SubnetName')]"
+                        "value": "[parameters('VirtualNetworkName')]"
                     },
                     "dnsServers": {
                         "value": [
@@ -297,10 +297,10 @@
                         ]
                     },
                     "addressSpace": {
-                        "value": "[reference(concat('Microsoft.Network/virtualNetworks/', parameters('SubnetName'))).addressSpace]"
+                        "value": "[reference(concat('Microsoft.Network/virtualNetworks/', parameters('VirtualNetworkName'))).addressSpace]"
                     },
                     "subnets": {
-                        "value": "[reference(concat('Microsoft.Network/virtualNetworks/', parameters('SubnetName'))).subnets]"
+                        "value": "[reference(concat('Microsoft.Network/virtualNetworks/', parameters('VirtualNetworkName'))).subnets]"
                     }
                 }
             }
