@@ -67,12 +67,12 @@
         "adPDCVMName": "DC1",
         "adBDCVMName": "DC2",
         "DCHASetName": "DCHASet",
-        "windowsVmTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/windowsvm.json')]",
+        "windowsVmTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplate/windowsvm.json')]",
         "adPDCModulesURL": "[concat(parameters('baseUri'),'DSC/CreateADPDC.ps1.zip')]",
         "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
         "adBDCModulesURL": "[concat(parameters('baseUri'),'DSC/ConfigureADBDC.ps1.zip')]",
         "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC",
-        "vnetwithDNSTemplateUri": "[concat(parameters('baseUri'),'nested-templates/update-vnet-dns.json')]"
+        "vnetwithDNSTemplateUri": "[concat(parameters('baseUri'),'/nestedTemplate/update-vnet-dns.json')]"
     },
     "resources": [
         {
