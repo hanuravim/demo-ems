@@ -172,7 +172,7 @@
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('adPDCVMName'),'/CreateADForest')]",
+            "name": "[concat('DC',copyindex(1),'/CreateADForest')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]"
@@ -203,7 +203,7 @@
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('adBDCVMName'),'/ConfigureADBDC')]",
+            "name": "[concat('DC',copyindex(1),'/ConfigureADBDC')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]",
@@ -237,7 +237,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', variables('adPDCVMName'),'/extensions/CreateADForest')]"
+                "[concat('Microsoft.Compute/virtualMachines/', 'DC',copyindex(1),'/extensions/CreateADForest')]"
             ],
             "properties": {
                 "mode": "Incremental",
