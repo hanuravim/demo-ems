@@ -11,14 +11,8 @@
         "domainName": {
             "value": "efoqa.local"
         },
-        "_artifactsLocation": {
-            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/AD"
-        },
-        "_artifactsLocationSasToken": {
-            "value": ""
-        },
-        "location": {
-            "value": "[resourceGroup().location]"
+        "DCVmSize": {
+            "value": "Standard_D1_v2"
         }
     }
 }
