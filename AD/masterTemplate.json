@@ -217,7 +217,7 @@
             "name": "[concat(variables('adPDCVMName'),'/CreateADForest')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]"
+                "[resourceId('Microsoft.Resources/deployments', 'DC1Deploy')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
@@ -248,7 +248,7 @@
             "name": "[concat(variables('adBDCVMName'),'/ConfigureADBDC')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]",
+                "[resourceId('Microsoft.Resources/deployments', 'DC2Deploy')]",
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
             ],
             "properties": {
