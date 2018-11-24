@@ -64,8 +64,6 @@
         "diagStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'advmdiag')]",
         "vnetID": "[resourceId(parameters('VirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]",
         "ADSubnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
-        "adPDCVMName": "DC1",
-        "adBDCVMName": "DC2",
         "DCHASetName": "DCHASet",
         "windowsVmTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplate/windowsvm.json')]",
         "adPDCModulesURL": "[concat(parameters('baseUri'),'/DSC/CreateADPDC.ps1.zip')]",
@@ -126,7 +124,7 @@
             }
         },
         {
-            "name": "DCDeploy",
+            "name": "[concat('DC', copyindex(1))]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "dependsOn": [
@@ -145,7 +143,7 @@
                 },
                 "parameters": {
                     "vmName": {
-                        "value": "[variables('adPDCVMName')]"
+                        "value": "[concat('DC', copyindex(1))]"
                     },
                     "vmSize": {
                         "value": "[parameters('DCVmSize')]"
@@ -171,7 +169,6 @@
                 }
             }
         },
-      
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
