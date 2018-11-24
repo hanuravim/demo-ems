@@ -25,7 +25,7 @@
             "type": "string"
         },
         "fixedPrivateIp": {
-            "type": "string"
+            "type": "array"
         },
         "domainName": {
             "type": "string"
@@ -126,13 +126,17 @@
             }
         },
         {
-            "name": "DC1Deploy",
+            "name": "DCDeploy",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-               
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]",
+                "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
             ],
+            "copy": {
+                "name": "dcvmloop",
+                "count": 2
+            },
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -150,7 +154,7 @@
                         "value": "[variables('ADSubnetRef')]"
                     },
                     "fixedPrivateIp": {
-                        "value": "[parameters('fixedPrivateIp')]"
+                        "value": "[parameters('fixedPrivateIp')[copyIndex()]]"
                     },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
@@ -167,56 +171,14 @@
                 }
             }
         },
-        {
-            "name": "DC2Deploy",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]",
-                "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('windowsVmTemplateURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "vmName": {
-                        "value": "[variables('adBDCVMName')]"
-                    },
-                    "vmSize": {
-                        "value": "[parameters('DCVmSize')]"
-                    },
-                    "subnetId": {
-                        "value": "[variables('ADSubnetRef')]"
-                    },
-                    "fixedPrivateIp": {
-                        "value": "[parameters('fixedPrivateIp')]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "diagStorageAccountId": {
-                        "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
-                    },
-                    "availabilitySetId": {
-                        "value": "[resourceId('Microsoft.Compute/availabilitySets', variables('DCHASetName'))]"
-                    }
-                }
-            }
-        },
+      
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('adPDCVMName'),'/CreateADForest')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'DC1Deploy')]"
+                "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]"
             ],
             "properties": {
                 "publisher": "Microsoft.Powershell",
@@ -247,7 +209,7 @@
             "name": "[concat(variables('adBDCVMName'),'/ConfigureADBDC')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'DC2Deploy')]",
+                "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]",
                 "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
             ],
             "properties": {
