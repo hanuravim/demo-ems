@@ -24,8 +24,11 @@
         "subnetAddressSpace": {
             "type": "string"
         },
-        "fixedPrivateIp": {
-            "type": "array"
+        "pdcVM-IP": {
+            "type": "string"
+        },
+        "bdcVM-IP": {
+            "type": "string"
         },
         "domainName": {
             "type": "string"
@@ -61,6 +64,8 @@
         }
     },
     "variables": {
+        "adPDCVMName":"DC1",
+        "adBDCVMName":"DC2",
         "diagStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'advmdiag')]",
         "vnetID": "[resourceId(parameters('VirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('VirtualNetworkName'))]",
         "ADSubnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
@@ -124,17 +129,12 @@
             }
         },
         {
-            "name": "[concat('DC', copyindex(1))]",
+            "name": "DC1Deploy",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]",
-                "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
             ],
-            "copy": {
-                "name": "dcvmloop",
-                "count": 2
-            },
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -143,7 +143,7 @@
                 },
                 "parameters": {
                     "vmName": {
-                        "value": "[concat('DC', copyindex(1))]"
+                        "value": "[variables('adPDCVMName')]"
                     },
                     "vmSize": {
                         "value": "[parameters('DCVmSize')]"
@@ -152,7 +152,49 @@
                         "value": "[variables('ADSubnetRef')]"
                     },
                     "fixedPrivateIp": {
-                        "value": "[parameters('fixedPrivateIp')[copyIndex()]]"
+                        "value": "[parameters('pdcVM-IP')]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "diagStorageAccountId": {
+                        "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
+                    },
+                    "availabilitySetId": {
+                        "value": "[resourceId('Microsoft.Compute/availabilitySets', variables('DCHASetName'))]"
+                    }
+                }
+            }
+        },
+        {
+            "name": "DC2Deploy",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]",
+                "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('windowsVmTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmName": {
+                        "value": "[variables('adBDCVMName')]"
+                    },
+                    "vmSize": {
+                        "value": "[parameters('DCVmSize')]"
+                    },
+                    "subnetId": {
+                        "value": "[variables('ADSubnetRef')]"
+                    },
+                    "fixedPrivateIp": {
+                        "value": "[parameters('bdcVM-IP')]"
                     },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
@@ -172,7 +214,7 @@
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat('DC',copyindex(1),'/CreateADForest')]",
+            "name": "[concat(variables('adPDCVMName'),'/CreateADForest')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]"
@@ -203,7 +245,7 @@
         {
             "apiVersion": "2016-03-30",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat('DC',copyindex(1),'/ConfigureADBDC')]",
+            "name": "[concat(variables('adBDCVMName'),'/ConfigureADBDC')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/deployments', 'DCDeploy')]",
@@ -237,7 +279,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', 'DC',copyindex(1),'/extensions/CreateADForest')]"
+                "[concat('Microsoft.Compute/virtualMachines/', variables('adPDCVMName'),'/extensions/CreateADForest')]"
             ],
             "properties": {
                 "mode": "Incremental",
