@@ -1,0 +1,39 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "adminUsername": {
+            "value": "adAdministrator"
+        },
+        "adminPassword": {
+            "value": ""
+        },
+        "VirtualNetworkResourceGroup": {
+            "value": "[resourcegroup().name]"
+        },
+        "VirtualNetworkName": {
+            "value": "commonVNET"
+        },
+        "vnetAddressSpace": {
+            "value": "10.0.0.0/16"
+        },
+        "subnetName": {
+            "value": "adSubnet"
+        },
+        "subnetAddressSpace": {
+            "value": "10.0.0.0/16"
+        },
+        "fixedPrivateIp": {
+            "value": "10.0.0.10"
+        },
+        "domainName": {
+            "value": "efoqa.local"
+        },
+        "DCVmSize": {
+            "value": "Standard_D1_v2"
+        },
+        "baseUri": {
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/AD"
+        }
+    }
+}
