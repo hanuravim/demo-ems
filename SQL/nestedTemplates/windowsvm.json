@@ -47,7 +47,7 @@
             "type": "int",
             "minValue": 0,
             "maxValue": 4,
-            "defaultValue": 1
+            "defaultValue": 0
         },
         "availabilitySetId": {
             "type": "string",
