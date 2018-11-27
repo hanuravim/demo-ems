@@ -37,7 +37,6 @@
         },
         "fixedPrivateIp": {
             "type": "array"
-            
         },
         "dataDiskSize": {
             "type": "int",
@@ -118,8 +117,7 @@
                             "privateIPAddress": "[parameters('fixedPrivateIp')]",
                             "subnet": {
                                 "id": "[variables('subnetId')]"
-                            },
-                            "loadBalancerBackendAddressPools": "[if(not(empty(parameters('LoadBalancerBEId'))),variables('loadBalancerBEIds'),json('null'))]"
+                            }
                         }
                     }
                 ]
@@ -132,7 +130,6 @@
             "location": "[resourceGroup().location]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
-                
             ],
             "properties": {
                 "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
