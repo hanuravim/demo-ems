@@ -36,7 +36,7 @@
             "defaultValue": "null"
         },
         "fixedPrivateIp": {
-            "type": "array"
+            "type": "string"
         },
         "dataDiskSize": {
             "type": "int",
