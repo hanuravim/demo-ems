@@ -42,10 +42,10 @@
       "defaultValue": "adBDC"
     },
     "adPDCVMIP": {
-      "type": "array"
+      "type": "string"
     },
     "adBDCVMIP": {
-      "type": "array"
+      "type": "string"
     },
     "DCVmSize": {
       "type": "string",
@@ -141,7 +141,7 @@
             "value": "[variables('ADSubnetRef')]"
           },
           "fixedPrivateIp": {
-            "value": "10.0.0.4"
+            "value": "[parameters('adPDCVMIP')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -183,7 +183,9 @@
             "value": "[variables('ADSubnetRef')]"
           },
           "fixedPrivateIp": {
-            "value": "10.0.0.5"
+            "value": [
+              "[parameters('adBDCVMIP')]"
+            ]
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -279,22 +281,22 @@
         "parameters": {
           "virtualNetworkName": {
             "value": "[parameters('VnetName')]"
+          },
+          "virtualNetworkAddressRange": {
+            "value": "[parameters('VnetAddressSpace')]"
+          },
+          "subnetName": {
+            "value": "[parameters('DCSubnetName')]"
+          },
+          "subnetRange": {
+            "value": "[parameters('DCSubnetRange')]"
+          },
+          "DNSServerAddress": {
+            "value": [
+              "[parameters('adPDCVMIP')]",
+              "[parameters('adBDCVMIP')]"
+            ]
           }
-        },
-        "virtualNetworkAddressRange": {
-          "value": "[parameters('VnetAddressSpace')]"
-        },
-        "subnetName": {
-          "value": "[parameters('DCSubnetName')]"
-        },
-        "subnetRange": {
-          "value": "[parameters('DCSubnetRange')]"
-        },
-        "DNSServerAddress": {
-          "value": [
-            "[parameters('adPDCVMIP')]",
-            "[parameters('adBDCVMIP')]"
-          ]
         }
       }
     }
