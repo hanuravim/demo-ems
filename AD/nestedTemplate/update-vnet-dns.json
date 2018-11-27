@@ -12,7 +12,7 @@
       "type": "string"
     },
     "subnets": {
-      "type": "array"
+      "type": "string"
     }
   },
   "variables": {
