@@ -107,10 +107,8 @@
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "dependsOn": [
-                "[variables('genVnetid')]"
-            ],
+            "apiVersion": "2017-06-01",
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -133,8 +131,8 @@
             "name": "[parameters('vmName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
-                "[variables('genStorageAccountId')]"
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+                
             ],
             "properties": {
                 "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
