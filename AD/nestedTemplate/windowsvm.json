@@ -48,6 +48,10 @@
             "maxValue": 4,
             "defaultValue": 1
         },
+        "availabilitySetId": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "secrets": {
             "type": "array",
             "defaultValue": []
@@ -62,6 +66,9 @@
         "genVnetid": "[resourceId('Microsoft.Network/virtualNetworks', variables('genVnetName'))]",
         "genSubnetId": "[concat(variables('genVnetid'), '/subnets/default')]",
         "subnetId": "[if(equals(parameters('subnetId'),'null'), variables('genSubnetId'), parameters('subnetId'))]",
+        "availabilitySetId": {
+            "id": "[parameters('availabilitySetId')]"
+        },
         "dataDisks": [
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
@@ -116,6 +123,7 @@
                 "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
             ],
             "properties": {
+                "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
                 },
