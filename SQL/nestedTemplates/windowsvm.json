@@ -35,6 +35,10 @@
             "type": "string",
             "defaultValue": "null"
         },
+        "assignPublicIP": {
+            "type": "bool",
+            "defaultValue": false
+        },
         "fixedPrivateIp": {
             "type": "string",
             "defaultValue": ""
@@ -47,7 +51,7 @@
             "type": "int",
             "minValue": 0,
             "maxValue": 4,
-            "defaultValue": 0
+            "defaultValue": 1
         },
         "availabilitySetId": {
             "type": "string",
@@ -63,6 +67,7 @@
         }
     },
     "variables": {
+        "publicipTemplateUrl": "[uri(deployment().properties.templateLink.uri, 'publicip.json')]",
         "nicName": "[concat(parameters('vmName'),'-nic')]",
         "genDiagStorageAccountName": "[concat('vmdiag', uniqueString( resourceGroup().id, deployment().name ))]",
         "genStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', variables('genDiagStorageAccountName'))]",
@@ -131,7 +136,7 @@
                 "subnets": [
                     {
                         "name": "default",
-                        "properties": {
+                        "properties" : {
                             "addressPrefix": "10.0.0.0/24"
                         }
                     }
@@ -142,8 +147,8 @@
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2017-06-01",
-            "dependsOn": [
+            "apiVersion": "2016-03-30",
+            "dependsOn":  [
                 "[variables('genVnetid')]"
             ],
             "properties": {
@@ -160,6 +165,30 @@
                         }
                     }
                 ]
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat(parameters('vmName'),'-publicip')]",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[parameters('assignPublicIP')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines',parameters('vmName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('publicipTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nicName": {
+                        "value": "[variables('nicName')]"
+                    },
+                    "subnetId": {
+                        "value": "[variables('subnetId')]"
+                    }
+                }
             }
         },
         {
