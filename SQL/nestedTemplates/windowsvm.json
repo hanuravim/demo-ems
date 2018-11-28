@@ -51,15 +51,7 @@
             "type": "int",
             "minValue": 0,
             "maxValue": 4,
-            "defaultValue": 1
-        },
-        "availabilitySetId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "LoadBalancerBEId": {
-            "type": "string",
-            "defaultValue": ""
+            "defaultValue": 2
         },
         "secrets": {
             "type": "array",
@@ -136,7 +128,7 @@
                 "subnets": [
                     {
                         "name": "default",
-                        "properties" : {
+                        "properties": {
                             "addressPrefix": "10.0.0.0/24"
                         }
                     }
@@ -147,8 +139,8 @@
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "dependsOn":  [
+            "apiVersion": "2017-06-01",
+            "dependsOn": [
                 "[variables('genVnetid')]"
             ],
             "properties": {
