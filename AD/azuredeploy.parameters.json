@@ -11,23 +11,8 @@
         "domainName": {
             "value": "efoqa.local"
         },
-        "VnetName": {
-            "value": "corevnet"
-        },
-        "DCSubnetName": {
-            "value": "subnet-1"
-        },
-        "nodeIpAddresses": {
-            "value": [
-                "",
-                ""
-            ]
-        },
         "DCVmSize": {
             "value": "Standard_D1_v2"
-        },
-        "baseUri": {
-            "value": "subnet-1"
         }
     }
 }
