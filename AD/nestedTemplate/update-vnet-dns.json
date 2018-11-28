@@ -2,46 +2,36 @@
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "virtualNetworkName": {
+    "vnetName": {
       "type": "string"
     },
-    "virtualNetworkAddressRange": {
-      "type": "string"
+    "dnsServers": {
+      "type": "array"
     },
-    "subnetName": {
-      "type": "string"
+    "addressSpace": {
+      "type": "object"
     },
-    "subnetRange": {
-      "type": "string"
-    },
-    "DNSServerAddress": {
-      "type": "string"
+    "subnets": {
+      "type": "array"
     }
+  },
+  "variables": {
   },
   "resources": [
     {
-      "apiVersion": "2017-06-01",
-      "name": "[parameters('virtualNetworkName')]",
+      "name": "[parameters('vnetName')]",
       "type": "Microsoft.Network/virtualNetworks",
       "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
       "properties": {
-        "addressSpace": {
-          "addressPrefixes": [
-            "[parameters('virtualNetworkAddressRange')]"
-          ]
-        },
+        "addressSpace": "[parameters('addressSpace')]",
+        "subnets": "[parameters('subnets')]",
         "dhcpOptions": {
-          "dnsServers": "[parameters('DNSServerAddress')]"
-        },
-        "subnets": [
-          {
-            "name": "[parameters('subnetName')]",
-            "properties": {
-              "addressPrefix": "[parameters('subnetRange')]"
-            }
-          }
-        ]
+          "dnsServers": "[parameters('dnsServers')]"
+        }
       }
     }
-  ]
+  ],
+  "outputs": {
+  }
 }
