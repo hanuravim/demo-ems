@@ -22,7 +22,7 @@
       "name": "[parameters('vnetName')]",
       "type": "Microsoft.Network/virtualNetworks",
       "location": "[resourceGroup().location]",
-      "apiVersion": "2016-03-30",
+      "apiVersion": "2017-06-01",
       "properties": {
         "addressSpace": "[parameters('addressSpace')]",
         "subnets": "[parameters('subnets')]",
