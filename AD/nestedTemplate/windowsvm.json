@@ -147,7 +147,7 @@
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
+            "apiVersion": "2017-06-01",
             "dependsOn":  [
                 "[variables('genVnetid')]"
             ],
