@@ -13,40 +13,6 @@
       "type": "string",
       "defaultValue": "efoqa.local"
     },
-    "VnetName": {
-      "type": "string",
-      "defaultValue": "corevnet"
-    },
-    "VnetAddressSpace": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/16"
-    },
-    "DCSubnetName": {
-      "type": "string",
-      "defaultValue": "subnet-1"
-    },
-    "DCSubnetRange": {
-      "type": "string",
-      "defaultValue": "10.0.0.0/24"
-    },
-    "DCHASetName": {
-      "type": "string",
-      "defaultValue": "DCAVSet"
-    },
-    "adPDCVMName": {
-      "type": "string",
-      "defaultValue": "adPDC"
-    },
-    "adBDCVMName": {
-      "type": "string",
-      "defaultValue": "adBDC"
-    },
-    "adPDCVMIP": {
-      "type": "string"
-    },
-    "adBDCVMIP": {
-      "type": "string"
-    },
     "DCVmSize": {
       "type": "string",
       "allowedValues": [
@@ -72,21 +38,28 @@
         "Standard_DS15_v2"
       ],
       "defaultValue": "Standard_D1_v2"
-    },
-    "baseUri": {
-      "type": "string"
     }
   },
   "variables": {
     "diagStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'vmdiag')]",
-    "VnetID": "[resourceId('Microsoft.Network/virtualNetworks', parameters('VnetName'))]",
-    "ADSubnetRef": "[concat(variables('VnetID'), '/subnets/', parameters('DCSubnetName'))]",
-    "windowsVmTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplate/windowsvm.json')]",
-    "adPDCModulesURL": "[concat(parameters('baseUri'),'/DSC/CreateADPDC.ps1.zip')]",
+    "VnetName": "corevnet",
+    "vnetPrefix": "10.0.0.0/16",
+    "DCSubnetName": "Subnet-1",
+    "DCSubnetPrefix": "10.0.0.0/24",
+    "VnetID": "[resourceId('Microsoft.Network/virtualNetworks', variables('VnetName'))]",
+    "ADSubnetRef": "[concat(variables('VnetID'), '/subnets/', variables('DCSubnetName'))]",
+    "adPDCVMName": "DC1",
+    "adBDCVMName": "DC2",
+    "adPDCVMIP": "10.0.0.10",
+    "adBDCVMIP": "10.0.0.11",
+    "DCHASetName": "DCHASet",
+    "baseUri": "[deployment().properties.templateLink.uri]",
+    "windowsVmTemplateURL": "[uri(variables('baseUri'),'../primitives/windowsvm.json')]",
+    "adPDCModulesURL": "[uri(variables('baseUri'),'DSC/CreateADPDC.ps1.zip')]",
     "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
-    "adBDCModulesURL": "[concat(parameters('baseUri'),'/DSC/ConfigureADBDC.ps1.zip')]",
+    "adBDCModulesURL": "[uri(variables('baseUri'),'DSC/ConfigureADBDC.ps1.zip')]",
     "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC",
-    "vnetwithDNSTemplateUri": "[concat(parameters('baseUri'),'/nestedTemplate/update-vnet-dns.json')]"
+    "vnetwithDNSTemplateUri": "[uri(variables('baseUri'),'nested-templates/update-vnet-dns.json')]"
   },
   "resources": [
     {
@@ -101,7 +74,29 @@
       "properties": {}
     },
     {
-      "name": "[parameters('DCHASetName')]",
+      "name": "[variables('VnetName')]",
+      "type": "Microsoft.Network/virtualNetworks",
+      "location": "[resourceGroup().location]",
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('vnetPrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('DCSubnetName')]",
+            "properties": {
+              "addressPrefix": "[variables('DCSubnetPrefix')]"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "[variables('DCHASetName')]",
       "type": "Microsoft.Compute/availabilitySets",
       "location": "[resourceGroup().location]",
       "apiVersion": "2017-03-30",
@@ -122,6 +117,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('VnetName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
       ],
       "properties": {
@@ -132,7 +128,7 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('adPDCVMName')]"
+            "value": "[variables('adPDCVMName')]"
           },
           "vmSize": {
             "value": "[parameters('DCVmSize')]"
@@ -141,7 +137,7 @@
             "value": "[variables('ADSubnetRef')]"
           },
           "fixedPrivateIp": {
-            "value": "[parameters('adPDCVMIP')]"
+            "value": "[variables('adPDCVMIP')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -153,7 +149,7 @@
             "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
           },
           "availabilitySetId": {
-            "value": "[resourceId('Microsoft.Compute/availabilitySets', parameters('DCHASetName'))]"
+            "value": "[resourceId('Microsoft.Compute/availabilitySets', variables('DCHASetName'))]"
           }
         }
       }
@@ -163,6 +159,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "dependsOn": [
+        "[resourceId('Microsoft.Network/virtualNetworks', variables('VnetName'))]",
         "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]",
         "[resourceId('Microsoft.Resources/deployments', 'UpdateVNetDNS')]"
       ],
@@ -174,7 +171,7 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('adBDCVMName')]"
+            "value": "[variables('adBDCVMName')]"
           },
           "vmSize": {
             "value": "[parameters('DCVmSize')]"
@@ -183,7 +180,7 @@
             "value": "[variables('ADSubnetRef')]"
           },
           "fixedPrivateIp": {
-            "value": "[parameters('adBDCVMIP')]"
+            "value": "[variables('adBDCVMIP')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -195,7 +192,7 @@
             "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
           },
           "availabilitySetId": {
-            "value": "[resourceId('Microsoft.Compute/availabilitySets', parameters('DCHASetName'))]"
+            "value": "[resourceId('Microsoft.Compute/availabilitySets', variables('DCHASetName'))]"
           }
         }
       }
@@ -203,7 +200,7 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('adPDCVMName'),'/CreateADForest')]",
+      "name": "[concat(variables('adPDCVMName'),'/CreateADForest')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'DC1Deploy')]"
@@ -234,7 +231,7 @@
     {
       "apiVersion": "2016-03-30",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(parameters('adBDCVMName'),'/ConfigureADBDC')]",
+      "name": "[concat(variables('adBDCVMName'),'/ConfigureADBDC')]",
       "location": "[resourceGroup().location]",
       "dependsOn": [
         "[resourceId('Microsoft.Resources/deployments', 'DC2Deploy')]",
@@ -268,7 +265,7 @@
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/', parameters('adPDCVMName'),'/extensions/CreateADForest')]"
+        "[concat('Microsoft.Compute/virtualMachines/', variables('adPDCVMName'),'/extensions/CreateADForest')]"
       ],
       "properties": {
         "mode": "Incremental",
@@ -277,21 +274,20 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
-          "virtualNetworkName": {
-            "value": "[parameters('VnetName')]"
+          "vnetName": {
+            "value": "[variables('VnetName')]"
           },
-          "virtualNetworkAddressRange": {
-            "value": "[parameters('VnetAddressSpace')]"
+          "dnsServers": {
+            "value": [
+              "10.0.0.4",
+              "10.0.0.5"
+            ]
           },
-          "subnetName": {
-            "value": "[parameters('DCSubnetName')]"
+          "addressSpace": {
+            "value": "[reference(concat('Microsoft.Network/virtualNetworks/', variables('VnetName'))).addressSpace]"
           },
-          "subnetRange": {
-            "value": "[parameters('DCSubnetRange')]"
-          },
-          "DNSServerAddress": {
-            "value": "[parameters('adPDCVMIP')]"
-            
+          "subnets": {
+            "value": "[reference(concat('Microsoft.Network/virtualNetworks/', variables('VnetName'))).subnets]"
           }
         }
       }
