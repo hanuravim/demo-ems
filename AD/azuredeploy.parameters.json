@@ -13,6 +13,9 @@
         },
         "DCVmSize": {
             "value": "Standard_D1_v2"
+        },
+        "baseUri": {
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/AD"
         }
     }
 }
