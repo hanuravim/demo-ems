@@ -35,8 +35,13 @@
             "type": "string",
             "defaultValue": "null"
         },
+        "assignPublicIP": {
+            "type": "bool",
+            "defaultValue": false
+        },
         "fixedPrivateIp": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": ""
         },
         "dataDiskSize": {
             "type": "int",
@@ -52,12 +57,17 @@
             "type": "string",
             "defaultValue": ""
         },
+        "LoadBalancerBEId": {
+            "type": "string",
+            "defaultValue": ""
+        },
         "secrets": {
             "type": "array",
             "defaultValue": []
         }
     },
     "variables": {
+        "publicipTemplateUrl": "[uri(deployment().properties.templateLink.uri, 'publicip.json')]",
         "nicName": "[concat(parameters('vmName'),'-nic')]",
         "genDiagStorageAccountName": "[concat('vmdiag', uniqueString( resourceGroup().id, deployment().name ))]",
         "genStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', variables('genDiagStorageAccountName'))]",
@@ -69,6 +79,11 @@
         "availabilitySetId": {
             "id": "[parameters('availabilitySetId')]"
         },
+        "loadBalancerBEIds": [
+            {
+                "id": "[parameters('LoadBalancerBEId')]"
+            }
+        ],
         "dataDisks": [
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
@@ -94,11 +109,48 @@
     },
     "resources": [
         {
+            "type": "Microsoft.Storage/storageAccounts",
+            "name": "[variables('genDiagStorageAccountName')]",
+            "apiVersion": "2016-01-01",
+            "condition": "[equals(parameters('diagStorageAccountId'),'null')]",
+            "location": "[resourceGroup().location]",
+            "sku": {
+                "name": "Standard_LRS"
+            },
+            "kind": "Storage",
+            "properties": {}
+        },
+        {
+            "name": "[variables('genVnetName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2016-03-30",
+            "condition": "[equals(parameters('subnetId'),'null')]",
+            "dependsOn": [],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "10.0.0.0/16"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties" : {
+                            "addressPrefix": "10.0.0.0/24"
+                        }
+                    }
+                ]
+            }
+        },
+        {
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
-            "apiVersion": "2017-06-01",
-            "dependsOn": [],
+            "apiVersion": "2016-03-30",
+            "dependsOn":  [
+                "[variables('genVnetid')]"
+            ],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -108,10 +160,35 @@
                             "privateIPAddress": "[parameters('fixedPrivateIp')]",
                             "subnet": {
                                 "id": "[variables('subnetId')]"
-                            }
+                            },
+                            "loadBalancerBackendAddressPools": "[if(not(empty(parameters('LoadBalancerBEId'))),variables('loadBalancerBEIds'),json('null'))]"
                         }
                     }
                 ]
+            }
+        },
+        {
+            "apiVersion": "2017-05-10",
+            "name": "[concat(parameters('vmName'),'-publicip')]",
+            "type": "Microsoft.Resources/deployments",
+            "condition": "[parameters('assignPublicIP')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Compute/virtualMachines',parameters('vmName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('publicipTemplateUrl')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "nicName": {
+                        "value": "[variables('nicName')]"
+                    },
+                    "subnetId": {
+                        "value": "[variables('subnetId')]"
+                    }
+                }
             }
         },
         {
@@ -120,7 +197,8 @@
             "name": "[parameters('vmName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
+                "[variables('genStorageAccountId')]"
             ],
             "properties": {
                 "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
