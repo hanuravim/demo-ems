@@ -183,9 +183,7 @@
             "value": "[variables('ADSubnetRef')]"
           },
           "fixedPrivateIp": {
-            "value": [
-              "[parameters('adBDCVMIP')]"
-            ]
+            "value": "[parameters('adBDCVMIP')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
