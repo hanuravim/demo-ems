@@ -21,7 +21,6 @@ configuration SQLServerPrepareDsc
 
        
 
-        
 
         [Int]$RetryCount=20,
         [Int]$RetryIntervalSec=30
@@ -35,9 +34,8 @@ configuration SQLServerPrepareDsc
     $ipdummy = $ipcomponents -join "."
     $ClusterNameDummy = "c" + $ClusterName
 
-   
-
   
+
     $computerName = $env:COMPUTERNAME
     $domainUserName = $DomainCreds.UserName.ToString()
 
