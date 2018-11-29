@@ -68,14 +68,6 @@
         "genVnetid": "[resourceId('Microsoft.Network/virtualNetworks', variables('genVnetName'))]",
         "genSubnetId": "[concat(variables('genVnetid'), '/subnets/default')]",
         "subnetId": "[if(equals(parameters('subnetId'),'null'), variables('genSubnetId'), parameters('subnetId'))]",
-        "availabilitySetId": {
-            "id": "[parameters('availabilitySetId')]"
-        },
-        "loadBalancerBEIds": [
-            {
-                "id": "[parameters('LoadBalancerBEId')]"
-            }
-        ],
         "dataDisks": [
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
@@ -193,7 +185,6 @@
                 "[variables('genStorageAccountId')]"
             ],
             "properties": {
-                "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
                 },
