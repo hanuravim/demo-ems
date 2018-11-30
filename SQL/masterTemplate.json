@@ -3,29 +3,29 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "subnetId": {
-            "type": "String"
+            "type": "string"
         },
         "nodeIpAddresses": {
             "defaultValue": [
                 "10.0.0.10",
                 "10.0.0.11"
             ],
-            "type": "Array"
+            "type": "array"
         },
         "clusterIpAddress": {
             "defaultValue": "10.0.0.30",
-            "type": "String"
+            "type": "string"
         },
         "adminUsername": {
             "defaultValue": "adAdministrator",
-            "type": "String"
+            "type": "string"
         },
         "adminPassword": {
-            "type": "SecureString"
+            "type": "securestring"
         },
         "domainName": {
             "defaultValue": "efoqa.local",
-            "type": "String"
+            "type": "string"
         },
         "sqlVmSize": {
             "defaultValue": "Standard_DS2_v2",
@@ -51,19 +51,19 @@
                 "Standard_DS14_v2",
                 "Standard_DS15_v2"
             ],
-            "type": "String"
+            "type": "string"
         },
         "sqlVmImagePublisher": {
             "defaultValue": "MicrosoftSqlServer",
-            "type": "String"
+            "type": "string"
         },
         "sqlVmImageOffer": {
             "defaultValue": "SQL2016SP1-WS2016",
-            "type": "String"
+            "type": "string"
         },
         "sqlVmImageSku": {
             "defaultValue": "Enterprise",
-            "type": "String"
+            "type": "string"
         }
     },
     "variables": {
