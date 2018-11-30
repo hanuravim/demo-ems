@@ -2,32 +2,26 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "existingVirtualNetworkResourceGroup": {
-            "value": ""
-        },
-        "existingVirtualNetworkName": {
-            "value": ""
-        },
-        "subnetName": {
-            "value": ""
+        "subnetId": {
+            "value": "/subscriptions/6e00b504-dddb-4435-a384-8dcf6f294c6f/resourceGroups/autoems/providers/Microsoft.Network/virtualNetworks/corevnet/subnets/Subnet-1"
         },
         "nodeIpAddresses": {
             "value": [
-                "10.0.1.10",
-                "10.0.1.11"
+                "10.0.0.10",
+                "10.0.0.11"
             ]
         },
         "clusterIpAddress": {
-            "value": "10.0.1.30"
+            "value": "10.0.0.30"
         },
         "adminUsername": {
-            "value": ""
+            "value": "adAdministrator"
         },
         "adminPassword": {
             "value": ""
         },
         "domainName": {
-            "value": ""
+            "value": "efoqa.local"
         },
         "sqlVmSize": {
             "value": "Standard_DS1_v2"
@@ -40,9 +34,6 @@
         },
         "sqlVmImageSku": {
             "value": "Enterprise"
-        },
-        "baseUri": {
-            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL"
         }
     }
 }
