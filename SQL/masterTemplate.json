@@ -2,224 +2,265 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vmName": {
-            "type": "string"
+        "subnetId": {
+            "type": "String"
+        },
+        "nodeIpAddresses": {
+            "defaultValue": [
+                "10.0.0.10",
+                "10.0.0.11"
+            ],
+            "type": "Array"
+        },
+        "clusterIpAddress": {
+            "defaultValue": "10.0.0.30",
+            "type": "String"
         },
         "adminUsername": {
-            "type": "string"
+            "defaultValue": "adAdministrator",
+            "type": "String"
         },
         "adminPassword": {
-            "type": "securestring"
+            "type": "SecureString"
         },
-        "vmSize": {
-            "type": "string",
-            "defaultValue": "Standard_D2"
+        "domainName": {
+            "defaultValue": "efoqa.local",
+            "type": "String"
         },
-        "subnetId": {
-            "type": "string",
-            "defaultValue": "null"
+        "sqlVmSize": {
+            "defaultValue": "Standard_DS2_v2",
+            "allowedValues": [
+                "Standard_D1_v2",
+                "Standard_D2_v2",
+                "Standard_D3_v2",
+                "Standard_D4_v2",
+                "Standard_D5_v2",
+                "Standard_D11_v2",
+                "Standard_D12_v2",
+                "Standard_D13_v2",
+                "Standard_D14_v2",
+                "Standard_D15_v2",
+                "Standard_DS1_v2",
+                "Standard_DS2_v2",
+                "Standard_DS3_v2",
+                "Standard_DS4_v2",
+                "Standard_DS5_v2",
+                "Standard_DS11_v2",
+                "Standard_DS12_v2",
+                "Standard_DS13_v2",
+                "Standard_DS14_v2",
+                "Standard_DS15_v2"
+            ],
+            "type": "String"
         },
-        "imagePublisher": {
-            "type": "string",
-            "defaultValue": "MicrosoftWindowsServer"
+        "sqlVmImagePublisher": {
+            "defaultValue": "MicrosoftSqlServer",
+            "type": "String"
         },
-        "imageOffer": {
-            "type": "string",
-            "defaultValue": "WindowsServer"
+        "sqlVmImageOffer": {
+            "defaultValue": "SQL2016SP1-WS2016",
+            "type": "String"
         },
-        "imageSku": {
-            "type": "string",
-            "defaultValue": "2016-Datacenter"
-        },
-        "diagStorageAccountId": {
-            "type": "string",
-            "defaultValue": "null"
-        },
-        "fixedPrivateIp": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "dataDiskSize": {
-            "type": "int",
-            "defaultValue": 1023
-        },
-        "numberOfDataDisks": {
-            "type": "int",
-            "minValue": 0,
-            "maxValue": 4,
-            "defaultValue": 4
-        },
-        "availabilitySetId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "LoadBalancerBEId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "secrets": {
-            "type": "array",
-            "defaultValue": []
+        "sqlVmImageSku": {
+            "defaultValue": "Enterprise",
+            "type": "String"
         }
     },
     "variables": {
-        "nicName": "[concat(parameters('vmName'),'-nic')]",
-        "genDiagStorageAccountName": "[concat('vmdiag', uniqueString( resourceGroup().id, deployment().name ))]",
-        "genStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', variables('genDiagStorageAccountName'))]",
-        "genVnetName": "[concat(parameters('vmName'),'-vnet')]",
-        "diagStorageAccountId": "[if(equals(parameters('diagStorageAccountId'),'null'), variables('genStorageAccountId'), parameters('diagStorageAccountId'))]",
-        "genVnetid": "[resourceId('Microsoft.Network/virtualNetworks', variables('genVnetName'))]",
-        "genSubnetId": "[concat(variables('genVnetid'), '/subnets/default')]",
-        "subnetId": "[if(equals(parameters('subnetId'),'null'), variables('genSubnetId'), parameters('subnetId'))]",
-        "availabilitySetId": {
-            "id": "[parameters('availabilitySetId')]"
-        },
-        "loadBalancerBEIds": [
-            {
-                "id": "[parameters('LoadBalancerBEId')]"
-            }
-        ],
-        "dataDisks": [
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 0,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 1,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 2,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 3,
-                "createOption": "Empty"
-            }
-        ]
-       
+        "diagStorageAccountName": "efoqasqlvmdiag",
+        "SqlVmPrefix": "SQL",
+        "baseUri": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL",
+        "SQLPrepareModuleURL": "[concat(variables('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
+        "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
+        "windowsVmTemplateURL": "[concat(variables('baseUri'),'/nestedTemplates/windowsvm.json')]"
     },
     "resources": [
         {
             "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('genDiagStorageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "condition": "[equals(parameters('diagStorageAccountId'),'null')]",
-            "location": "[resourceGroup().location]",
             "sku": {
                 "name": "Standard_LRS"
             },
             "kind": "Storage",
+            "name": "[variables('diagStorageAccountName')]",
+            "apiVersion": "2016-01-01",
+            "location": "[resourceGroup().location]",
             "properties": {}
         },
         {
-            "name": "[variables('genVnetName')]",
-            "type": "Microsoft.Network/virtualNetworks",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "condition": "[equals(parameters('subnetId'),'null')]",
-            "dependsOn": [],
+            "type": "Microsoft.Resources/deployments",
+            "name": "[concat('SqlVmDeploy', copyindex())]",
+            "apiVersion": "2017-05-10",
+            "copy": {
+                "name": "sqlvmloop",
+                "count": 2
+            },
             "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "10.0.0.0/16"
-                    ]
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('windowsVmTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
                 },
-                "subnets": [
-                    {
-                        "name": "default",
-                        "properties": {
-                            "addressPrefix": "10.0.0.0/24"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "name": "[variables('nicName')]",
-            "type": "Microsoft.Network/networkInterfaces",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2017-06-01",
-            "dependsOn": [
-                "[variables('genVnetid')]"
-            ],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIPAllocationMethod": "[if(empty(parameters('fixedPrivateIp')), 'Dynamic', 'Static')]",
-                            "privateIPAddress": "[parameters('fixedPrivateIp')]",
-                            "subnet": {
-                                "id": "[variables('subnetId')]"
-                            },
-                            "loadBalancerBackendAddressPools": "[if(not(empty(parameters('LoadBalancerBEId'))),variables('loadBalancerBEIds'),json('null'))]"
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "apiVersion": "2017-03-30",
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('vmName')]",
-            "location": "[resourceGroup().location]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
-                "[variables('genStorageAccountId')]"
-            ],
-            "properties": {
-                "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
-                "hardwareProfile": {
-                    "vmSize": "[parameters('vmSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[parameters('vmName')]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "secrets": "[parameters('secrets')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "[parameters('imagePublisher')]",
-                        "offer": "[parameters('imageOffer')]",
-                        "sku": "[parameters('imageSku')]",
-                        "version": "latest"
+                "parameters": {
+                    "vmName": {
+                        "value": "[concat(variables('SqlVmPrefix'), copyindex())]"
                     },
-                    "osDisk": {
-                        "createOption": "FromImage"
+                    "vmSize": {
+                        "value": "[parameters('sqlVmSize')]"
                     },
-                    "dataDisks": "[take(variables('dataDisks'),parameters('numberOfDataDisks'))]"
-                    
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
-                        }
-                    ]
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[reference(variables('diagStorageAccountId'),'2016-01-01').primaryEndpoints.blob]"
+                    "subnetId": {
+                        "value": "[parameters('subnetId')]"
+                    },
+                    "fixedPrivateIp": {
+                        "value": "[parameters('nodeIpAddresses')[copyIndex()]]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "diagStorageAccountId": {
+                        "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
+                    },
+                    "imagePublisher": {
+                        "value": "[parameters('sqlVmImagePublisher')]"
+                    },
+                    "imageOffer": {
+                        "value": "[parameters('sqlVmImageOffer')]"
+                    },
+                    "imageSku": {
+                        "value": "[parameters('sqlVmImageSku')]"
                     }
                 }
-            }
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/SqlIaasExtension')]",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "sqliaasextensionsloop",
+                "count": 2
+            },
+            "properties": {
+                "type": "SqlIaaSAgent",
+                "publisher": "Microsoft.SqlServer.Management",
+                "typeHandlerVersion": "1.2",
+                "autoUpgradeMinorVersion": "true",
+                "settings": {
+                    "AutoTelemetrySettings": {
+                        "Region": "[resourceGroup().location]"
+                    },
+                    "AutoPatchingSettings": {
+                        "PatchCategory": "WindowsMandatoryUpdates",
+                        "Enable": true,
+                        "DayOfWeek": "Sunday",
+                        "MaintenanceWindowStartingHour": "2",
+                        "MaintenanceWindowDuration": "60"
+                    },
+                    "KeyVaultCredentialSettings": {
+                        "Enable": false,
+                        "CredentialName": ""
+                    },
+                    "ServerConfigurationsManagementSettings": {
+                        "SQLConnectivityUpdateSettings": {
+                            "ConnectivityType": "Private",
+                            "Port": "1433"
+                        },
+                        "SQLWorkloadTypeUpdateSettings": {
+                            "SQLWorkloadType": "GENERAL"
+                        },
+                        "SQLStorageUpdateSettings": {
+                            "DiskCount": "1",
+                            "NumberOfColumns": "1",
+                            "StartingDeviceID": "2",
+                            "DiskConfigurationType": "NEW"
+                        },
+                        "AdditionalFeaturesServerConfigurations": {
+                            "IsRServicesEnabled": "false"
+                        }
+                    }
+                },
+                "protectedSettings": {}
+            },
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', concat('SqlVmDeploy', copyindex()))]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/joindomain')]",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "sqlvmjoinloop",
+                "count": 2
+            },
+            "properties": {
+                "publisher": "Microsoft.Compute",
+                "type": "JsonADDomainExtension",
+                "typeHandlerVersion": "1.3",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "Name": "[parameters('domainName')]",
+                    "OUPath": "",
+                    "User": "[concat(parameters('domainName'), '\\', parameters('adminUserName'))]",
+                    "Restart": "true",
+                    "Options": "3"
+                },
+                "protectedSettings": {
+                    "Password": "[parameters('adminPassword')]"
+                }
+            },
+            "dependsOn": [
+                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('SqlVmPrefix'), copyindex())), '/extensions/SqlIaasExtension')]"
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/configuresql', copyindex())]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "sqlconfigloop",
+                "count": 2,
+                "mode": "Serial",
+                "batchSize": 1
+            },
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.21",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesURL": "[variables('SQLPrepareModuleURL')]",
+                    "configurationFunction": "[variables('SQLPrepareFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "privateSettingsRef:adminPassword"
+                        },
+                        "ClusterName": "SQLClusterAG",
+                        "ClusterOwnerNode": "[concat(variables('SqlVmPrefix'), '0')]",
+                        "ClusterIP": "[parameters('clusterIpAddress')]"
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('SqlVmPrefix'), copyindex())), '/extensions/joindomain')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
+            ]
         }
     ],
-    "outputs": {
-        "diagStorageAccountId": {
-            "type": "string",
-            "value": "[variables('diagStorageAccountId')]"
-        },
-        "subnetId": {
-            "type": "string",
-            "value": "[variables('subnetId')]"
-        }
-    }
+    "outputs": {}
 }
