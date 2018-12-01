@@ -3,7 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "subnetId": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "/subscriptions/6e00b504-dddb-4435-a384-8dcf6f294c6f/resourceGroups/autoems/providers/Microsoft.Network/virtualNetworks/corevnet/subnets/Subnet-1"
         },
         "nodeIpAddresses": {
             "defaultValue": [
@@ -17,7 +18,6 @@
             "type": "string"
         },
         "adminUsername": {
-            "defaultValue": "adAdministrator",
             "type": "string"
         },
         "adminPassword": {
