@@ -27,7 +27,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "Microsoft.EnterpriseCloud.Monitoring",
+            "name": "OMSAgent",
             "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
             "dependsOn": [
