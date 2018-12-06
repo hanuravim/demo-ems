@@ -36,6 +36,7 @@
         }
     },
     "variables": {
+        "domainName": "efoqa.local",
         "osDiskType": "Premium_LRS",
         "StorageAccountName": "geemsstr001",
         "StorageAccountType": "",
@@ -81,7 +82,8 @@
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/virtualMachine.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/StorageAccount.json')]",
         "AvailabilitySetTemplate": "[concat(parameters('baseUri'),'/AvailabilitySet.json')]",
-        "diagnosticsExtensionTemplate": "[concat(parameters('baseUri'),'/diagnosticsExtension.json')]"
+        "diagnosticsExtensionTemplate": "[concat(parameters('baseUri'),'/diagnosticsExtension.json')]",
+        "domainJoinExtensionTemplate": "[concat(parameters('baseUri'),'/diagnosticsExtension.json')]"
     },
     "resources": [
         {
@@ -248,6 +250,32 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "domainJoin",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('domainJoinExtensionTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualMachineName": {
+                        "value": "[parameters('virtualMachineName')]"
+                    },
+                    "domainName": {
+                        "value": "[variables('domainName')]"
+                    },
+                    "adminUserName": {
+                        "value": "[parameters('adminUserName')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
                     }
                 }
             }
