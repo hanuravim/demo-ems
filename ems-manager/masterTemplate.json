@@ -160,6 +160,12 @@
             "type": "Microsoft.Resources/deployments",
             "name": "virtualMachine",
             "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "DataDisk",
+                "NetworkInterface",
+                "StorageAccount",
+                "AvailabilitySet"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
