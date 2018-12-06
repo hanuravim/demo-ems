@@ -307,9 +307,7 @@
                     "storageAccountEndPoint": "https://core.windows.net/"
                 }
             },
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
-            ]
+            "dependsOn": []
         }
     ]
 }
