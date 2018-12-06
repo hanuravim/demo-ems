@@ -39,7 +39,7 @@
         "domainName": "efoqa.local",
         "osDiskType": "Premium_LRS",
         "StorageAccountName": "geemsstr001",
-        "StorageAccountType": "",
+        "StorageAccountType": "Premium_LRS",
         "StorageAccountKind": "Storage",
         "StorageAccountId": "Microsoft.Storage/storageAccounts/[variables('StorageAccountName')]",
         "DataDiskName": "ADI",
