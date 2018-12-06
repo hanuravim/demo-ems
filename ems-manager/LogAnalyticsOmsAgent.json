@@ -8,7 +8,7 @@
         "workspaceName": {
             "type": "string"
         },
-        "location": {
+        "OMSWorkSpaceLocation": {
             "type": "string"
         }
     },
@@ -18,7 +18,7 @@
             "type": "Microsoft.OperationalInsights/workspaces",
             "name": "[parameters('workspaceName')]",
             "apiVersion": "2015-11-01-preview",
-            "location": "[parameters('location')]",
+            "location": "[parameters('OMSWorkSpaceLocation')]",
             "properties": {
                 "sku": {
                     "name": "PerNode"
@@ -32,7 +32,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualMachineName'),'/omsagent')]",
             "apiVersion": "2015-06-15",
-            "location": "[parameters('location')]",
+            "location": "[parameters('OMSWorkSpaceLocation')]",
             "dependsOn": [
                 "[parameters('workspaceName')]"
             ],
