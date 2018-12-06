@@ -21,9 +21,6 @@
         "privateIpAddress": {
             "type": "string"
         },
-        "dataDisks": {
-            "type": "array"
-        },
         "virtualMachineSize": {
             "type": "string"
         },
@@ -46,6 +43,19 @@
         "StorageAccountId": "Microsoft.Storage/storageAccounts/[variables('StorageAccountName')]",
         "DataDiskName": "ADI",
         "DataDiskSize": 1023,
+        "dataDisks": {
+            "value": [
+                {
+                    "lun": 0,
+                    "createOption": "attach",
+                    "caching": "ReadOnly",
+                    "writeAcceleratorEnabled": false,
+                    "id": null,
+                    "name": "ADI",
+                    "storageAccountType": null
+                }
+            ]
+        },
         "dataDiskResources": [
             {
                 "name": "[variables('DataDiskName')]",
@@ -176,7 +186,7 @@
                         "value": "[variables('osDiskType')]"
                     },
                     "dataDisks": {
-                        "value": "[parameters('dataDisks')]"
+                        "value": "[variables('dataDisks')]"
                     },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
