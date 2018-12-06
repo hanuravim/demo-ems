@@ -44,19 +44,17 @@
         "StorageAccountId": "Microsoft.Storage/storageAccounts/[variables('StorageAccountName')]",
         "DataDiskName": "ADI",
         "DataDiskSize": 1023,
-        "dataDisks": {
-            "value": [
-                {
-                    "lun": 0,
-                    "createOption": "attach",
-                    "caching": "ReadOnly",
-                    "writeAcceleratorEnabled": false,
-                    "id": null,
-                    "name": "ADI",
-                    "storageAccountType": null
-                }
-            ]
-        },
+        "dataDisks": [
+            {
+                "lun": 0,
+                "createOption": "attach",
+                "caching": "ReadOnly",
+                "writeAcceleratorEnabled": false,
+                "id": null,
+                "name": "ADI",
+                "storageAccountType": null
+            }
+        ],
         "dataDiskResources": [
             {
                 "name": "[variables('DataDiskName')]",
@@ -82,8 +80,8 @@
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/virtualMachine.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/StorageAccount.json')]",
         "AvailabilitySetTemplate": "[concat(parameters('baseUri'),'/AvailabilitySet.json')]",
-        "diagnosticsExtensionTemplate": "[concat(parameters('baseUri'),'/diagnosticsExtension.json')]",
-        "domainJoinExtensionTemplate": "[concat(parameters('baseUri'),'/diagnosticsExtension.json')]"
+        "diagnosticsTemplate": "[concat(parameters('baseUri'),'/diagnostics.json')]",
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/domainJoin.json')]"
     },
     "resources": [
         {
@@ -129,11 +127,11 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "subnetRef": {
-                        "value": "[variables('subnetRef')]"
+                    "networkSecurityGroupName": {
+                        "value": "[variables('networkSecurityGroupName')]"
                     },
-                    "networkInterfaceName": {
-                        "value": "[variables('networkInterfaceName')]"
+                    "location": {
+                        "value": "[parameters('location')]"
                     }
                 }
             }
@@ -261,7 +259,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('domainJoinExtensionTemplate')]",
+                    "uri": "[variables('domainJoinTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -287,7 +285,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('diagnosticsExtensionTemplate')]",
+                    "uri": "[variables('diagnosticsTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
