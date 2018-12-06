@@ -2,6 +2,9 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "virtualMachineName": {
+            "type": "string"
+        },
         "workspaceName": {
             "type": "string"
         },
@@ -27,7 +30,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "OMSAgent",
+            "name": "[concat(parameters('virtualMachineName'),'/domainJoin')]",
             "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
             "dependsOn": [
