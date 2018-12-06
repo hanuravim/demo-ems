@@ -30,7 +30,7 @@
         },
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('virtualMachineName'),'/domainJoin')]",
+            "name": "[concat(parameters('virtualMachineName'),'/omsagent')]",
             "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
             "dependsOn": [
