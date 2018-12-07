@@ -21,7 +21,7 @@
             "type": "string"
         },
         "dataDisks": {
-            "type": "array"
+            "type": "string"
         },
         "adminUsername": {
             "type": "string"
@@ -110,9 +110,7 @@
                     "name": "Microsoft.EnterpriseCloud.Monitoring",
                     "apiVersion": "2018-06-01",
                     "location": "[parameters('location')]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
-                    ],
+                    "dependsOn": [],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
