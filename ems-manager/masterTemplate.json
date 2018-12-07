@@ -38,10 +38,9 @@
     "variables": {
         "domainName": "efoqa.local",
         "osDiskType": "Premium_LRS",
-        "StorageAccountName": "geemsstr001",
-        "StorageAccountType": "Premium_LRS",
+        "StorageAccountName": "emsmgrstr001",
+        "StorageAccountType": "Standard_GRS",
         "StorageAccountKind": "Storage",
-        "StorageAccountId": "Microsoft.Storage/storageAccounts/[variables('StorageAccountName')]",
         "DataDiskName": "ADI",
         "DataDiskSize": 1023,
         "dataDisks": [
@@ -65,6 +64,8 @@
                 }
             }
         ],
+        "OMSWorkSpaceName": "emsLogAnalyticWorkspace",
+        "OMSWorkSpaceLocation": "eastus",
         "availabilitySetName": "emsmgravset",
         "availabilitySetPlatformFaultDomainCount": "2",
         "availabilitySetPlatformUpdateDomainCount": "5",
@@ -72,6 +73,7 @@
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
         "vnetId": "[resourceId(parameters('virtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "StorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "diagnosticsExtensionName": "Microsoft.Insights.VMDiagnosticsSettings",
         "networkInterfaceTemplate": "[concat(parameters('baseUri'),'/networkInterface.json')]",
@@ -81,13 +83,17 @@
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/StorageAccount.json')]",
         "AvailabilitySetTemplate": "[concat(parameters('baseUri'),'/AvailabilitySet.json')]",
         "diagnosticsTemplate": "[concat(parameters('baseUri'),'/diagnostics.json')]",
-        "domainJoinTemplate": "[concat(parameters('baseUri'),'/domainJoin.json')]"
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/domainJoin.json')]",
+        "LogAnalyticsTemplate": "[concat(parameters('baseUri'),'/LogAnalytics.json')]"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
             "name": "NetworkInterface",
             "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "networkSecurityGroup"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -164,7 +170,8 @@
                 "DataDisk",
                 "NetworkInterface",
                 "StorageAccount",
-                "AvailabilitySet"
+                "AvailabilitySet",
+                "LogAnalytics"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -199,6 +206,9 @@
                     },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('OMSWorkSpaceName')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
@@ -262,6 +272,9 @@
             "type": "Microsoft.Resources/deployments",
             "name": "domainJoin",
             "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "virtualMachine"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -288,6 +301,9 @@
             "type": "Microsoft.Resources/deployments",
             "name": "diagnosticsExtension",
             "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "virtualMachine"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -309,6 +325,27 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "LogAnalytics",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('LogAnalyticsTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspaceName": {
+                        "value": "[variables('OMSWorkSpaceName')]"
+                    },
+                    "OMSWorkSpaceLocation": {
+                        "value": "[variables('OMSWorkSpaceLocation')]"
                     }
                 }
             }
