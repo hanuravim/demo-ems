@@ -31,7 +31,7 @@
             "type": "string"
         },
         "dnsServers": {
-            "type": "string"
+            "type": "array"
         },
         "subnetAddressPrefixes1": {
             "type": "string"
