@@ -15,22 +15,6 @@
             "type": "string",
             "defaultValue": "Standard_D2"
         },
-        "existingVirtualNetworkResourceGroup": {
-            "type": "string",
-            "defaultValue": "null"
-        },
-        "existingVirtualNetworkName": {
-            "type": "string",
-            "defaultValue": "null"
-        },
-        "VirtualNetworkAddressPrefixes": {
-            "type": "string",
-            "defaultValue": "null"
-        },
-        "subnetAddressPrefixes": {
-            "type": "string",
-            "defaultValue": "null"
-        },
         "imagePublisher": {
             "type": "string",
             "defaultValue": "MicrosoftWindowsServer"
@@ -66,9 +50,14 @@
         }
     },
     "variables": {
+        "existingVirtualNetworkResourceGroup":"autoems",
+        "existingVirtualNetworkName":"corevnet",
+        "subnetName":"corevnet",
+        "VirtualNetworkAddressPrefixes":"10.0.0.0/16",
+        "subnetAddressPrefixes":"10.0.0.0/16",
         "nicName": "[concat(parameters('vmName'),'-nic')]",
-        "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
-        "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingVirtualNetworkName'))]",
+        "vnetID": "[resourceId(variables('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', variables('existingVirtualNetworkName'))]",
+        "subnetId": "[concat(variables('vnetID'),'/subnets/', variables('existingVirtualNetworkName'))]",
         "diagStorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
         "dataDisks": [
             {
@@ -95,7 +84,7 @@
     },
     "resources": [
         {
-            "name": "[parameters('existingVirtualNetworkName')]",
+            "name": "[variables('existingVirtualNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[resourceGroup().location]",
             "apiVersion": "2016-03-30",
@@ -103,14 +92,14 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[parameters('VirtualNetworkAddressPrefixes')]"
+                        "[variables('VirtualNetworkAddressPrefixes')]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "default",
+                        "name": "[variables('subnetName')]",
                         "properties": {
-                            "addressPrefix": "[parameters('subnetAddressPrefixes')]"
+                            "addressPrefix": "[variables('subnetAddressPrefixes')]"
                         }
                     }
                 ]
