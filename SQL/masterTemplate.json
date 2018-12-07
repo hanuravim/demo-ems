@@ -64,17 +64,44 @@
         "sqlVmImageSku": {
             "defaultValue": "Enterprise",
             "type": "string"
+        },
+        "baseUri": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL"
         }
     },
     "variables": {
         "diagStorageAccountName": "efoqasqlvmdiag",
+        "WorkSpaceName":"emsomswrksps",
+        "OMSWorkSpaceLocation":"eastus",
         "SqlVmPrefix": "SQL",
-        "baseUri": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL",
-        "SQLPrepareModuleURL": "[concat(variables('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
+        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
-        "SQLVMTemplateURL": "[concat(variables('baseUri'),'/nestedTemplates/sqlvm.json')]"
+        "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
+        "LogAnalyticsTemplate": "[concat(parameters('baseUri'),'/LogAnalytics.json')]"
     },
     "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "LogAnalytics",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('LogAnalyticsTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "workspaceName": {
+                        "value": "[variables('WorkSpaceName')]"
+                    },
+                    "OMSWorkSpaceLocation": {
+                        "value": "[variables('OMSWorkSpaceLocation')]"
+                    }
+                }
+            }
+        },
         {
             "type": "Microsoft.Storage/storageAccounts",
             "sku": {
