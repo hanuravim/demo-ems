@@ -8,7 +8,7 @@
         "networkInterfaceName": {
             "type": "string"
         },
-        "diagnosticsStorageAccountName": {
+        "StorageAccountName": {
             "type": "string"
         },
         "availabilitySetName": {
@@ -97,7 +97,7 @@
                 "diagnosticsProfile": {
                     "bootDiagnostics": {
                         "enabled": true,
-                        "storageUri": "[concat('https://', parameters('diagnosticsStorageAccountName'), '.blob.core.windows.net/')]"
+                        "storageUri": "[concat('https://', parameters('StorageAccountName'), '.blob.core.windows.net/')]"
                     }
                 },
                 "availabilitySet": {
