@@ -15,6 +15,29 @@
             "type": "string",
             "defaultValue": "Standard_D2"
         },
+        "existingVirtualNetworkResourceGroup": {
+            "type": "string"
+        },
+        "existingVirtualNetworkName": {
+            "type": "string"
+        },
+        "VirtualNetworkAddressPrefixes": {
+            "type": "string"
+        },
+        "subnetName1": {
+            "type": "string"
+        },
+        "subnetName2": {
+            "type": "string"
+        },
+        "subnetAddressPrefixes1": {
+            "type": "string",
+            "defaultValue": "Standard_D2"
+        },
+        "subnetAddressPrefixes2": {
+            "type": "string",
+            "defaultValue": "Standard_D2"
+        },
         "imagePublisher": {
             "type": "string",
             "defaultValue": "MicrosoftWindowsServer"
@@ -50,14 +73,11 @@
         }
     },
     "variables": {
-        "existingVirtualNetworkResourceGroup":"autoems",
-        "existingVirtualNetworkName":"corevnet",
-        "subnetName":"corevnet",
-        "VirtualNetworkAddressPrefixes":"10.0.0.0/16",
-        "subnetAddressPrefixes":"10.0.0.0/16",
+       
+        
         "nicName": "[concat(parameters('vmName'),'-nic')]",
-        "vnetID": "[resourceId(variables('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', variables('existingVirtualNetworkName'))]",
-        "subnetId": "[concat(variables('vnetID'),'/subnets/', variables('existingVirtualNetworkName'))]",
+        "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
+        "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingVirtualNetworkName'))]",
         "diagStorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
         "dataDisks": [
             {
@@ -84,7 +104,7 @@
     },
     "resources": [
         {
-            "name": "[variables('existingVirtualNetworkName')]",
+            "name": "[parameters('existingVirtualNetworkName')]",
             "type": "Microsoft.Network/virtualNetworks",
             "location": "[resourceGroup().location]",
             "apiVersion": "2016-03-30",
@@ -92,14 +112,20 @@
             "properties": {
                 "addressSpace": {
                     "addressPrefixes": [
-                        "[variables('VirtualNetworkAddressPrefixes')]"
+                        "[parameters('VirtualNetworkAddressPrefixes')]"
                     ]
                 },
                 "subnets": [
                     {
-                        "name": "[variables('subnetName')]",
+                        "name": "[parameters('subnetName1')]",
                         "properties": {
-                            "addressPrefix": "[variables('subnetAddressPrefixes')]"
+                            "addressPrefix": "[parameters('subnetAddressPrefixes1')]"
+                        }
+                    },
+                    {
+                        "name": "[parameters('subnetName2')]",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetAddressPrefixes2')]"
                         }
                     }
                 ]
