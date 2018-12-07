@@ -21,7 +21,7 @@
             "type": "string"
         },
         "dataDisks": {
-            "type": "string"
+            "type": "array"
         },
         "adminUsername": {
             "type": "string"
