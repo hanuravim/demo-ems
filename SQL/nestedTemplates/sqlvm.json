@@ -215,9 +215,11 @@
                 {
                     "type": "extensions",
                     "name": "Microsoft.EnterpriseCloud.Monitoring",
-                    "apiVersion": "2018-06-01",
+                    "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
-                    "dependsOn": [],
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+                    ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
