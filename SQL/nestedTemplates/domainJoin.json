@@ -41,10 +41,7 @@
                 "protectedSettings": {
                     "Password": "[parameters('adminPassword')]"
                 }
-            },
-            "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(parameters('SqlVmPrefix'), copyindex())), '/extensions/SqlIaasExtension')]"
-            ]
+            }
         }
     ]
 }
