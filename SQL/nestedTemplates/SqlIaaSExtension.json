@@ -57,10 +57,7 @@
                     }
                 },
                 "protectedSettings": {}
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat('SqlVmDeploy', copyindex()))]"
-            ]
-        }
+            }
+       }
     ]
 }
