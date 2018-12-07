@@ -72,7 +72,7 @@
         "baseUri": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL",
         "SQLPrepareModuleURL": "[concat(variables('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
-        "windowsVmTemplateURL": "[concat(variables('baseUri'),'/nestedTemplates/windowsvm.json')]"
+        "windowsVmTemplateURL": "[concat(variables('baseUri'),'/nestedTemplates/sqlvm.json')]"
     },
     "resources": [
         {
