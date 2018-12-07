@@ -75,8 +75,7 @@
     },
     "variables": {
         "nicName": "[concat(parameters('vmName'),'-nic')]",
-        "vnetid": "[resourceId('Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
-        "subnetId1": "[concat(variables('vnetid'), '/subnets/',parameters('subnetName1'))]",
+        "subnetId1": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets/', parameters('existingVirtualNetworkName'), parameters('subnetName1'))]",
         "diagStorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
         "dataDisks": [
             {
@@ -103,41 +102,10 @@
     },
     "resources": [
         {
-            "name": "[parameters('existingVirtualNetworkName')]",
-            "type": "Microsoft.Network/virtualNetworks",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "dependsOn": [],
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "[parameters('VirtualNetworkAddressPrefixes')]"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "[parameters('subnetName1')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('subnetAddressPrefixes1')]"
-                        }
-                    },
-                    {
-                        "name": "[parameters('subnetName2')]",
-                        "properties": {
-                            "addressPrefix": "[parameters('subnetAddressPrefixes2')]"
-                        }
-                    }
-                ]
-            }
-        },
-        {
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
             "apiVersion": "2017-06-01",
-            "dependsOn": [
-                "[variables('vnetID')]"
-            ],
             "properties": {
                 "ipConfigurations": [
                     {
