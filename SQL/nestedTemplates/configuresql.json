@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "SqlVmPrefix": {
+            "type": "string"
+        },
+        "domainName": {
+            "type": "string"
+        },
+        "SQLPrepareModuleURL": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "adminUserName": {
+            "type": "string"
+        },
+        "clusterIpAddress": {
+            "type": "string"
+        },
+        "SQLPrepareFunction": {
+            "type": "string"
+        },
+        "diagStorageAccountName": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('SqlVmPrefix'), copyindex(), '/configuresql', copyindex())]",
+            "apiVersion": "2016-03-30",
+            "location": "[resourceGroup().location]",
+            "copy": {
+                "name": "sqlconfigloop",
+                "count": 2,
+                "mode": "Serial",
+                "batchSize": 1
+            },
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.21",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesURL": "[parameters('SQLPrepareModuleURL')]",
+                    "configurationFunction": "[parameters('SQLPrepareFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "privateSettingsRef:adminPassword"
+                        },
+                        "ClusterName": "SQLClusterAG",
+                        "ClusterOwnerNode": "[concat(parameters('SqlVmPrefix'), '0')]",
+                        "ClusterIP": "[parameters('clusterIpAddress')]"
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]"
+                    }
+                }
+            },
+            "dependsOn": [
+                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(parameters('SqlVmPrefix'), copyindex())), '/extensions/joindomain')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagStorageAccountName'))]"
+            ]
+        }
+    ]
+}
