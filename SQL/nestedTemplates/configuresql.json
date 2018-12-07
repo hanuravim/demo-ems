@@ -64,11 +64,7 @@
                         "adminPassword": "[parameters('adminPassword')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(parameters('SqlVmPrefix'), copyindex())), '/extensions/joindomain')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', parameters('diagStorageAccountName'))]"
-            ]
+            }
         }
     ]
 }
