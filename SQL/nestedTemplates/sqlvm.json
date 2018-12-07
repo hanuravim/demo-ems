@@ -73,7 +73,7 @@
     "variables": {
         "nicName": "[concat(parameters('vmName'),'-nic')]",
         "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
-        "subnetId1": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName')), '/subnets/subnetName1')]",
+        "subnetId1": "[concat(resourceId('Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName')), '/subnets/',parameters('subnetName1'))]",
         "diagStorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
         "dataDisks": [
             {
