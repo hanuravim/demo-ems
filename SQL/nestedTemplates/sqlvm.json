@@ -30,6 +30,9 @@
         "subnetName2": {
             "type": "string"
         },
+        "dnsServers": {
+            "type": "string"
+        },
         "subnetAddressPrefixes1": {
             "type": "string"
         },
@@ -124,7 +127,8 @@
                             "addressPrefix": "[parameters('subnetAddressPrefixes2')]"
                         }
                     }
-                ]
+                ],
+                "dhcpOptions": "[parameters('dnsServers')]"
             }
         },
         {
