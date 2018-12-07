@@ -23,6 +23,14 @@
             "type": "string",
             "defaultValue": "null"
         },
+        "VirtualNetworkAddressPrefixes": {
+            "type": "string",
+            "defaultValue": "null"
+        },
+        "subnetAddressPrefixes": {
+            "type": "string",
+            "defaultValue": "null"
+        },
         "imagePublisher": {
             "type": "string",
             "defaultValue": "MicrosoftWindowsServer"
@@ -86,6 +94,28 @@
         ]
     },
     "resources": [
+        {
+            "name": "[parameters('existingVirtualNetworkName')]",
+            "type": "Microsoft.Network/virtualNetworks",
+            "location": "[resourceGroup().location]",
+            "apiVersion": "2016-03-30",
+            "dependsOn": [],
+            "properties": {
+                "addressSpace": {
+                    "addressPrefixes": [
+                        "[parameters('VirtualNetworkAddressPrefixes')]"
+                    ]
+                },
+                "subnets": [
+                    {
+                        "name": "default",
+                        "properties": {
+                            "addressPrefix": "[parameters('subnetAddressPrefixes')]"
+                        }
+                    }
+                ]
+            }
+        },
         {
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
