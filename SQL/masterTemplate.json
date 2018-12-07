@@ -157,6 +157,9 @@
                     },
                     "imageSku": {
                         "value": "[parameters('sqlVmImageSku')]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('workspaceName')]"
                     }
                 }
             },
