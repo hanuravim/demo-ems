@@ -15,7 +15,11 @@
             "type": "string",
             "defaultValue": "Standard_D2"
         },
-        "subnetId": {
+        "existingVirtualNetworkResourceGroup": {
+            "type": "string",
+            "defaultValue": "null"
+        },
+        "existingVirtualNetworkName": {
             "type": "string",
             "defaultValue": "null"
         },
@@ -31,10 +35,6 @@
             "type": "string",
             "defaultValue": "2016-Datacenter"
         },
-        "diagStorageAccountId": {
-            "type": "string",
-            "defaultValue": "null"
-        },
         "fixedPrivateIp": {
             "type": "string",
             "defaultValue": ""
@@ -49,39 +49,19 @@
             "maxValue": 4,
             "defaultValue": 1
         },
-        "availabilitySetId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "LoadBalancerBEId": {
-            "type": "string",
-            "defaultValue": ""
-        },
         "secrets": {
             "type": "array",
             "defaultValue": []
         },
-        "workspaceName": {
+        "diagStorageAccountName": {
             "type": "string"
         }
     },
     "variables": {
         "nicName": "[concat(parameters('vmName'),'-nic')]",
-        "genDiagStorageAccountName": "[concat('vmdiag', uniqueString( resourceGroup().id, deployment().name ))]",
-        "genStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', variables('genDiagStorageAccountName'))]",
-        "genVnetName": "[concat(parameters('vmName'),'-vnet')]",
-        "diagStorageAccountId": "[if(equals(parameters('diagStorageAccountId'),'null'), variables('genStorageAccountId'), parameters('diagStorageAccountId'))]",
-        "genVnetid": "[resourceId('Microsoft.Network/virtualNetworks', variables('genVnetName'))]",
-        "genSubnetId": "[concat(variables('genVnetid'), '/subnets/default')]",
-        "subnetId": "[if(equals(parameters('subnetId'),'null'), variables('genSubnetId'), parameters('subnetId'))]",
-        "availabilitySetId": {
-            "id": "[parameters('availabilitySetId')]"
-        },
-        "loadBalancerBEIds": [
-            {
-                "id": "[parameters('LoadBalancerBEId')]"
-            }
-        ],
+        "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
+        "subnetId": "[concat(variables('vnetID'),'/subnets/', parameters('existingVirtualNetworkName'))]",
+        "diagStorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
         "dataDisks": [
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
@@ -107,47 +87,12 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('genDiagStorageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "condition": "[equals(parameters('diagStorageAccountId'),'null')]",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "properties": {}
-        },
-        {
-            "name": "[variables('genVnetName')]",
-            "type": "Microsoft.Network/virtualNetworks",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "condition": "[equals(parameters('subnetId'),'null')]",
-            "dependsOn": [],
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "10.0.0.0/16"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "default",
-                        "properties": {
-                            "addressPrefix": "10.0.0.0/24"
-                        }
-                    }
-                ]
-            }
-        },
-        {
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
             "apiVersion": "2017-06-01",
             "dependsOn": [
-                "[variables('genVnetid')]"
+                "[variables('vnetID')]"
             ],
             "properties": {
                 "ipConfigurations": [
@@ -158,8 +103,7 @@
                             "privateIPAddress": "[parameters('fixedPrivateIp')]",
                             "subnet": {
                                 "id": "[variables('subnetId')]"
-                            },
-                            "loadBalancerBackendAddressPools": "[if(not(empty(parameters('LoadBalancerBEId'))),variables('loadBalancerBEIds'),json('null'))]"
+                            }
                         }
                     }
                 ]
@@ -171,11 +115,9 @@
             "name": "[parameters('vmName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
-                "[variables('genStorageAccountId')]"
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
             ],
             "properties": {
-                "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
                     "vmSize": "[parameters('vmSize')]"
                 },
@@ -210,40 +152,8 @@
                         "storageUri": "[reference(variables('diagStorageAccountId'),'2016-01-01').primaryEndpoints.blob]"
                     }
                 }
-            },
-            "resources": [
-                {
-                    "type": "extensions",
-                    "name": "Microsoft.EnterpriseCloud.Monitoring",
-                    "apiVersion": "2017-03-30",
-                    "location": "[resourceGroup().location]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                        "type": "MicrosoftMonitoringAgent",
-                        "typeHandlerVersion": "1.0",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
-                        },
-                        "protectedSettings": {
-                            "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
-                        }
-                    }
-                }
-            ]
+            }
         }
     ],
-    "outputs": {
-        "diagStorageAccountId": {
-            "type": "string",
-            "value": "[variables('diagStorageAccountId')]"
-        },
-        "subnetId": {
-            "type": "string",
-            "value": "[variables('subnetId')]"
-        }
-    }
+    "outputs": {}
 }
