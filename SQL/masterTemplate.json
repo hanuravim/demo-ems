@@ -78,7 +78,7 @@
         "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
-        "LogAnalyticsTemplate": "[concat(parameters('baseUri'),'/LogAnalytics.json')]"
+        "LogAnalyticsTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/LogAnalytics.json')]"
     },
     "resources": [
         {
