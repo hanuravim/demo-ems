@@ -127,8 +127,7 @@
                             "addressPrefix": "[parameters('subnetAddressPrefixes2')]"
                         }
                     }
-                ],
-                "dhcpOptions": "[parameters('dnsServers')]"
+                ]
             }
         },
         {
