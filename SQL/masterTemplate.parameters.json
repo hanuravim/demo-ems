@@ -36,7 +36,7 @@
             "value": "Enterprise"
         },
         "numberOfDataDisks": {
-            "value": 3
+            "value": 2
         },
         "baseUri": {
             "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL"
