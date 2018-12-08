@@ -2,6 +2,9 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "sqlNodeCount": {
+            "type": "int"
+        },
         "nodeIpAddresses": {
             "defaultValue": [
                 "10.0.0.10",
@@ -26,26 +29,10 @@
         "sqlVmSize": {
             "defaultValue": "Standard_DS2_v2",
             "allowedValues": [
-                "Standard_D1_v2",
-                "Standard_D2_v2",
-                "Standard_D3_v2",
-                "Standard_D4_v2",
-                "Standard_D5_v2",
-                "Standard_D11_v2",
-                "Standard_D12_v2",
-                "Standard_D13_v2",
-                "Standard_D14_v2",
-                "Standard_D15_v2",
+                "Standard E32-16s_v3",
+                "Standard_DS2_v3",
                 "Standard_DS1_v2",
-                "Standard_DS2_v2",
-                "Standard_DS3_v2",
-                "Standard_DS4_v2",
-                "Standard_DS5_v2",
-                "Standard_DS11_v2",
-                "Standard_DS12_v2",
-                "Standard_DS13_v2",
-                "Standard_DS14_v2",
-                "Standard_DS15_v2"
+                "Standard_DS2_v2"
             ],
             "type": "string"
         },
@@ -61,6 +48,10 @@
             "defaultValue": "Enterprise",
             "type": "string"
         },
+        "numberOfDataDisks": {
+            "defaultValue": 3,
+            "type": "int"
+        },
         "baseUri": {
             "type": "string",
             "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL"
@@ -72,8 +63,8 @@
         "existingVirtualNetworkName": "corevnet",
         "subnetName1": "Subnet-1",
         "SqlVmPrefix": "SQL",
-        "workspaceName":"emslogomsworksps",
-        "workspaceLocation":"eastus",
+        "workspaceName": "emslogomsworksps",
+        "workspaceLocation": "eastus",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
         "SqlIaaSExtension": "[concat(parameters('baseUri'),'/nestedTemplates/SqlIaaSExtension.json')]",
@@ -107,7 +98,7 @@
             "apiVersion": "2017-05-10",
             "copy": {
                 "name": "sqlvmloop",
-                "count": 2
+                "count": "[parameters('sqlNodeCount')]"
             },
             "dependsOn": [
                 "StorageAccount"
@@ -154,6 +145,9 @@
                     },
                     "imageSku": {
                         "value": "[parameters('sqlVmImageSku')]"
+                    },
+                    "numberOfDataDisks": {
+                        "value": "[parameters('numberOfDataDisks')]"
                     }
                 }
             }
