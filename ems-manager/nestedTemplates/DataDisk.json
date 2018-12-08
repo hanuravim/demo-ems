@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "dataDiskResources": {
-            "type": "string"
+            "type": "array"
         },
         "location": {
             "type": "string"
