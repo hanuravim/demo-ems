@@ -2,9 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "subnetId": {
-            "value": "/subscriptions/6e00b504-dddb-4435-a384-8dcf6f294c6f/resourceGroups/autoems/providers/Microsoft.Network/virtualNetworks/corevnet/subnets/Subnet-1"
-        },
         "nodeIpAddresses": {
             "value": [
                 "10.0.0.10",
