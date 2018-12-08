@@ -27,6 +27,7 @@
         "dataDisks": {
             "type": "array"
         },
+        
         "DataDiskName": {
             "type": "array"
         },
@@ -50,7 +51,19 @@
         "availabilitySetName": "emsmgravset",
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
-        }
+        },
+        "StorageAccountType": "Standard_GRS",
+        "dataDisks": [
+            {
+                "lun": 0,
+                "createOption": "attach",
+                "caching": "ReadOnly",
+                "writeAcceleratorEnabled": false,
+                "id": null,
+                "name": "[parameters('DataDiskName')]",
+                "storageAccountType": "[variables('StorageAccountType')]"
+            }
+        ]
     },
     "resources": [
         {
@@ -96,14 +109,14 @@
                             "name": "DataDisks",
                             "count": "[parameters('numberOfDataDisks')]",
                             "input": {
-                                "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
+                                "lun": "[variables('dataDisks')[copyIndex('dataDisks')].lun]",
                                 "name": "[length(parameters('DataDiskName'))]",
-                                "createOption": "[parameters('dataDisks')[copyIndex('dataDisks')].createOption]",
-                                "caching": "[parameters('dataDisks')[copyIndex('dataDisks')].caching]",
-                                "writeAcceleratorEnabled": "[parameters('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
+                                "createOption": "[variables('dataDisks')[copyIndex('dataDisks')].createOption]",
+                                "caching": "[variables('dataDisks')[copyIndex('dataDisks')].caching]",
+                                "writeAcceleratorEnabled": "[variables('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
                                 "managedDisk": {
-                                    "id": "[coalesce(parameters('dataDisks')[copyIndex('dataDisks')].id, if(equals(parameters('dataDisks')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', parameters('dataDisks')[copyIndex('dataDisks')].name)))]",
-                                    "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].storageAccountType]"
+                                    "id": "[coalesce(variables('dataDisks')[copyIndex('dataDisks')].id, if(equals(variables('dataDisks')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', variables('dataDisks')[copyIndex('dataDisks')].name)))]",
+                                    "storageAccountType": "[variables('dataDisks')[copyIndex('dataDisks')].storageAccountType]"
                                 }
                             }
                         }
