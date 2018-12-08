@@ -131,7 +131,9 @@
                     "name": "Microsoft.EnterpriseCloud.Monitoring",
                     "apiVersion": "2018-06-01",
                     "location": "[parameters('location')]",
-                    "dependsOn": [],
+                    "dependsOn": [
+                    "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+                    ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
