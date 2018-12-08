@@ -68,7 +68,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [],
             "properties": {
-                "availabilitySetCondition": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
+                "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
                 },
@@ -132,7 +132,7 @@
                     "apiVersion": "2018-06-01",
                     "location": "[parameters('location')]",
                     "dependsOn": [
-                    "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
