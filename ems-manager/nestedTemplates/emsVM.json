@@ -48,7 +48,7 @@
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
         },
-        "StorageAccountType": "Standard_GRS",
+        "StorageAccountType": "Premium_LRS",
         "dataDisks": [
             {
                 "lun": 0,
