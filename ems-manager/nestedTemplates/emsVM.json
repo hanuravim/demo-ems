@@ -94,7 +94,7 @@
                     "copy": [
                         {
                             "name": "DataDisk",
-                            "count": "[length(parameters('numberOfDataDisks'))]",
+                            "count": "[parameters('numberOfDataDisks'))]",
                             "input": {
                                 "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
                                 "name": "[length(parameters('DataDiskName'))]",
