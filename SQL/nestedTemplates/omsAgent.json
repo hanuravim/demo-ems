@@ -2,13 +2,16 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "sqlNodeCount": {
+            "type": "int"
+        },
         "SqlVmPrefix": {
             "type": "string"
         },
         "workspaceName": {
             "type": "string"
         },
-        "location": {
+        "workspaceLocation": {
             "type": "string"
         }
     },
@@ -17,8 +20,12 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('SqlVmPrefix'), copyindex(), '/omsagent')]",
-            "apiVersion": "2018-06-01",
-            "location": "[parameters('location')]",
+            "apiVersion": "2015-06-15",
+            "location": "[parameters('workspaceLocation')]",
+            "copy": {
+                "name": "sqlomsAgentloop",
+                "count": "[parameters('sqlNodeCount')]"
+            },
             "dependsOn": [],
             "properties": {
                 "publisher": "Microsoft.EnterpriseCloud.Monitoring",
