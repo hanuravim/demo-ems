@@ -72,10 +72,13 @@
         "existingVirtualNetworkName": "corevnet",
         "subnetName1": "Subnet-1",
         "SqlVmPrefix": "SQL",
+        "workspaceName":"emslogomsworksps",
+        "workspaceLocation":"eastus",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
         "SqlIaaSExtension": "[concat(parameters('baseUri'),'/nestedTemplates/SqlIaaSExtension.json')]",
         "domainJoinExtension": "[concat(parameters('baseUri'),'/nestedTemplates/domainJoin.json')]",
+        "omsAgent": "[concat(parameters('baseUri'),'/nestedTemplates/omsAgent.json')]",
         "configuresql": "[concat(parameters('baseUri'),'/nestedTemplates/configuresql.json')]",
         "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
@@ -200,6 +203,29 @@
                     },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "omsAgent",
+            "apiVersion": "2017-05-10",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('omsAgent')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "SqlVmPrefix": {
+                        "value": "[variables('SqlVmPrefix')]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('workspaceName')]"
+                    },
+                    "location": {
+                        "value": "[variables('workspaceLocation')]"
                     }
                 }
             }
