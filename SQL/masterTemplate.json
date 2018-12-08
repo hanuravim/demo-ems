@@ -3,7 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "sqlNodeCount": {
-            "type": "int"
+            "type": "int",
+            "defaultValue": 2
         },
         "nodeIpAddresses": {
             "defaultValue": [
