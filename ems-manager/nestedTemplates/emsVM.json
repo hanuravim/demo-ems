@@ -27,6 +27,12 @@
         "dataDisks": {
             "type": "array"
         },
+        "DataDiskName": {
+            "type": "array"
+        },
+        "numberOfDataDisks": {
+            "type": "int"
+        },
         "adminUsername": {
             "type": "string"
         },
@@ -87,8 +93,8 @@
                     },
                     "copy": [
                         {
-                            "name": "dataDisks",
-                            "count": "[length(parameters('dataDisks'))]",
+                            "name": "[parameters('DataDiskName')]",
+                            "count": "[length(parameters('numberOfDataDisks'))]",
                             "input": {
                                 "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
                                 "createOption": "[parameters('dataDisks')[copyIndex('dataDisks')].createOption]",
