@@ -17,6 +17,9 @@
         "virtualMachineName": {
             "value": "emsmgr001"
         },
+        "AvailabilitySet": {
+            "value": "No"
+        },
         "privateIpAddress": {
             "value": "10.0.0.20"
         },
@@ -27,6 +30,12 @@
             "value": "adAdministrator"
         },
         "adminPassword": {
+            "value": ""
+        },
+        "DomainUsername": {
+            "value": ""
+        },
+        "DomainPassword": {
             "value": ""
         },
         "baseUri": {
