@@ -2,10 +2,6 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "subnetId": {
-            "type": "string",
-            "defaultValue": "/subscriptions/6e00b504-dddb-4435-a384-8dcf6f294c6f/resourceGroups/autoems/providers/Microsoft.Network/virtualNetworks/corevnet/subnets/Subnet-1"
-        },
         "nodeIpAddresses": {
             "defaultValue": [
                 "10.0.0.10",
@@ -72,46 +68,35 @@
     },
     "variables": {
         "diagStorageAccountName": "efoqasqlvmdiag",
-        "WorkSpaceName":"emsomswrksps",
-        "OMSWorkSpaceLocation":"eastus",
+        "existingVirtualNetworkResourceGroup": "autoems",
+        "existingVirtualNetworkName": "corevnet",
+        "subnetName1": "Subnet-1",
         "SqlVmPrefix": "SQL",
-        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
-        "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
+        "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
-        "LogAnalyticsTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/LogAnalytics.json')]"
+        "SqlIaaSExtension": "[concat(parameters('baseUri'),'/nestedTemplates/SqlIaaSExtension.json')]",
+        "domainJoinExtension": "[concat(parameters('baseUri'),'/nestedTemplates/domainJoin.json')]",
+        "configuresql": "[concat(parameters('baseUri'),'/nestedTemplates/configuresql.json')]",
+        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
+        "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "LogAnalytics",
+            "name": "StorageAccount",
             "apiVersion": "2017-05-10",
-            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('LogAnalyticsTemplate')]",
+                    "uri": "[variables('StorageAccountTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "workspaceName": {
-                        "value": "[variables('WorkSpaceName')]"
-                    },
-                    "OMSWorkSpaceLocation": {
-                        "value": "[variables('OMSWorkSpaceLocation')]"
+                    "diagStorageAccountName": {
+                        "value": "[variables('diagStorageAccountName')]"
                     }
                 }
             }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "name": "[variables('diagStorageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "location": "[resourceGroup().location]",
-            "properties": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -121,6 +106,9 @@
                 "name": "sqlvmloop",
                 "count": 2
             },
+            "dependsOn": [
+                "StorageAccount"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -131,23 +119,29 @@
                     "vmName": {
                         "value": "[concat(variables('SqlVmPrefix'), copyindex())]"
                     },
-                    "vmSize": {
-                        "value": "[parameters('sqlVmSize')]"
-                    },
-                    "subnetId": {
-                        "value": "[parameters('subnetId')]"
-                    },
-                    "fixedPrivateIp": {
-                        "value": "[parameters('nodeIpAddresses')[copyIndex()]]"
-                    },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
                     },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     },
-                    "diagStorageAccountId": {
-                        "value": "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
+                    "vmSize": {
+                        "value": "[parameters('sqlVmSize')]"
+                    },
+                    "existingVirtualNetworkResourceGroup": {
+                        "value": "[variables('existingVirtualNetworkResourceGroup')]"
+                    },
+                    "existingVirtualNetworkName": {
+                        "value": "[variables('existingVirtualNetworkName')]"
+                    },
+                    "subnetName1": {
+                        "value": "[variables('subnetName1')]"
+                    },
+                    "fixedPrivateIp": {
+                        "value": "[parameters('nodeIpAddresses')[copyIndex()]]"
+                    },
+                    "diagStorageAccountName": {
+                        "value": "[variables('diagStorageAccountName')]"
                     },
                     "imagePublisher": {
                         "value": "[parameters('sqlVmImagePublisher')]"
@@ -157,139 +151,97 @@
                     },
                     "imageSku": {
                         "value": "[parameters('sqlVmImageSku')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('workspaceName')]"
                     }
                 }
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
-            ]
+            }
         },
         {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/SqlIaasExtension')]",
-            "apiVersion": "2015-06-15",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "sqliaasextensionsloop",
-                "count": 2
-            },
-            "properties": {
-                "type": "SqlIaaSAgent",
-                "publisher": "Microsoft.SqlServer.Management",
-                "typeHandlerVersion": "1.2",
-                "autoUpgradeMinorVersion": "true",
-                "settings": {
-                    "AutoTelemetrySettings": {
-                        "Region": "[resourceGroup().location]"
-                    },
-                    "AutoPatchingSettings": {
-                        "PatchCategory": "WindowsMandatoryUpdates",
-                        "Enable": true,
-                        "DayOfWeek": "Sunday",
-                        "MaintenanceWindowStartingHour": "2",
-                        "MaintenanceWindowDuration": "60"
-                    },
-                    "KeyVaultCredentialSettings": {
-                        "Enable": false,
-                        "CredentialName": ""
-                    },
-                    "ServerConfigurationsManagementSettings": {
-                        "SQLConnectivityUpdateSettings": {
-                            "ConnectivityType": "Private",
-                            "Port": "1433"
-                        },
-                        "SQLWorkloadTypeUpdateSettings": {
-                            "SQLWorkloadType": "GENERAL"
-                        },
-                        "SQLStorageUpdateSettings": {
-                            "DiskCount": "1",
-                            "NumberOfColumns": "1",
-                            "StartingDeviceID": "2",
-                            "DiskConfigurationType": "NEW"
-                        },
-                        "AdditionalFeaturesServerConfigurations": {
-                            "IsRServicesEnabled": "false"
-                        }
-                    }
-                },
-                "protectedSettings": {}
-            },
+            "type": "Microsoft.Resources/deployments",
+            "name": "SqlIaaSExtension",
+            "apiVersion": "2017-05-10",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat('SqlVmDeploy', copyindex()))]"
-            ]
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/joindomain')]",
-            "apiVersion": "2015-06-15",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "sqlvmjoinloop",
-                "count": 2
-            },
+                "sqlvmloop"
+            ],
             "properties": {
-                "publisher": "Microsoft.Compute",
-                "type": "JsonADDomainExtension",
-                "typeHandlerVersion": "1.3",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "Name": "[parameters('domainName')]",
-                    "OUPath": "",
-                    "User": "[concat(parameters('domainName'), '\\', parameters('adminUserName'))]",
-                    "Restart": "true",
-                    "Options": "3"
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('SqlIaaSExtension')]",
+                    "contentVersion": "1.0.0.0"
                 },
-                "protectedSettings": {
-                    "Password": "[parameters('adminPassword')]"
-                }
-            },
-            "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('SqlVmPrefix'), copyindex())), '/extensions/SqlIaasExtension')]"
-            ]
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/configuresql', copyindex())]",
-            "apiVersion": "2016-03-30",
-            "location": "[resourceGroup().location]",
-            "copy": {
-                "name": "sqlconfigloop",
-                "count": 2,
-                "mode": "Serial",
-                "batchSize": 1
-            },
-            "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.21",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "modulesURL": "[variables('SQLPrepareModuleURL')]",
-                    "configurationFunction": "[variables('SQLPrepareFunction')]",
-                    "properties": {
-                        "domainName": "[parameters('domainName')]",
-                        "adminCreds": {
-                            "userName": "[parameters('adminUserName')]",
-                            "password": "privateSettingsRef:adminPassword"
-                        },
-                        "ClusterName": "SQLClusterAG",
-                        "ClusterOwnerNode": "[concat(variables('SqlVmPrefix'), '0')]",
-                        "ClusterIP": "[parameters('clusterIpAddress')]"
-                    }
-                },
-                "protectedSettings": {
-                    "items": {
-                        "adminPassword": "[parameters('adminPassword')]"
+                "parameters": {
+                    "SqlVmPrefix": {
+                        "value": "[variables('SqlVmPrefix')]"
                     }
                 }
-            },
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "domainJoin",
+            "apiVersion": "2017-05-10",
             "dependsOn": [
-                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('SqlVmPrefix'), copyindex())), '/extensions/joindomain')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
-            ]
+                "sqlvmloop"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('domainJoinExtension')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "SqlVmPrefix": {
+                        "value": "[variables('SqlVmPrefix')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "adminUserName": {
+                        "value": "[parameters('adminUserName')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "configuresql",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "sqlvmloop",
+                "domainJoin"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuresql')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "SqlVmPrefix": {
+                        "value": "[variables('sqlvmprefix')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "SQLPrepareModuleURL": {
+                        "value": "[variables('SQLPrepareModuleURL')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "adminUserName": {
+                        "value": "[parameters('adminUserName')]"
+                    },
+                    "clusterIpAddress": {
+                        "value": "[parameters('clusterIpAddress')]"
+                    },
+                    "SQLPrepareFunction": {
+                        "value": "[variables('SQLPrepareFunction')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {}
