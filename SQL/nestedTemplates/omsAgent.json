@@ -10,9 +10,6 @@
             },
             "workspaceName": {
                 "type": "string"
-            },
-            "vmLocation": {
-                "type": "string"
             }
         },
         "variables": {
@@ -23,7 +20,7 @@
                 "type": "Microsoft.Compute/virtualMachines/extensions",
                 "name": "[concat(parameters('SqlVmPrefix'),copyindex(),'/', variables('vmExtensionName'))]",
                 "apiVersion": "2015-06-15",
-                "location": "[parameters('vmLocation')]",
+                "location": "[resourcegroup().location]",
                 "copy": {
                     "name": "sqlvmjoinloop",
                     "count": "[parameters('sqlNodeCount')]"
