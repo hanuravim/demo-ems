@@ -77,7 +77,6 @@
                 }
             }
         ],
-        "availabilitySetName": "emsmgravset",
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
@@ -196,9 +195,6 @@
                     },
                     "StorageAccountName": {
                         "value": "[variables('StorageAccountName')]"
-                    },
-                    "availabilitySetName": {
-                        "value": "[variables('availabilitySetName')]"
                     },
                     "virtualMachineSize": {
                         "value": "[parameters('virtualMachineSize')]"
