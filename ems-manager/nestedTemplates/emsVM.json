@@ -5,13 +5,17 @@
         "virtualMachineName": {
             "type": "string"
         },
+        "AvailabilitySet": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
         "networkInterfaceName": {
             "type": "string"
         },
         "StorageAccountName": {
-            "type": "string"
-        },
-        "availabilitySetName": {
             "type": "string"
         },
         "virtualMachineSize": {
@@ -36,8 +40,27 @@
             "type": "string"
         }
     },
-    "variables": {},
+    "variables": {
+        "availabilitySetName": "emsmgravset",
+        "availabilitySetId": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
+        }
+    },
     "resources": [
+        {
+            "condition": "[equals(parameters('AvailabilitySet'), 'Yes')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2017-03-30",
+            "name": "[variables('availabilitySetName')]",
+            "location": "[parameters('location')]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 3
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
         {
             "name": "[parameters('virtualMachineName')]",
             "type": "Microsoft.Compute/virtualMachines",
@@ -45,6 +68,7 @@
             "location": "[parameters('location')]",
             "dependsOn": [],
             "properties": {
+                "availabilitySetCondition": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
                 },
@@ -99,9 +123,6 @@
                         "enabled": true,
                         "storageUri": "[concat('https://', parameters('StorageAccountName'), '.blob.core.windows.net/')]"
                     }
-                },
-                "availabilitySet": {
-                    "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
                 }
             },
             "resources": [
