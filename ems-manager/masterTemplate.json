@@ -180,7 +180,6 @@
             "name": "virtualMachine",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "DataDisk",
                 "NetworkInterface",
                 "StorageAccount"
             ],
@@ -208,9 +207,6 @@
                     },
                     "osDiskType": {
                         "value": "[variables('osDiskType')]"
-                    },
-                    "dataDisks": {
-                        "value": "[variables('dataDisks')]"
                     },
                     "DataDiskName": {
                         "value": "[parameters('DataDiskName')]"
