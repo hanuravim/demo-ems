@@ -306,10 +306,8 @@
                     "storageAccountKey": "[listKeys(parameters('StorageAccountId'),'2015-06-15').key1]",
                     "storageAccountEndPoint": "https://core.windows.net/"
                 }
-            },
-            "dependsOn": [
-                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
-            ]
+            }
+           
         }
     ]
 }
