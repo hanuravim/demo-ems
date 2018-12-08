@@ -3,13 +3,12 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
-            "type": "string",
-            "defaultValue": "[resourceGroup().location]"
-        },
-        "virtualNetworkRG": {
             "type": "string"
         },
-        "virtualNetworkName": {
+        "existingvirtualNetworkRG": {
+            "type": "string"
+        },
+        "existingvirtualNetworkName": {
             "type": "string"
         },
         "subnetName": {
@@ -17,6 +16,12 @@
         },
         "virtualMachineName": {
             "type": "string"
+        },
+        "AvailabilitySet": {
+            "type": "string",
+            "metadata": {
+                "description": "Select whether the VM should be in AvailabilitySet or not."
+            }
         },
         "privateIpAddress": {
             "type": "string"
@@ -29,6 +34,14 @@
         },
         "adminPassword": {
             "type": "securestring"
+        },
+        "DomainUsername": {
+            "type": "string",
+            "defaultValue": ""
+        },
+        "DomainPassword": {
+            "type": "securestring",
+            "defaultValue": ""
         },
         "baseUri": {
             "type": "string",
@@ -64,27 +77,21 @@
                 }
             }
         ],
-        "workspaceName":"emslogomsworksps",
-        "workspaceLocation":"eastus",
         "availabilitySetName": "emsmgravset",
-        "availabilitySetPlatformFaultDomainCount": "2",
-        "availabilitySetPlatformUpdateDomainCount": "5",
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
-        "vnetId": "[resourceId(parameters('virtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "vnetId": "[resourceId(parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
         "StorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "diagnosticsExtensionName": "Microsoft.Insights.VMDiagnosticsSettings",
-        "networkInterfaceTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/networkInterface.json')]",
-        "networkSecurityGroupTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/networkSecurityGroup.json')]",
-        "DataDiskTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/DataDisk.json')]",
-        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/emsVM.json')]",
-        "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/StorageAccount.json')]",
-        "AvailabilitySetTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/AvailabilitySet.json')]",
-        "diagnosticsTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/diagnostics.json')]",
-        "domainJoinTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/domainJoin.json')]",
-        "omsAgent": "[concat(parameters('baseUri'),'/nestedTemplates/omsAgent.json')]"
+        "networkInterfaceTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/networkInterface.json')]",
+        "networkSecurityGroupTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/networkSecurityGroup.json')]",
+        "DataDiskTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/DataDisk.json')]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/emsVM.json')]",
+        "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
+        "diagnosticsTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/diagnostics.json')]",
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/domainJoin.json')]"
     },
     "resources": [
         {
@@ -169,8 +176,7 @@
             "dependsOn": [
                 "DataDisk",
                 "NetworkInterface",
-                "StorageAccount",
-                "AvailabilitySet"
+                "StorageAccount"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -181,6 +187,9 @@
                 "parameters": {
                     "virtualMachineName": {
                         "value": "[parameters('virtualMachineName')]"
+                    },
+                    "AvailabilitySet": {
+                        "value": "[parameters('AvailabilitySet')]"
                     },
                     "networkInterfaceName": {
                         "value": "[variables('networkInterfaceName')]"
@@ -214,29 +223,6 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "omsAgent",
-            "apiVersion": "2017-05-10",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('omsAgent')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "virtualMachineName": {
-                        "value": "[parameters('virtualMachineName')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('workspaceName')]"
-                    },
-                    "location": {
-                        "value": "[variables('workspaceLocation')]"
-                    }
-                }
-            }
-        }
-        {
-            "type": "Microsoft.Resources/deployments",
             "name": "StorageAccount",
             "apiVersion": "2017-05-10",
             "properties": {
@@ -254,32 +240,6 @@
                     },
                     "StorageAccountType": {
                         "value": "[variables('StorageAccountType')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "AvailabilitySet",
-            "apiVersion": "2017-05-10",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('AvailabilitySetTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "availabilitySetName": {
-                        "value": "[variables('availabilitySetName')]"
-                    },
-                    "availabilitySetPlatformFaultDomainCount": {
-                        "value": "[variables('availabilitySetPlatformFaultDomainCount')]"
-                    },
-                    "availabilitySetPlatformUpdateDomainCount": {
-                        "value": "[variables('availabilitySetPlatformUpdateDomainCount')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
@@ -307,11 +267,11 @@
                     "domainName": {
                         "value": "[variables('domainName')]"
                     },
-                    "adminUserName": {
-                        "value": "[parameters('adminUserName')]"
+                    "DomainUserName": {
+                        "value": "[parameters('DomainUserName')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "DomainPassword": {
+                        "value": "[parameters('DomainPassword')]"
                     }
                 }
             }
