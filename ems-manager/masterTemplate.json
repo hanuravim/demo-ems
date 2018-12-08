@@ -19,6 +19,10 @@
         },
         "AvailabilitySet": {
             "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
             "metadata": {
                 "description": "Select whether the VM should be in AvailabilitySet or not."
             }
@@ -77,6 +81,7 @@
                 }
             }
         ],
+        "workspaceName":"emslogomsworksps",
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
@@ -210,6 +215,9 @@
                     },
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
+                    },
+                    "workspaceName": {
+                        "value": "[variables('workspaceName')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
