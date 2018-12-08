@@ -93,10 +93,11 @@
                     },
                     "copy": [
                         {
-                            "name": "[parameters('DataDiskName')]",
+                            "name": "DataDisk",
                             "count": "[length(parameters('numberOfDataDisks'))]",
                             "input": {
                                 "lun": "[parameters('dataDisks')[copyIndex('dataDisks')].lun]",
+                                "name": "[length(parameters('DataDiskName'))]",
                                 "createOption": "[parameters('dataDisks')[copyIndex('dataDisks')].createOption]",
                                 "caching": "[parameters('dataDisks')[copyIndex('dataDisks')].caching]",
                                 "writeAcceleratorEnabled": "[parameters('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
