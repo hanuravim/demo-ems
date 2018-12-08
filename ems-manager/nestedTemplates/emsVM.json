@@ -24,10 +24,6 @@
         "osDiskType": {
             "type": "string"
         },
-        "dataDisks": {
-            "type": "array"
-        },
-        
         "DataDiskName": {
             "type": "array"
         },
