@@ -21,22 +21,7 @@
         "existingVirtualNetworkName": {
             "type": "string"
         },
-        "VirtualNetworkAddressPrefixes": {
-            "type": "string"
-        },
         "subnetName1": {
-            "type": "string"
-        },
-        "subnetName2": {
-            "type": "string"
-        },
-        "dnsServers": {
-            "type": "array"
-        },
-        "subnetAddressPrefixes1": {
-            "type": "string"
-        },
-        "subnetAddressPrefixes2": {
             "type": "string"
         },
         "imagePublisher": {
