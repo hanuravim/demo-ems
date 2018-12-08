@@ -3,19 +3,24 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "location": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue":"westus2"
         },
         "existingvirtualNetworkRG": {
             "type": "string"
+            "defaultvalue":""
         },
         "existingvirtualNetworkName": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue":""
         },
         "subnetName": {
-            "type": "string"
+            "type": "string",
+             "defaultvalue":""
         },
         "virtualMachineName": {
-            "type": "string"
+            "type": "string",
+             "defaultvalue":""
         },
         "AvailabilitySet": {
             "type": "string",
@@ -28,16 +33,20 @@
             }
         },
         "privateIpAddress": {
-            "type": "string"
+            "type": "string",
+             "defaultvalue":""
         },
         "virtualMachineSize": {
-            "type": "string"
+            "type": "string",
+             "defaultvalue":""
         },
         "adminUsername": {
-            "type": "string"
+            "type": "string",
+             "defaultvalue":""
         },
         "adminPassword": {
-            "type": "securestring"
+            "type": "securestring",
+             "defaultvalue":""
         },
         "DomainUsername": {
             "type": "string",
