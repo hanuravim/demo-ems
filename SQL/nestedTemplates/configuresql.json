@@ -22,10 +22,8 @@
         },
         "SQLPrepareFunction": {
             "type": "string"
-        },
-        "diagStorageAccountName": {
-            "type": "string"
         }
+        
     },
     "variables": {},
     "resources": [
