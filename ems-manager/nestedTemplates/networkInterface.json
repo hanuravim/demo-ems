@@ -30,9 +30,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2017-06-01",
             "location": "[parameters('location')]",
-            "dependsOn": [
-                "[concat('Microsoft.Network/networkSecurityGroups/', parameters('networkSecurityGroupName'))]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
