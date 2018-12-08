@@ -47,8 +47,8 @@
         "numberOfDataDisks": {
             "type": "int",
             "minValue": 0,
-            "maxValue": 4,
-            "defaultValue": 1
+            "maxValue": 8
+            
         },
         "secrets": {
             "type": "array",
