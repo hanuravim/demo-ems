@@ -79,7 +79,7 @@
         "networkInterfaceTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/networkInterface.json')]",
         "networkSecurityGroupTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/networkSecurityGroup.json')]",
         "DataDiskTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/DataDisk.json')]",
-        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/virtualMachine.json')]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/emsVM.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/StorageAccount.json')]",
         "AvailabilitySetTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/AvailabilitySet.json')]",
         "diagnosticsTemplate": "[concat(parameters('baseUri'),'/nesteTemplates/diagnostics.json')]",
