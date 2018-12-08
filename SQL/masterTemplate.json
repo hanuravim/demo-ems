@@ -49,7 +49,7 @@
             "type": "string"
         },
         "numberOfDataDisks": {
-            "defaultValue": 3,
+            "defaultValue": 2,
             "type": "int"
         },
         "baseUri": {
@@ -64,7 +64,6 @@
         "subnetName1": "Subnet-1",
         "SqlVmPrefix": "SQL",
         "workspaceName": "emslogomsworksps",
-        "workspaceLocation": "eastus",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
         "SqlIaaSExtension": "[concat(parameters('baseUri'),'/nestedTemplates/SqlIaaSExtension.json')]",
@@ -166,6 +165,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "sqlNodeCount": {
+                        "value": "[parameters('sqlNodeCount')]"
+                    },
                     "SqlVmPrefix": {
                         "value": "[variables('SqlVmPrefix')]"
                     }
@@ -186,16 +188,19 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "sqlNodeCount": {
+                        "value": "[parameters('sqlNodeCount')]"
+                    },
                     "SqlVmPrefix": {
                         "value": "[variables('SqlVmPrefix')]"
                     },
                     "domainName": {
                         "value": "[parameters('domainName')]"
                     },
-                    "adminUserName": {
+                    "DomainUserName": {
                         "value": "[parameters('adminUserName')]"
                     },
-                    "adminPassword": {
+                    "DomainPassword": {
                         "value": "[parameters('adminPassword')]"
                     }
                 }
@@ -205,6 +210,11 @@
             "type": "Microsoft.Resources/deployments",
             "name": "omsAgent",
             "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "sqlvmloop",
+                "SqlIaaSExtension",
+                "domainJoin"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -212,14 +222,14 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "sqlNodeCount": {
+                        "value": "[parameters('sqlNodeCount')]"
+                    },
                     "SqlVmPrefix": {
                         "value": "[variables('SqlVmPrefix')]"
                     },
                     "workspaceName": {
                         "value": "[variables('workspaceName')]"
-                    },
-                    "location": {
-                        "value": "[variables('workspaceLocation')]"
                     }
                 }
             }
@@ -239,6 +249,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "sqlNodeCount": {
+                        "value": "[parameters('sqlNodeCount')]"
+                    },
                     "SqlVmPrefix": {
                         "value": "[variables('sqlvmprefix')]"
                     },
