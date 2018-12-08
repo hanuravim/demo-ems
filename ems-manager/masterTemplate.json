@@ -7,7 +7,7 @@
             "defaultvalue":"westus2"
         },
         "existingvirtualNetworkRG": {
-            "type": "string"
+            "type": "string",
             "defaultvalue":""
         },
         "existingvirtualNetworkName": {
