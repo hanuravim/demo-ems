@@ -55,26 +55,23 @@
             {
                 "diskSizeGB": "[parameters('DataDiskSize')]",
                 "lun": 0,
-                "createOption": "Empty",
-                "name":"[parameters('DataDiskName')]"
+                "createOption": "Empty"
             },
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
                 "lun": 1,
                 "createOption": "Empty",
-                "name":"[parameters('DataDiskName')]"
+                
             },
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
                 "lun": 2,
                 "createOption": "Empty",
-                "name":"[parameters('DataDiskName')]"
             },
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
                 "lun": 3,
                 "createOption": "Empty",
-                "name":"[parameters('DataDiskName')]"
             }
         ]
     },
