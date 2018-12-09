@@ -112,7 +112,7 @@
                                 "writeAcceleratorEnabled": "[variables('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
                                 "managedDisk": {
                                     "storageAccountType": "[variables('dataDisks')[copyIndex('dataDisks')].storageAccountType]",
-                                    "id": "[resourceId('Microsoft.Compute/disks/', concat(parameters('virtualMachineName'),length(parameters('DataDiskName'))))]"
+                                    "id": "[coalesce(variables('dataDisks')[copyIndex('dataDisks')].id, if(equals(variables('dataDisks')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', variables('dataDisks')[copyIndex('dataDisks')].name)))]"
                                 }
                             }
                         }
