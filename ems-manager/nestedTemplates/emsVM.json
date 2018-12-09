@@ -111,7 +111,8 @@
                                 "caching": "[variables('dataDisks')[copyIndex('dataDisks')].caching]",
                                 "writeAcceleratorEnabled": "[variables('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
                                 "managedDisk": {
-                                    "storageAccountType": "[variables('dataDisks')[copyIndex('dataDisks')].storageAccountType]"
+                                    "storageAccountType": "[variables('dataDisks')[copyIndex('dataDisks')].storageAccountType]",
+                                    "id": "[resourceId('Microsoft.Compute/disks/', concat(parameters('virtualMachineName'),length(parameters('DataDiskName'))))]"
                                 }
                             }
                         }
