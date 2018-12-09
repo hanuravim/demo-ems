@@ -5,10 +5,10 @@
         "location": {
             "value": "westus2"
         },
-        "virtualNetworkRG": {
+        "existingvirtualNetworkRG": {
             "value": "autoems"
         },
-        "virtualNetworkName": {
+        "existingvirtualNetworkName": {
             "value": "corevnet"
         },
         "subnetName": {
@@ -25,6 +25,15 @@
         },
         "virtualMachineSize": {
             "value": "Standard_DS4_v2"
+        },
+        "numberOfDataDisks": {
+            "value": 2
+        },
+        "DataDiskName": {
+            "value": ["ADI"]
+        },
+        "DataDiskSize": {
+            "value": 1023
         },
         "adminUsername": {
             "value": "adAdministrator"
