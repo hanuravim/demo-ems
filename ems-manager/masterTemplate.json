@@ -82,27 +82,6 @@
         "StorageAccountName": "emsmgrstr001",
         "StorageAccountType": "Standard_GRS",
         "StorageAccountKind": "Storage",
-        "dataDisks": [
-            {
-                "lun": 0,
-                "createOption": "attach",
-                "caching": "ReadOnly",
-                "writeAcceleratorEnabled": false,
-                "id": null,
-                "name": "[parameters('DataDiskName')]",
-                "storageAccountType": "[variables('StorageAccountType')]"
-            }
-        ],
-        "dataDiskResources": [
-            {
-                "name": "[parameters('DataDiskName')]",
-                "diskSizeGB": "[parameters('DataDiskSize')]",
-                "sku": "[variables('osDiskType')]",
-                "creationData": {
-                    "createOption": "empty"
-                }
-            }
-        ],
         "workspaceName": "emslogomsworksps",
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
@@ -113,7 +92,6 @@
         "diagnosticsExtensionName": "Microsoft.Insights.VMDiagnosticsSettings",
         "networkInterfaceTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/networkInterface.json')]",
         "networkSecurityGroupTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/networkSecurityGroup.json')]",
-        "DataDiskTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/DataDisk.json')]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/emsVM.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "diagnosticsTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/diagnostics.json')]",
@@ -213,6 +191,9 @@
                     },
                     "numberOfDataDisks": {
                         "value": "[parameters('numberOfDataDisks')]"
+                    },
+                    "DataDiskSize": {
+                        "value": "[parameters('DataDiskSize')]"
                     },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
