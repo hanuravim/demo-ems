@@ -30,6 +30,9 @@
         "numberOfDataDisks": {
             "type": "int"
         },
+        "DataDiskSize": {
+            "type": "int"
+        },
         "adminUsername": {
             "type": "string"
         },
@@ -48,16 +51,30 @@
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
         },
-        "StorageAccountType": "Premium_LRS",
         "dataDisks": [
             {
+                "diskSizeGB": "[parameters('DataDiskSize')]",
                 "lun": 0,
-                "createOption": "attach",
-                "caching": "ReadOnly",
-                "writeAcceleratorEnabled": false,
-                "id": null,
-                "name": "[parameters('DataDiskName')]",
-                "storageAccountType": "[variables('StorageAccountType')]"
+                "createOption": "Empty",
+                "name":"[parameters('DataDiskName')]"
+            },
+            {
+                "diskSizeGB": "[parameters('dataDiskSize')]",
+                "lun": 1,
+                "createOption": "Empty",
+                "name":"[parameters('DataDiskName')]"
+            },
+            {
+                "diskSizeGB": "[parameters('dataDiskSize')]",
+                "lun": 2,
+                "createOption": "Empty",
+                "name":"[parameters('DataDiskName')]"
+            },
+            {
+                "diskSizeGB": "[parameters('dataDiskSize')]",
+                "lun": 3,
+                "createOption": "Empty",
+                "name":"[parameters('DataDiskName')]"
             }
         ]
     },
@@ -100,23 +117,7 @@
                         "sku": "2016-Datacenter",
                         "version": "latest"
                     },
-                    "copy": [
-                        {
-                            "name": "DataDisks",
-                            "count": "[parameters('numberOfDataDisks')]",
-                            "input": {
-                                "lun": "[variables('dataDisks')[copyIndex('dataDisks')].lun]",
-                                "name": "[length(parameters('DataDiskName'))]",
-                                "createOption": "[variables('dataDisks')[copyIndex('dataDisks')].createOption]",
-                                "caching": "[variables('dataDisks')[copyIndex('dataDisks')].caching]",
-                                "writeAcceleratorEnabled": "[variables('dataDisks')[copyIndex('dataDisks')].writeAcceleratorEnabled]",
-                                "managedDisk": {
-                                    "storageAccountType": "[variables('dataDisks')[copyIndex('dataDisks')].storageAccountType]",
-                                    "id": "[coalesce(variables('dataDisks')[copyIndex('dataDisks')].id, if(equals(variables('dataDisks')[copyIndex('dataDisks')].name, json('null')), json('null'), resourceId('Microsoft.Compute/disks', variables('dataDisks')[copyIndex('dataDisks')].name)))]"
-                                }
-                            }
-                        }
-                    ]
+                    "dataDisks": "[take(variables('dataDisks'),parameters('numberOfDataDisks'))]"
                 },
                 "networkProfile": {
                     "networkInterfaces": [
