@@ -21,9 +21,9 @@
     "variables": {},
     "resources": [
         {
-            "name": "[concat(parameters('virtualMachineName'),'/', parameters('diagnosticsExtensionName'))]",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "apiVersion": "2017-12-01",
+            "name": "[concat(parameters('virtualMachineName'),'/diagnostics')]",
+            "apiVersion": "2015-06-15",
             "location": "[parameters('location')]",
             "properties": {
                 "publisher": "Microsoft.Azure.Diagnostics",
@@ -306,8 +306,10 @@
                     "storageAccountKey": "[listKeys(parameters('StorageAccountId'),'2015-06-15').key1]",
                     "storageAccountEndPoint": "https://core.windows.net/"
                 }
-            }
-           
+            },
+            "dependsOn": [
+                "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+            ]
         }
     ]
 }
