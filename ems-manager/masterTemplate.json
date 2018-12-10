@@ -68,7 +68,7 @@
             "defaultValue": ""
         },
         "DomainPassword": {
-            "type": "string",
+            "type": "securestring",
             "defaultValue": ""
         },
         "baseUri": {
