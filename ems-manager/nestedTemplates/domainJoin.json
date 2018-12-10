@@ -9,10 +9,10 @@
             "type": "string"
         },
         "DomainUserName": {
-            "type": "string"
+            "type": "securestring"
         },
         "DomainPassword": {
-            "type": "string"
+            "type": "securestring"
         }
     },
     "variables": {},
