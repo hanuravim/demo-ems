@@ -63,13 +63,17 @@
             "type": "securestring",
             "defaultvalue": ""
         },
-        "DomainUsername": {
+        "keyVaultName": {
             "type": "string",
-            "defaultValue": ""
+            "defaultValue": "efoqaKeyVault"
         },
-        "DomainPassword": {
-            "type": "securestring",
-            "defaultValue": ""
+        "DomainUserSecretName": {
+            "type": "string",
+            "defaultValue": "DomainJoinUser"
+        },
+        "DomainPasswordSecretName": {
+            "type": "string",
+            "defaultValue": "DomainJoinPassword"
         },
         "baseUri": {
             "type": "string",
@@ -257,10 +261,18 @@
                         "value": "[variables('domainName')]"
                     },
                     "DomainUserName": {
-                        "value": "[parameters('DomainUserName')]"
+                        "reference": {
+                            "keyVault": {
+                                "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                            },
+                            "secretName": "[parameters('DomainUserSecretName')]"
+                        }
                     },
                     "DomainPassword": {
-                        "value": "[parameters('DomainPassword')]"
+                        "keyVault": {
+                            "id": "[resourceId(subscription().subscriptionId, resourceGroup().name, 'Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+                        },
+                        "secretName": "[parameters('DomainPasswordSecretName')]"
                     }
                 }
             }
