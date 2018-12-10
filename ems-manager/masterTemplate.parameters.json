@@ -6,13 +6,13 @@
             "value": "westus2"
         },
         "existingvirtualNetworkRG": {
-            "value": "autoems"
+            "value": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
         },
         "existingvirtualNetworkName": {
-            "value": "corevnet"
+            "value": "efoqavn"
         },
         "subnetName": {
-            "value": "Subnet-1"
+            "value": "efoqacommonnet"
         },
         "virtualMachineName": {
             "value": "emsmgr001"
@@ -21,7 +21,7 @@
             "value": "No"
         },
         "privateIpAddress": {
-            "value": "10.0.0.20"
+            "value": ""
         },
         "virtualMachineSize": {
             "value": "Standard_DS4_v2"
@@ -41,11 +41,12 @@
         "adminPassword": {
             "value": ""
         },
-        "DomainUsername": {
-            "value": ""
+       
+        "DomainUserName": {
+            "value": "DomainJoinUser"
         },
         "DomainPassword": {
-            "value": ""
+            "value": "DomainJoinPassword"
         },
         "baseUri": {
             "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager"
