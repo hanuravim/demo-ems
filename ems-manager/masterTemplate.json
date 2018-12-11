@@ -154,30 +154,16 @@
             "tags": {}
         },
         {
-            "type": "Microsoft.Resources/deployments",
-            "name": "StorageAccount",
-            "apiVersion": "2017-05-10",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('StorageAccountTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "StorageAccountKind": {
-                        "value": "[variables('StorageAccountKind')]"
-                    },
-                    "StorageAccountType": {
-                        "value": "[variables('StorageAccountType')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
+            "name": "[variables('StorageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2018-07-01",
+            "location": "[parameters('location')]",
+            "properties": {},
+            "kind": "[variables('StorageAccountKind')]",
+            "sku": {
+                "name": "[variables('StorageAccountType')]"
+            },
+            "tags": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -185,7 +171,7 @@
             "apiVersion": "2017-05-10",
             "dependsOn": [
                 "[variables('networkInterfaceName')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
+                "[variables('StorageAccountName')]"
             ],
             "properties": {
                 "mode": "Incremental",
