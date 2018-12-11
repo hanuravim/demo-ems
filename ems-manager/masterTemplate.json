@@ -60,8 +60,7 @@
             "defaultvalue": "azadmin"
         },
         "adminPassword": {
-            "type": "securestring",
-            "defaultvalue": ""
+            "type": "securestring"
             
         },
         "DomainUserName": {
@@ -184,8 +183,8 @@
             "name": "virtualMachine",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "NetworkInterface",
-                "StorageAccount"
+                "[variables('networkInterfaceName')]",
+                "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]"
             ],
             "properties": {
                 "mode": "Incremental",
