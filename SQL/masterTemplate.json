@@ -8,27 +8,29 @@
         },
         "nodeIpAddresses": {
             "defaultValue": [
-                "10.0.0.10",
-                "10.0.0.11"
+                "10.7.0.6",
+                "10.7.0.7"
             ],
             "type": "array"
         },
         "clusterIpAddress": {
-            "defaultValue": "10.0.0.30",
+            "defaultValue": "10.7.0.8",
             "type": "string"
         },
         "adminUsername": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "azadmin"
         },
         "adminPassword": {
-            "type": "securestring"
+            "type": "securestring",
+            "defaultValue":""
         },
         "domainName": {
-            "defaultValue": "efoqa.local",
+            "defaultValue": "efoqa.com",
             "type": "string"
         },
         "sqlVmSize": {
-            "defaultValue": "Standard_DS2_v2",
+            "defaultValue": "Standard_DS2_v3",
             "allowedValues": [
                 "Standard E32-16s_v3",
                 "Standard_DS2_v3",
@@ -50,7 +52,7 @@
             "type": "string"
         },
         "numberOfDataDisks": {
-            "defaultValue": 2,
+            "defaultValue": 3,
             "type": "int"
         },
         "baseUri": {
@@ -60,10 +62,10 @@
     },
     "variables": {
         "diagStorageAccountName": "efoqasqlvmdiag",
-        "existingVirtualNetworkResourceGroup": "autoems",
-        "existingVirtualNetworkName": "corevnet",
-        "subnetName1": "Subnet-1",
-        "SqlVmPrefix": "SQL",
+        "existingVirtualNetworkResourceGroup": "GAV-WE2-NET-SB-PRD-NET-SRD-01",
+        "existingVirtualNetworkName": "efoqavn",
+        "subnetName1": "efoqacommonnet",
+        "SqlVmPrefix": "emsdrsql00",
         "workspaceName": "emslogomsworksps",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
@@ -94,7 +96,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "[concat('SqlVmDeploy', copyindex())]",
+            "name": "[concat('SqlVmDeploy', copyindex(1))]",
             "apiVersion": "2017-05-10",
             "copy": {
                 "name": "sqlvmloop",
@@ -111,7 +113,7 @@
                 },
                 "parameters": {
                     "vmName": {
-                        "value": "[concat(variables('SqlVmPrefix'), copyindex())]"
+                        "value": "[concat(variables('SqlVmPrefix'), copyindex(1))]"
                     },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
@@ -132,7 +134,7 @@
                         "value": "[variables('subnetName1')]"
                     },
                     "fixedPrivateIp": {
-                        "value": "[parameters('nodeIpAddresses')[copyIndex()]]"
+                        "value": "[parameters('nodeIpAddresses')[copyIndex(1)]]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
