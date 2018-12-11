@@ -24,7 +24,7 @@
         },
         "AvailabilitySet": {
             "type": "string",
-            "defaultvalue": "No",
+            "defaultvalue": "",
             "allowedValues": [
                 "Yes",
                 "No"
@@ -229,67 +229,6 @@
                     },
                     "StorageAccountType": {
                         "value": "[variables('StorageAccountType')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "domainJoin",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "virtualMachine"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('domainJoinTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "virtualMachineName": {
-                        "value": "[parameters('virtualMachineName')]"
-                    },
-                    "domainName": {
-                        "value": "[variables('domainName')]"
-                    },
-                    "DomainUserName": {
-                        "value": "[parameters('DomainUserName')]"
-                    },
-                    "DomainPassword": {
-                        "value": "[parameters('DomainPassword')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "diagnosticsExtension",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "virtualMachine"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('diagnosticsTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "virtualMachineName": {
-                        "value": "[parameters('virtualMachineName')]"
-                    },
-                    "diagnosticsExtensionName": {
-                        "value": "[variables('diagnosticsExtensionName')]"
-                    },
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "StorageAccountId": {
-                        "value": "[variables('StorageAccountId')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
