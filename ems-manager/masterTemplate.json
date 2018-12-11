@@ -4,11 +4,11 @@
     "parameters": {
         "location": {
             "type": "string",
-            "defaultvalue": "westus2"
+            "defaultvalue": "eastus"
         },
         "existingvirtualNetworkRG": {
             "type": "string",
-            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+            "defaultvalue": "autoems"
         },
         "existingvirtualNetworkName": {
             "type": "string",
