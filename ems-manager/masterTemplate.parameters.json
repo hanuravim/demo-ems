@@ -39,7 +39,7 @@
             "value": "adAdministrator"
         },
         "adminPassword": {
-            "value": ""
+            "value": "Testuser@123"
         },
         "DomainUserName": {
             "value": ""
