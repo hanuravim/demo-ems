@@ -31,7 +31,7 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('SqlVmPrefix'), copyindex(), '/configuresql', copyindex())]",
+            "name": "[concat(parameters('SqlVmPrefix'), copyindex(1), '/configuresql', copyindex(1))]",
             "apiVersion": "2016-03-30",
             "location": "[resourceGroup().location]",
             "copy": {
