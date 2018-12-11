@@ -24,7 +24,7 @@
         },
         "AvailabilitySet": {
             "type": "string",
-            "defaultvalue": "No",
+            
             "allowedValues": [
                 "Yes",
                 "No"
