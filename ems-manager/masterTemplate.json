@@ -77,10 +77,10 @@
     "variables": {
         "domainName": "efoqa.local",
         "osDiskType": "Premium_LRS",
-        "StorageAccountName": "emsmgrstr001010",
+        "StorageAccountName": "emsmgrstr001",
         "StorageAccountType": "Standard_GRS",
         "StorageAccountKind": "Storage",
-        "workspaceName": "emslogomsworksps010",
+        "workspaceName": "emslogomsworksps",
         "enableAcceleratedNetworking": true,
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
