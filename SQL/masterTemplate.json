@@ -25,6 +25,12 @@
             "type": "securestring",
             "defaultValue":""
         },
+        "DomainUserName": {
+            "type": "string"
+        },
+        "DomainPassword": {
+            "type": "securestring"
+        },
         "domainName": {
             "defaultValue": "efoqa.com",
             "type": "string"
@@ -201,10 +207,10 @@
                         "value": "[parameters('domainName')]"
                     },
                     "DomainUserName": {
-                        "value": "[parameters('adminUserName')]"
+                        "value": "[parameters('DomainUserName')]"
                     },
                     "DomainPassword": {
-                        "value": "[parameters('adminPassword')]"
+                        "value": "[parameters('DomainPassword')]"
                     }
                 }
             }
