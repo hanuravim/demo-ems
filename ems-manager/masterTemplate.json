@@ -24,7 +24,6 @@
         },
         "AvailabilitySet": {
             "type": "string",
-            
             "allowedValues": [
                 "Yes",
                 "No"
@@ -132,110 +131,8 @@
                     }
                 }
             }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "networkSecurityGroup",
-            "apiVersion": "2017-05-10",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('networkSecurityGroupTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "networkSecurityGroupName": {
-                        "value": "[variables('networkSecurityGroupName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "virtualMachine",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "NetworkInterface",
-                "StorageAccount"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('virtualMachineTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "virtualMachineName": {
-                        "value": "[parameters('virtualMachineName')]"
-                    },
-                    "AvailabilitySet": {
-                        "value": "[parameters('AvailabilitySet')]"
-                    },
-                    "networkInterfaceName": {
-                        "value": "[variables('networkInterfaceName')]"
-                    },
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "virtualMachineSize": {
-                        "value": "[parameters('virtualMachineSize')]"
-                    },
-                    "osDiskType": {
-                        "value": "[variables('osDiskType')]"
-                    },
-                    "DataDiskName": {
-                        "value": "[parameters('DataDiskName')]"
-                    },
-                    "numberOfDataDisks": {
-                        "value": "[parameters('numberOfDataDisks')]"
-                    },
-                    "DataDiskSize": {
-                        "value": "[parameters('DataDiskSize')]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('workspaceName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "StorageAccount",
-            "apiVersion": "2017-05-10",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('StorageAccountTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "StorageAccountKind": {
-                        "value": "[variables('StorageAccountKind')]"
-                    },
-                    "StorageAccountType": {
-                        "value": "[variables('StorageAccountType')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
-                    }
-                }
-            }
         }
+       
     ],
     "outputs": {
         "adminUsername": {
