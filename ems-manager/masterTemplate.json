@@ -24,7 +24,6 @@
         },
         "AvailabilitySet": {
             "type": "string",
-            "defaultvalue": "No",
             "allowedValues": [
                 "Yes",
                 "No"
@@ -100,31 +99,37 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/deployments",
-            "name": "networkSecurityGroup",
-            "apiVersion": "2017-05-10",
+            "name": "[variables('networkSecurityGroupName')]",
+            "type": "Microsoft.Network/networkSecurityGroups",
+            "apiVersion": "2018-08-01",
+            "location": "[parameters('location')]",
             "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('networkSecurityGroupTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "networkSecurityGroupName": {
-                        "value": "[variables('networkSecurityGroupName')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
+                "securityRules": [
+                    {
+                        "name": "HTTPS",
+                        "properties": {
+                            "priority": 300,
+                            "protocol": "Tcp",
+                            "access": "Allow",
+                            "direction": "Inbound",
+                            "sourceAddressPrefix": "*",
+                            "sourcePortRange": "*",
+                            "destinationAddressPrefix": "*",
+                            "destinationPortRange": "443"
+                        }
                     }
-                }
-            }
+                ]
+            },
+            "tags": {}
         },
         {
             "name": "[variables('networkInterfaceName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "apiVersion": "2017-06-01",
             "location": "[parameters('location')]",
-            "dependsOn": [],
+            "dependsOn": [
+                "[variables('networkSecurityGroupName')]"
+            ],
             "properties": {
                 "ipConfigurations": [
                     {
