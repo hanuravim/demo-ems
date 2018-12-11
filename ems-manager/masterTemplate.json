@@ -12,11 +12,11 @@
         },
         "existingvirtualNetworkName": {
             "type": "string",
-            "defaultvalue": "corevnet"
+            "defaultvalue": "efoqavn"
         },
         "subnetName": {
             "type": "string",
-            "defaultvalue": "Subnet-1"
+            "defaultvalue": "efoqacommonnet"
         },
         "virtualMachineName": {
             "type": "string",
@@ -35,7 +35,7 @@
         },
         "privateIpAddress": {
             "type": "string",
-            "defaultvalue": "10.0.0.6"
+            "defaultvalue": "10.7.0.8"
         },
         "virtualMachineSize": {
             "type": "string",
