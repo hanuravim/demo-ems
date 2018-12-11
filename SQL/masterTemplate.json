@@ -134,7 +134,7 @@
                         "value": "[variables('subnetName1')]"
                     },
                     "fixedPrivateIp": {
-                        "value": "[parameters('nodeIpAddresses')[copyIndex(1)]]"
+                        "value": "[parameters('nodeIpAddresses')[copyIndex()]]"
                     },
                     "diagStorageAccountName": {
                         "value": "[variables('diagStorageAccountName')]"
