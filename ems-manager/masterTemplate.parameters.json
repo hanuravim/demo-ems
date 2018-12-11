@@ -42,10 +42,10 @@
             "value": ""
         },
         "DomainUserName": {
-            "value": "DomainJoinUser"
+            "value": ""
         },
         "DomainPassword": {
-            "value": "DomainJoinPassword"
+            "value": ""
         },
         "baseUri": {
             "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager"
