@@ -24,6 +24,7 @@
         },
         "AvailabilitySet": {
             "type": "string",
+            "defaultvalue": "No",
             "allowedValues": [
                 "Yes",
                 "No"
@@ -102,7 +103,7 @@
             "name": "NetworkInterface",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "networkSecurityGroup"
+                
             ],
             "properties": {
                 "mode": "Incremental",
