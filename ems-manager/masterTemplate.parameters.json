@@ -21,7 +21,7 @@
             "value": "No"
         },
         "privateIpAddress": {
-            "value": ""
+            "value": "10.7.0.8"
         },
         "virtualMachineSize": {
             "value": "Standard_DS4_v2"
@@ -41,7 +41,6 @@
         "adminPassword": {
             "value": ""
         },
-       
         "DomainUserName": {
             "value": "DomainJoinUser"
         },
