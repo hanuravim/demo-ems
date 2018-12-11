@@ -8,7 +8,7 @@
         },
         "existingvirtualNetworkRG": {
             "type": "string",
-            "defaultvalue": "autoems"
+            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
         },
         "existingvirtualNetworkName": {
             "type": "string",
