@@ -24,7 +24,6 @@
         },
         "AvailabilitySet": {
             "type": "string",
-            "defaultvalue": "No",
             "allowedValues": [
                 "Yes",
                 "No"
@@ -83,6 +82,7 @@
         "StorageAccountType": "Standard_GRS",
         "StorageAccountKind": "Storage",
         "workspaceName": "emslogomsworksps",
+        "enableAcceleratedNetworking": true,
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "nsgId": "[resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', variables('networkSecurityGroupName'))]",
@@ -100,40 +100,51 @@
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "NetworkInterface",
+            "name": "networkSecurityGroup",
             "apiVersion": "2017-05-10",
-            "dependsOn": [
-                
-            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('networkInterfaceTemplate')]",
+                    "uri": "[variables('networkSecurityGroupTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "subnetRef": {
-                        "value": "[variables('subnetRef')]"
-                    },
-                    "networkInterfaceName": {
-                        "value": "[variables('networkInterfaceName')]"
-                    },
-                    "privateIpAddress": {
-                        "value": "[parameters('privateIpAddress')]"
-                    },
                     "networkSecurityGroupName": {
                         "value": "[variables('networkSecurityGroupName')]"
-                    },
-                    "nsgId": {
-                        "value": "[variables('nsgId')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
                     }
                 }
             }
+        },
+        {
+            "name": "[variables('networkInterfaceName')]",
+            "type": "Microsoft.Network/networkInterfaces",
+            "apiVersion": "2017-06-01",
+            "location": "[parameters('location')]",
+            "dependsOn": [],
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIpAddress": "[parameters('privateIpAddress')]",
+                            "privateIpAddressVersion": "IPv4",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[variables('subnetRef')]"
+                            }
+                        }
+                    }
+                ],
+                "enableAcceleratedNetworking": "[variables('enableAcceleratedNetworking')]",
+                "networkSecurityGroup": {
+                    "id": "[variables('nsgId')]"
+                }
+            },
+            "tags": {}
         }
-       
     ],
     "outputs": {
         "adminUsername": {
