@@ -36,12 +36,12 @@
             "type": "string"
         },
         "sqlVmSize": {
-            "defaultValue": "Standard_DS2_v3",
+            "defaultValue": "Standard_DS3_v2",
             "allowedValues": [
-                "Standard E32-16s_v3",
-                "Standard_DS2_v3",
-                "Standard_DS1_v2",
-                "Standard_DS2_v2"
+                "Standard_E32-16s_v3",
+                "Standard_DS3_v2",
+                "Standard_DS2_v2",
+                "Standard_DS1_v2"
             ],
             "type": "string"
         },
