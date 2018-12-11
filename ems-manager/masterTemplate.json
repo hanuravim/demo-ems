@@ -8,19 +8,19 @@
         },
         "existingvirtualNetworkRG": {
             "type": "string",
-            "defaultvalue": ""
+            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
         },
         "existingvirtualNetworkName": {
             "type": "string",
-            "defaultvalue": ""
+            "defaultvalue": "efoqacommonnet"
         },
         "subnetName": {
             "type": "string",
-            "defaultvalue": ""
+            "defaultvalue": "efoqacommonnet"
         },
         "virtualMachineName": {
             "type": "string",
-            "defaultvalue": ""
+            "defaultvalue": "emsmgr001"
         },
         "AvailabilitySet": {
             "type": "string",
@@ -35,11 +35,11 @@
         },
         "privateIpAddress": {
             "type": "string",
-            "defaultvalue": ""
+            "defaultvalue": "10.7.0.8"
         },
         "virtualMachineSize": {
             "type": "string",
-            "defaultvalue": ""
+            "defaultvalue": "Standard_DS4_v2"
         },
         "numberOfDataDisks": {
             "type": "int",
@@ -53,23 +53,23 @@
         },
         "DataDiskSize": {
             "type": "int",
-            "defaultvalue": 1023
+            "defaultvalue": 1024
         },
         "adminUsername": {
             "type": "string",
-            "defaultvalue": ""
+            "defaultvalue": "azadmin"
         },
         "adminPassword": {
-            "type": "securestring",
-            "defaultvalue": ""
+            "type": "securestring"
+            
         },
         "DomainUserName": {
-            "type": "string",
-            "defaultValue": ""
+            "type": "string"
+           
         },
         "DomainPassword": {
-            "type": "securestring",
-            "defaultValue": ""
+            "type": "securestring"
+            
         },
         "baseUri": {
             "type": "string",
