@@ -75,7 +75,7 @@
         }
     },
     "variables": {
-        "domainName": "efoqa.local",
+        "domainName": "efoqa.com",
         "osDiskType": "Premium_LRS",
         "StorageAccountName": "emsmgrstr001",
         "StorageAccountType": "Standard_GRS",
