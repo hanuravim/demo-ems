@@ -185,7 +185,7 @@
             "apiVersion": "2017-05-10",
             "dependsOn": [
                 "[variables('networkInterfaceName')]",
-                "[resourceId('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
             ],
             "properties": {
                 "mode": "Incremental",
