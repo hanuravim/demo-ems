@@ -37,7 +37,8 @@
             "type": "string"
         },
         "adminPassword": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue": ""
         },
         "workspaceName": {
             "type": "string"
