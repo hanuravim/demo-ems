@@ -60,7 +60,8 @@
             "defaultvalue": "azadmin"
         },
         "adminPassword": {
-            "type": "securestring"
+            "type": "securestring",
+            "defaultvalue": ""
             
         },
         "DomainUserName": {
