@@ -14,10 +14,10 @@
         "SQLPrepareModuleURL": {
             "type": "string"
         },
-        "adminPassword": {
+        "DomainPassword": {
             "type": "securestring"
         },
-        "adminUserName": {
+        "DomainUserName": {
             "type": "string"
         },
         "clusterIpAddress": {
@@ -51,8 +51,8 @@
                     "properties": {
                         "domainName": "[parameters('domainName')]",
                         "adminCreds": {
-                            "userName": "[parameters('adminUserName')]",
-                            "password": "privateSettingsRef:adminPassword"
+                            "userName": "[parameters('DomainUserName')]",
+                            "password": "privateSettingsRef:[parameters('DomainPassword')]"
                         },
                         "ClusterName": "SQLClusterAG",
                         "ClusterOwnerNode": "[concat(parameters('SqlVmPrefix'), '0')]",
@@ -61,7 +61,7 @@
                 },
                 "protectedSettings": {
                     "items": {
-                        "adminPassword": "[parameters('adminPassword')]"
+                        "adminPassword": "[parameters('DomainPassword')]"
                     }
                 }
             }
