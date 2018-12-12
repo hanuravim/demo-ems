@@ -67,7 +67,7 @@
         }
     },
     "variables": {
-        "diagStorageAccountName": "efoqasqlvmdiag",
+        "diagStorageAccountName": "efoqasqlvmdiag001",
         "existingVirtualNetworkResourceGroup": "GAV-WE2-NET-SB-PRD-NET-SRD-01",
         "existingVirtualNetworkName": "efoqavn",
         "subnetName1": "efoqacommonnet",
