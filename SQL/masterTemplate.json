@@ -270,11 +270,11 @@
                     "SQLPrepareModuleURL": {
                         "value": "[variables('SQLPrepareModuleURL')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "DomainPassword": {
+                        "value": "[parameters('DomainPassword')]"
                     },
-                    "adminUserName": {
-                        "value": "[parameters('adminUserName')]"
+                    "DomainUserName": {
+                        "value": "[parameters('DomainUserName')]"
                     },
                     "clusterIpAddress": {
                         "value": "[parameters('clusterIpAddress')]"
