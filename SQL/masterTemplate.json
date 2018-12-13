@@ -68,7 +68,7 @@
     },
     "variables": {
         "diagStorageAccountName": "efoqasqlvmdiag0001",
-        "existingVirtualNetworkResourceGroup": "autoems",
+        "existingVirtualNetworkResourceGroup": "hanu-poc-vnetrg",
         "existingVirtualNetworkName": "corevnet",
         "subnetName1": "subnet-1",
         "SqlVmPrefix": "emsdrsql00",
