@@ -8,13 +8,13 @@
         },
         "nodeIpAddresses": {
             "defaultValue": [
-                "10.7.0.6",
-                "10.7.0.7"
+                "10.0.0.7",
+                "10.0.0.8"
             ],
             "type": "array"
         },
         "clusterIpAddress": {
-            "defaultValue": "10.7.0.8",
+            "defaultValue": "10.0.0.9",
             "type": "string"
         },
         "adminUsername": {
@@ -32,11 +32,11 @@
             "type": "securestring"
         },
         "domainName": {
-            "defaultValue": "efoqa.com",
+            "defaultValue": "efoqa.local",
             "type": "string"
         },
         "sqlVmSize": {
-            "defaultValue": "Standard_DS3_v2",
+            "defaultValue": "Standard_DS1_v2",
             "allowedValues": [
                 "Standard_E32-16s_v3",
                 "Standard_DS3_v2",
@@ -68,9 +68,9 @@
     },
     "variables": {
         "diagStorageAccountName": "efoqasqlvmdiag0001",
-        "existingVirtualNetworkResourceGroup": "GAV-WE2-NET-SB-PRD-NET-SRD-01",
-        "existingVirtualNetworkName": "efoqavn",
-        "subnetName1": "efoqacommonnet",
+        "existingVirtualNetworkResourceGroup": "autoems",
+        "existingVirtualNetworkName": "corevnet",
+        "subnetName1": "subnet-1",
         "SqlVmPrefix": "emsdrsql00",
         "workspaceName": "emslogomsworksps",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
