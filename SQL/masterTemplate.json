@@ -67,7 +67,7 @@
         }
     },
     "variables": {
-        "diagStorageAccountName": "efoqasqlvmdiag0001",
+        "diagStorageAccountName": "efoqasqlvmdiag010",
         "existingVirtualNetworkResourceGroup": "hanu-poc-vnetrg",
         "existingVirtualNetworkName": "corevnet",
         "subnetName1": "subnet-1",
