@@ -220,9 +220,7 @@
             "name": "omsAgent",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "sqlvmloop",
-                "SqlIaaSExtension",
-                "domainJoin"
+                "sqlvmloop"
             ],
             "properties": {
                 "mode": "Incremental",
