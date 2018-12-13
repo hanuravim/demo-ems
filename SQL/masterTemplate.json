@@ -8,13 +8,13 @@
         },
         "nodeIpAddresses": {
             "defaultValue": [
-                "10.0.0.7",
-                "10.0.0.8"
+                "172.22.0.5",
+                "172.22.0.6"
             ],
             "type": "array"
         },
         "clusterIpAddress": {
-            "defaultValue": "10.0.0.9",
+            "defaultValue": "172.22.0.7",
             "type": "string"
         },
         "adminUsername": {
@@ -69,10 +69,10 @@
     "variables": {
         "diagStorageAccountName": "efoqasqlvmdiag010",
         "existingVirtualNetworkResourceGroup": "hanu-poc-vnetrg",
-        "existingVirtualNetworkName": "corevnet",
-        "subnetName1": "subnet-1",
+        "existingVirtualNetworkName": "hanu-poc-vnet",
+        "subnetName1": "common",
         "SqlVmPrefix": "emsdrsql00",
-        "workspaceName": "emslogomsworksps",
+        "workspaceName": "emslogomsworksps001",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
         "SqlIaaSExtension": "[concat(parameters('baseUri'),'/nestedTemplates/SqlIaaSExtension.json')]",
