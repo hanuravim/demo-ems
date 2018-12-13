@@ -52,7 +52,7 @@
                         "domainName": "[parameters('domainName')]",
                         "adminCreds": {
                             "userName": "[parameters('DomainUserName')]",
-                            "password": "privateSettingsRef:[parameters('DomainPassword')]"
+                            "password": "privateSettingsRef:adminPassword"
                         },
                         "ClusterName": "SQLClusterAG",
                         "ClusterOwnerNode": "[concat(parameters('SqlVmPrefix'), '0')]",
