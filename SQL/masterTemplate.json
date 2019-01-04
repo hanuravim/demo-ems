@@ -8,13 +8,13 @@
         },
         "nodeIpAddresses": {
             "defaultValue": [
-                "172.22.0.5",
-                "172.22.0.6"
+                "10.5.0.27",
+                "10.5.0.28"
             ],
             "type": "array"
         },
         "clusterIpAddress": {
-            "defaultValue": "172.22.0.7",
+            "defaultValue": "10.5.0.29",
             "type": "string"
         },
         "adminUsername": {
@@ -32,7 +32,7 @@
             "type": "securestring"
         },
         "domainName": {
-            "defaultValue": "efoqa.local",
+            "defaultValue": "drefoqa.com",
             "type": "string"
         },
         "sqlVmSize": {
@@ -68,11 +68,11 @@
     },
     "variables": {
         "diagStorageAccountName": "efoqasqlvmdiag010",
-        "existingVirtualNetworkResourceGroup": "hanu-poc-vnetrg",
-        "existingVirtualNetworkName": "hanu-poc-vnet",
-        "subnetName1": "common",
-        "SqlVmPrefix": "emsdrsql00",
-        "workspaceName": "emslogomsworksps001",
+        "existingVirtualNetworkResourceGroup": "fa-dr-poc",
+        "existingVirtualNetworkName": "DREFOQAPOC",
+        "subnetName1": "default",
+        "SqlVmPrefix": "hanutestsql00",
+        "workspaceName": "fa-log-analytics",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
         "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
         "SqlIaaSExtension": "[concat(parameters('baseUri'),'/nestedTemplates/SqlIaaSExtension.json')]",
