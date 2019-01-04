@@ -7,21 +7,21 @@
         },
         "nodeIpAddresses": {
             "value": [
-                "10.0.0.10",
-                "10.0.0.11"
+                "10.5.0.27",
+                "10.5.0.28"
             ]
         },
         "clusterIpAddress": {
-            "value": "10.0.0.30"
+            "value": "10.5.0.29"
         },
         "adminUsername": {
-            "value": "adAdministrator"
+            "value": "azadmin"
         },
         "adminPassword": {
             "value": ""
         },
         "domainName": {
-            "value": "efoqa.local"
+            "value": "drefoqa.com"
         },
         "sqlVmSize": {
             "value": "Standard_DS1_v2"
