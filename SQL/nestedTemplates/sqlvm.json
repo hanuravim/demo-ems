@@ -153,7 +153,7 @@
             "resources": [
                 {
                     "type": "extensions",
-                    "name": "diskPartExtension'",
+                    "name": "diskPartExtension",
                     "apiVersion": "2017-03-30",
                     "location": "[resourceGroup().location]",
                     "dependsOn": [
