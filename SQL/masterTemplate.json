@@ -162,29 +162,6 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "SqlIaaSExtension",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "sqlvmloop"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('SqlIaaSExtension')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "sqlNodeCount": {
-                        "value": "[parameters('sqlNodeCount')]"
-                    },
-                    "SqlVmPrefix": {
-                        "value": "[variables('SqlVmPrefix')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
             "name": "domainJoin",
             "apiVersion": "2017-05-10",
             "dependsOn": [
