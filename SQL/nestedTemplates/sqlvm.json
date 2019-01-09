@@ -56,6 +56,9 @@
         },
         "diagStorageAccountName": {
             "type": "string"
+        },
+        "rglocation": {
+            "type": "string"
         }
     },
     "variables": {
@@ -89,7 +92,7 @@
         {
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('rgLocation')]",
             "apiVersion": "2017-06-01",
             "properties": {
                 "ipConfigurations": [
@@ -110,7 +113,7 @@
             "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
             "name": "[parameters('vmName')]",
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('rgLocation')]",
             "dependsOn": [
                 "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
             ],
@@ -155,7 +158,7 @@
                     "type": "extensions",
                     "name": "diskPartExtension",
                     "apiVersion": "2017-03-30",
-                    "location": "[resourceGroup().location]",
+                    "location": "[parameters('rgLocation')]",
                     "dependsOn": [
                         "[parameters('vmName')]"
                     ],
