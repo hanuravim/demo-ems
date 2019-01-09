@@ -6,7 +6,7 @@
             "type": "string"
         },
         "rgCount": {
-            "type": "string"
+            "type": "int"
         },
         "Application_Acronym": {
             "type": "string"
