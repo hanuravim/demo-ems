@@ -1,0 +1,44 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgLocation": {
+            "type": "string"
+        },
+        "rgCount": {
+            "type": "string"
+        },
+        "Application_Acronym": {
+            "type": "string"
+        },
+        "Tier_Name": {
+            "type": "string"
+        },
+        "Environment_Category": {
+            "type": "string"
+        },
+        "Role": {
+            "type": "string"
+        },
+        "Tenant": {
+            "type": "string"
+        },
+        "Custom": {
+            "type": "string"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('rgLocation')]",
+            "name": "[toupper(concat('GAV-',replace(parameters('rgLocation'),'CentralUS','CU'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
+            "copy": {
+                "name": "sqlvmloop",
+                "count": "[parameters('rgCount')]"
+            },
+            "properties": {}
+        }
+    ]
+}
