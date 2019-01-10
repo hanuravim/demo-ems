@@ -1,0 +1,170 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgCount": {
+            "type": "int"
+        },
+        "rglocation": {
+            "type": "string"
+        },
+        "Application_Acronym": {
+            "type": "string"
+        },
+        "Tier_Name": {
+            "type": "string"
+        },
+        "Environment_Category": {
+            "type": "string"
+        },
+        "Role": {
+            "type": "string"
+        },
+        "Tenant": {
+            "type": "string"
+        },
+        "Custom": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string",
+            "defaultvalue": "westus2"
+        },
+        "existingvirtualNetworkRG": {
+            "type": "string",
+            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+        },
+        "existingvirtualNetworkName": {
+            "type": "string",
+            "defaultvalue": "efoqavn"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultvalue": "efoqacommonnet"
+        },
+        "virtualMachineName": {
+            "type": "string",
+            "defaultvalue": "emsmgr001"
+        },
+        "AvailabilitySet": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether the VM should be in AvailabilitySet or not."
+            }
+        },
+        "privateIpAddress": {
+            "type": "string",
+            "defaultvalue": "10.7.0.8"
+        },
+        "virtualMachineSize": {
+            "type": "string",
+            "defaultvalue": "Standard_DS4_v2"
+        },
+        "numberOfDataDisks": {
+            "type": "int",
+            "defaultvalue": 1
+        },
+        "DataDiskName": {
+            "type": "array",
+            "defaultvalue": [
+                "ADI"
+            ]
+        },
+        "DataDiskSize": {
+            "type": "int",
+            "defaultvalue": 1024
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultvalue": "azadmin"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultvalue": ""
+        },
+        "DomainUserName": {
+            "type": "string"
+        },
+        "DomainPassword": {
+            "type": "securestring"
+        },
+        "baseUri": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager"
+        }
+    },
+    "variables": {
+        "domainName": "efoqa.com",
+        "osDiskType": "Premium_GRS",
+        "StorageAccountName": "emsmgrstr001",
+        "StorageAccountType": "Standard_GRS",
+        "StorageAccountKind": "Storage",
+        "omsWorkspaceResourceGroup": "GAV-WE2-NET-SB-PRD-NET-SRD-01",
+        "workspaceName": "emsLogAnalytics",
+        "enableAcceleratedNetworking": true,
+        "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
+        "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
+        "vnetId": "[resourceId(parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
+        "StorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/emsVM.json')]",
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/domainJoin.json')]",
+        "rgTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/ResourceGroup.json')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "rgdeploy",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('rgLocation')]",
+            "copy": {
+                "name": "rgloop",
+                "count": "[parameters('rgCount')]"
+            },
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('rgTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "rgLocation": {
+                        "value": "[parameters('rgLocation')]"
+                    },
+                    "rgCount": {
+                        "value": "[parameters('rgCount')]"
+                    },
+                    "Application_Acronym": {
+                        "value": "[parameters('Application_Acronym')]"
+                    },
+                    "Tier_Name": {
+                        "value": "[parameters('Tier_Name')]"
+                    },
+                    "Environment_Category": {
+                        "value": "[parameters('Environment_Category')]"
+                    },
+                    "Role": {
+                        "value": "[parameters('Role')]"
+                    },
+                    "Tenant": {
+                        "value": "[parameters('Tenant')]"
+                    },
+                    "Custom": {
+                        "value": "[parameters('Custom')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        }
+    }
+}
