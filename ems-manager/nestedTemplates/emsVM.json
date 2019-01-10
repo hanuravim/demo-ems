@@ -50,8 +50,6 @@
         }
     },
     "variables": {
-        "scriptStorageAccountName":"dremsblobstore",
-        "AzureFilesStorageAccountResourceGroup":"fa-dr-poc",
         "availabilitySetName": "emsmgravset",
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
@@ -183,12 +181,12 @@
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
-                                "https://dremsblobstore.blob.core.windows.net/scripts/azr file share.ps1"
+                                "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/nestedTemplates/AzFileShare.ps1"
                             ]
                         },
                         "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','azr file share.ps1 -SAName ',variables('scriptStorageAccountName'),'  -SAKey ', listKeys(resourceId(variables('AzureFilesStorageAccountResourceGroup'),'Microsoft.Storage/storageAccounts', variables('scriptStorageAccountName')), '2015-06-15').key1)]" 
-                          }
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','AzFileShare.ps1 -SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2015-06-15').key1)]"
+                        }
                     }
                 }
             ],
