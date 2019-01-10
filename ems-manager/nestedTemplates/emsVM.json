@@ -51,6 +51,7 @@
     },
     "variables": {
         "scriptStorageAccountName":"dremsblobstore",
+        "AzureFilesStorageAccountResourceGroup":"fa-dr-poc",
         "availabilitySetName": "emsmgravset",
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
@@ -186,8 +187,7 @@
                             ]
                         },
                         "protectedSettings": {
-                            "storageAccountName": "[variables('scriptStorageAccountName')]",
-                            "storageAccountKey": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('scriptStorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('scriptStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','azr file share.ps1 -SAName ',variables('scriptStorageAccountName'),'  -SAKey ', listKeys(resourceId(variables('AzureFilesStorageAccountResourceGroup'),'Microsoft.Storage/storageAccounts', variables('scriptStorageAccountName')), '2015-06-15').key1)]" 
                           }
                     }
                 }
