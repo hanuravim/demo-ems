@@ -38,7 +38,9 @@
         },
         "adminPassword": {
             "type": "string"
-            
+        },
+        "omsWorkspaceResourceGroup": {
+            "type": "string"
         },
         "workspaceName": {
             "type": "string"
@@ -61,18 +63,17 @@
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
                 "lun": 1,
-                "createOption": "Empty",
-                
+                "createOption": "Empty"
             },
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
                 "lun": 2,
-                "createOption": "Empty",
+                "createOption": "Empty"
             },
             {
                 "diskSizeGB": "[parameters('dataDiskSize')]",
                 "lun": 3,
-                "createOption": "Empty",
+                "createOption": "Empty"
             }
         ]
     },
@@ -155,10 +156,36 @@
                         "typeHandlerVersion": "1.0",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "workspaceId": "[reference(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
                         },
                         "protectedSettings": {
-                            "workspaceKey": "[listKeys(resourceId('Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
+                        }
+                    }
+                },
+                {
+                    "name": "AzureFileShares",
+                    "type": "extensions",
+                    "location": "[parameters('location')]",
+                    "apiVersion": "2016-03-30",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
+                    ],
+                    "tags": {
+                        "displayName": "AzureFileShares"
+                    },
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.4",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "https://dremsblobstore.blob.core.windows.net/scripts/azr file share.ps1"
+                            ]
+                        },
+                        "protectedSettings": {
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','azr file share.ps1 -SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2015-06-15').key1)]"
                         }
                     }
                 }
