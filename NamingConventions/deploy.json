@@ -88,10 +88,12 @@
             "defaultvalue": ""
         },
         "DomainUserName": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue": ""
         },
         "DomainPassword": {
-            "type": "securestring"
+            "type": "securestring",
+            "defaultvalue": ""
         },
         "baseUri": {
             "type": "string",
