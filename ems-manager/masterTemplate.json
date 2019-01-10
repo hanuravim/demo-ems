@@ -80,7 +80,8 @@
         "StorageAccountName": "emsmgrstr001",
         "StorageAccountType": "Standard_GRS",
         "StorageAccountKind": "Storage",
-        "workspaceName": "emslogomsworksps",
+        "omsWorkspaceResourceGroup": "GAV-WE2-NET-SB-PRD-NET-SRD-01",
+        "workspaceName": "emsLogAnalytics",
         "enableAcceleratedNetworking": true,
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
@@ -88,12 +89,7 @@
         "vnetId": "[resourceId(parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
         "StorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "diagnosticsExtensionName": "Microsoft.Insights.VMDiagnosticsSettings",
-        "networkInterfaceTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/networkInterface.json')]",
-        "networkSecurityGroupTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/networkSecurityGroup.json')]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/emsVM.json')]",
-        "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
-        "diagnosticsTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/diagnostics.json')]",
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/domainJoin.json')]"
     },
     "resources": [
@@ -210,6 +206,9 @@
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     },
+                    "omsWorkspaceResourceGroup": {
+                        "value": "[variables('omsWorkspaceResourceGroup')]"
+                    },
                     "workspaceName": {
                         "value": "[variables('workspaceName')]"
                     },
@@ -244,38 +243,6 @@
                     },
                     "DomainPassword": {
                         "value": "[parameters('DomainPassword')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "diagnosticsExtension",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "virtualMachine"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('diagnosticsTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "virtualMachineName": {
-                        "value": "[parameters('virtualMachineName')]"
-                    },
-                    "diagnosticsExtensionName": {
-                        "value": "[variables('diagnosticsExtensionName')]"
-                    },
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "StorageAccountId": {
-                        "value": "[variables('StorageAccountId')]"
-                    },
-                    "location": {
-                        "value": "[parameters('location')]"
                     }
                 }
             }
