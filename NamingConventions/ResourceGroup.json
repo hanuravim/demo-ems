@@ -32,9 +32,10 @@
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
+            "location":"[parameters('rgLocation')]",
             "name": "[toupper(concat('GAV-',replace(parameters('rgLocation'),'CentralUS','CU'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
             "copy": {
-                "name": "sqlvmloop",
+                "name": "rgloop",
                 "count": "[parameters('rgCount')]"
             },
             "properties": {}
