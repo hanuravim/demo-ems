@@ -167,7 +167,7 @@
                     "name": "AzureFileShares",
                     "type": "extensions",
                     "location": "[parameters('location')]",
-                    "apiVersion": "2016-03-30",
+                    "apiVersion": "2017-03-30",
                     "dependsOn": [
                         "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
                     ],
@@ -177,16 +177,14 @@
                     "properties": {
                         "publisher": "Microsoft.Compute",
                         "type": "CustomScriptExtension",
-                        "typeHandlerVersion": "1.4",
+                        "typeHandlerVersion": "1.9",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
                             "fileUris": [
                                 "https://dremsblobstore.blob.core.windows.net/scripts/azr file share.ps1"
                             ]
                         },
-                        "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','azr file share.ps1 -SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2015-06-15').key1)]"
-                        }
+                        "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File azr file share.ps1"
                     }
                 }
             ],
