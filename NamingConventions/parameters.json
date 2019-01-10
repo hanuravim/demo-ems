@@ -1,0 +1,30 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "rgLocation": {
+            "value": "westus2"
+        },
+        "rgCount": {
+            "value": 1
+        },
+        "Application_Acronym": {
+            "value": "EMS"
+        },
+        "Tier_Name": {
+            "value": "TR"
+        },
+        "Environment_Category": {
+            "value": "DEV"
+        },
+        "Role": {
+            "value": "WEB"
+        },
+        "Tenant": {
+            "value": "SRD"
+        },
+        "Custom": {
+            "value": "EFOQA"
+        }
+    }
+}
