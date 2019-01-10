@@ -50,6 +50,7 @@
         }
     },
     "variables": {
+        "scriptStorageAccountName":"dremsblobstore",
         "availabilitySetName": "emsmgravset",
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
@@ -184,7 +185,10 @@
                                 "https://dremsblobstore.blob.core.windows.net/scripts/azr file share.ps1"
                             ]
                         },
-                        "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File azr file share.ps1"
+                        "protectedSettings": {
+                            "storageAccountName": "[variables('scriptStorageAccountName')]",
+                            "storageAccountKey": "[Concat('DefaultEndpointsProtocol=https;AccountName=',variables('scriptStorageAccountName'),';AccountKey=',listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('scriptStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value)]"
+                          }
                     }
                 }
             ],
