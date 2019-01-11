@@ -2,10 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "rgCount": {
+        "ResourceGroupCount": {
             "value": 1
         },
-        "rglocation": {
+        "ResourceGroupLocation": {
             "value": "westus2"
         },
         "Application_Acronym": {
@@ -54,10 +54,21 @@
             "value": 2
         },
         "DataDiskName": {
-            "value": ["ADI"]
+            "value": [
+                "ADI"
+            ]
         },
         "DataDiskSize": {
             "value": 1024
+        },
+        "omsWorkspaceResourceGroup": {
+            "value": "emsSharedResources"
+        },
+        "omsWorkspaceName":{
+            "value": "emsLogAnalytiks"
+        },
+        "omsWorkspaceLocation":{
+            "value": "WestUS2"
         },
         "adminUsername": {
             "value": "azadmin"
