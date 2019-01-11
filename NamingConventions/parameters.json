@@ -3,7 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "rgCount": {
-            "value": 2
+            "value": 1
         },
         "rglocation": {
             "value": "westus2"
