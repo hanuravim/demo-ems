@@ -2,33 +2,64 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "rgCount": {
+        "ResourceGroupCount": {
             "type": "int"
         },
-        "rglocation": {
-            "type": "string"
+        "ResourceGroupLocation": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
+            },
+            "defaultValue": "WUS2"
         },
         "Application_Acronym": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. nxt (Next Net), ems"
+            },
+            "defaultValue": "EMS"
         },
         "Tier_Name": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 2,
+            "metadata": {
+                "description": "2 chars E.g. Sanbox (SB), Live (LI) and training (TR)"
+            },
+            "defaultValue": "SB"
         },
         "Environment_Category": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 char. E.g.  DEV, QA, UAT and PRD"
+            },
+            "defaultValue": "DEV"
         },
         "Role": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
+            },
+            "defaultValue": "GEN"
         },
         "Tenant": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars  Shared (SRD), Tenant Acronym)"
+            },
+            "defaultValue": "SRD"
         },
         "Custom": {
-            "type": "string"
-        },
-        "location": {
             "type": "string",
-            "defaultvalue": "westus2"
+            "maxLength": 8,
+            "metadata": {
+                "description": "(Product Specific) Space. 8 chars (OPTIONAL)"
+            },
+            "defaultValue": ""
         },
         "existingvirtualNetworkRG": {
             "type": "string",
@@ -79,6 +110,18 @@
             "type": "int",
             "defaultvalue": 1024
         },
+        "omsWorkspaceResourceGroup": {
+            "type": "string",
+            "defaultvalue": "emssharedresources"
+        },
+        "omsWorkspaceName": {
+            "type": "string",
+            "defaultvalue": "emsLogAnalytiks"
+        },
+        "omsWorkspaceLocation": {
+            "type": "string",
+            "defaultvalue": "WestUS2"
+        },
         "adminUsername": {
             "type": "string",
             "defaultvalue": "azadmin"
@@ -103,16 +146,15 @@
     "variables": {
         "domainName": "efoqa.com",
         "osDiskType": "Premium_GRS",
-        "StorageAccountName": "emsmgrstr001",
+        "StorageAccountName": "emsmgrstr00101",
         "StorageAccountType": "Standard_GRS",
         "StorageAccountKind": "Storage",
-        "omsWorkspaceResourceGroup": "GAV-WE2-NET-SB-PRD-NET-SRD-01",
-        "workspaceName": "emsLogAnalytics",
         "enableAcceleratedNetworking": true,
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "vnetId": "[concat(subscription().id, '/resourceGroups/', parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/nsg.json')]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/emsVM.json')]",
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]",
         "rgTemplateURL": "[concat(parameters('baseUri'),'/NamingConventions/ResourceGroup.json')]"
@@ -120,10 +162,9 @@
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "ResourceGroupDeploy",
+            "name": "ResourceGroup",
             "apiVersion": "2018-05-01",
-            "location": "[parameters('rgLocation')]",
-            
+            "location": "[parameters('ResourceGroupLocation')]",
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -131,11 +172,11 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "rgLocation": {
-                        "value": "[parameters('rgLocation')]"
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
                     },
-                    "rgCount": {
-                        "value": "[parameters('rgCount')]"
+                    "ResourceGroupCount": {
+                        "value": "[parameters('ResourceGroupCount')]"
                     },
                     "Application_Acronym": {
                         "value": "[parameters('Application_Acronym')]"
@@ -158,6 +199,7 @@
                 }
             }
         }
+       
     ],
     "outputs": {
         "adminUsername": {
