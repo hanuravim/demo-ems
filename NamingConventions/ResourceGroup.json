@@ -9,6 +9,9 @@
                 "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
             }
         },
+        "shortLocation": {
+            "type": "string"
+        },
         "ResourceGroupCount": {
             "type": "int"
         },
@@ -37,7 +40,7 @@
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location":"[parameters('ResourceGroupLocation')]",
-            "name": "[toupper(concat('GAV-',parameters('ResourceGroupLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
+            "name": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
             "copy": {
                 "name": "rgloop",
                 "count": "[parameters('ResourceGroupCount')]"
