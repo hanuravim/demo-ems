@@ -42,11 +42,14 @@
         "omsWorkspaceResourceGroup": {
             "type": "string"
         },
-        "workspaceName": {
+        "omsWorkspaceName": {
             "type": "string"
         },
-        "location": {
+        "omsworkspacelocation": {
             "type": "string"
+        },
+        "location":{
+            "type":"string"
         }
     },
     "variables": {
@@ -146,7 +149,7 @@
                     "type": "extensions",
                     "name": "Microsoft.EnterpriseCloud.Monitoring",
                     "apiVersion": "2018-06-01",
-                    "location": "[parameters('location')]",
+                    "location": "[parameters('omsworkspacelocation')]",
                     "dependsOn": [
                         "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
                     ],
