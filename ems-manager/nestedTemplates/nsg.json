@@ -2,17 +2,49 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "Network security group name": {
-            "type": "string"
+        "nsgCount": {
+            "type": "int"
+        },
+        "Application_Acronym": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. nxt (Next Net), ems"
+            }
+        },
+        "Environment_Category": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 char. E.g.  dev , qa , uat and prd"
+            }
+        },
+        "Azure_Service": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars   e.g. Disk (dsk), Blob (blb), Storage Account (str) blb  etc"
+            }
+        },
+        "Custom": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars"
+            }
         }
     },
     "variables": {},
-    "resources":
+    "resources": [
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[parameters ('networkSecurityGroupName')]",
-            "location": "[resourceGroup (). location]",
-            "apiVersion": "2017-03-01",
+            "name": "[tolower(concat('GAV-',resourcegroup().location,'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('Azure_Service'),'-',parameters('Custom'),copyindex(1)))]",
+            "location": "[resourcegroup().location]",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                "name": "nsgloop",
+                "count": "[parameters('nsgCount')]"
+            },
             "properties": {
                 "securityRules": [
                     {
@@ -26,11 +58,11 @@
                             "destinationAddressPrefix": "*",
                             "access": "Deny",
                             "priority": 100,
-                            "direction": "inbound"
+                            "direction": "Inbound"
                         }
                     }
                 ]
             }
-        }  
+        }
     ]
-}    
+}
