@@ -113,20 +113,17 @@
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "vnetId": "[concat(subscription().id, '/resourceGroups/', parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
-        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/emsVM.json')]",
-        "domainJoinTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/domainJoin.json')]",
-        "rgTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/ResourceGroup.json')]"
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/emsVM.json')]",
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]",
+        "rgTemplateURL": "[concat(parameters('baseUri'),'/NamingConventions/ResourceGroup.json')]"
     },
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
             "name": "ResourceGroupDeploy",
             "apiVersion": "2018-05-01",
-            "location": "[parameters('rgLocation')]",
-            "copy": {
-                "name": "rgloop",
-                "count": "[parameters('rgCount')]"
-            },
+            
+            
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
