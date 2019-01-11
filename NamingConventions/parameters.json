@@ -26,9 +26,6 @@
         "Custom": {
             "value": "EFOQA"
         },
-        "location": {
-            "value": "westus2"
-        },
         "existingvirtualNetworkRG": {
             "value": "emsSharedResources"
         },
@@ -64,10 +61,10 @@
         "omsWorkspaceResourceGroup": {
             "value": "emsSharedResources"
         },
-        "omsWorkspaceName":{
+        "omsWorkspaceName": {
             "value": "emsLogAnalytiks"
         },
-        "omsWorkspaceLocation":{
+        "omsWorkspaceLocation": {
             "value": "WestUS2"
         },
         "adminUsername": {
