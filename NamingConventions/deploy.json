@@ -111,7 +111,7 @@
         "enableAcceleratedNetworking": true,
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
-        "vnetId": "[resourceId(parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
+        "vnetId": "[concat(subscription().id, '/resourceGroups/', parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
         "StorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', variables('StorageAccountName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/emsVM.json')]",
@@ -121,7 +121,7 @@
     "resources": [
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "rgdeploy",
+            "name": "ResourceGroupDeploy",
             "apiVersion": "2018-05-01",
             "location": "[parameters('rgLocation')]",
             "copy": {
