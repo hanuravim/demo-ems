@@ -7,11 +7,15 @@
         },
         "ResourceGroupLocation": {
             "type": "string",
+            "defaultValue": "WestUS2"
+        },
+        "shortLocation": {
+            "type": "string",
             "maxLength": 3,
             "metadata": {
                 "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
             },
-            "defaultValue": "WUS2"
+            "defaultValue": "WU2"
         },
         "Application_Acronym": {
             "type": "string",
@@ -145,6 +149,7 @@
     },
     "variables": {
         "domainName": "efoqa.com",
+        "ResourceGroupLocation": "replace(parameters('ResourceGroupLocation'),'WestUS2','WU2')",
         "osDiskType": "Premium_GRS",
         "StorageAccountName": "emsmgrstr00101",
         "StorageAccountType": "Standard_GRS",
@@ -173,7 +178,10 @@
                 },
                 "parameters": {
                     "ResourceGroupLocation": {
-                        "value": "[parameters('ResourceGroupLocation')]"
+                        "value": "[variables('ResourceGroupLocation')]"
+                    },
+                    "shortLocation": {
+                        "value": "[parameters('shortLocation')]"
                     },
                     "ResourceGroupCount": {
                         "value": "[parameters('ResourceGroupCount')]"
@@ -199,7 +207,6 @@
                 }
             }
         }
-       
     ],
     "outputs": {
         "adminUsername": {
