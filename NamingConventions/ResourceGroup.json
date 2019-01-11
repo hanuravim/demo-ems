@@ -2,10 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "rgLocation": {
+        "ResourceGroupLocation": {
             "type": "string"
         },
-        "rgCount": {
+        "ResourceGroupCount": {
             "type": "int"
         },
         "Application_Acronym": {
@@ -32,11 +32,11 @@
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
-            "location":"[parameters('rgLocation')]",
-            "name": "[toupper(concat('GAV-',replace(parameters('rgLocation'),'CentralUS','CU'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
+            "location":"[parameters('ResourceGroupLocation')]",
+            "name": "[toupper(concat('GAV-',replace(parameters('ResourceGroupLocation'),'CentralUS','CU'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
             "copy": {
                 "name": "rgloop",
-                "count": "[parameters('rgCount')]"
+                "count": "[parameters('ResourceGroupCount')]"
             },
             "properties": {}
         }
