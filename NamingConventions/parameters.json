@@ -2,11 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "rgLocation": {
-            "value": "westus2"
-        },
         "rgCount": {
             "value": 2
+        },
+        "rglocation": {
+            "value": "westus2"
         },
         "Application_Acronym": {
             "value": "EMS"
@@ -25,6 +25,54 @@
         },
         "Custom": {
             "value": "EFOQA"
+        },
+        "location": {
+            "value": "westus2"
+        },
+        "existingvirtualNetworkRG": {
+            "value": "emsSharedResources"
+        },
+        "existingvirtualNetworkName": {
+            "value": "emsVNET"
+        },
+        "subnetName": {
+            "value": "default"
+        },
+        "virtualMachineName": {
+            "value": "fapdaalxxxxx"
+        },
+        "AvailabilitySet": {
+            "value": "No"
+        },
+        "privateIpAddress": {
+            "value": "10.3.0.10"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS4_v2"
+        },
+        "numberOfDataDisks": {
+            "value": 2
+        },
+        "DataDiskName": {
+            "value": ["ADI"]
+        },
+        "DataDiskSize": {
+            "value": 1024
+        },
+        "adminUsername": {
+            "value": "azadmin"
+        },
+        "adminPassword": {
+            "value": ""
+        },
+        "DomainUserName": {
+            "value": ""
+        },
+        "DomainPassword": {
+            "value": ""
+        },
+        "baseUri": {
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
         }
     }
 }
