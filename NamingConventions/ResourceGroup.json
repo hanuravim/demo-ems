@@ -30,18 +30,26 @@
             "type": "string"
         }
     },
-    "variables": {},
+    "variables": {
+        "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]"
+    },
     "resources": [
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[parameters('ResourceGroupLocation')]",
-            "name": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
+            "name": "[variables('ResourceGroupName')]",
             "copy": {
                 "name": "rgloop",
                 "count": "[parameters('ResourceGroupCount')]"
             },
             "properties": {}
         }
-    ]
+    ],
+    "outputs": {
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('ResourceGroupName')]"
+        }
+    }
 }
