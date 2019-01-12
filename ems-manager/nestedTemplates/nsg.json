@@ -14,7 +14,7 @@
         "Environment_Category": {
             "type": "string"
         },
-        "Azure_Service": {
+        "azrserv": {
             "type": "string"
         },
         "Custom": {
@@ -25,7 +25,7 @@
     "resources": [
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[tolower(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('Azure_Service'),'-',parameters('Custom'),'-','00',copyindex(1)))]",
+            "name": "[tolower(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('azrserv'),'-',parameters('Custom'),'-','00',copyindex(1)))]",
             "location": "[resourcegroup().location]",
             "apiVersion": "2018-05-01",
             "copy": {
