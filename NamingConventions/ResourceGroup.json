@@ -1,47 +1,260 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "ResourceGroupLocation": {
-            "type": "string"
-        },
-        "shortLocation": {
-            "type": "string"
-        },
         "ResourceGroupCount": {
             "type": "int"
         },
+        "nsgCount": {
+            "type": "int"
+        },
+        "ResourceGroupLocation": {
+            "type": "string",
+            "defaultValue": "WestUS2"
+        },
+        "shortLocation": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
+            },
+            "defaultValue": "WU2"
+        },
         "Application_Acronym": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. nxt (Next Net), ems"
+            },
+            "defaultValue": "EMS"
         },
         "Tier_Name": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 2,
+            "metadata": {
+                "description": "2 chars E.g. Sanbox (SB), Live (LI) and training (TR)"
+            },
+            "defaultValue": "SB"
         },
         "Environment_Category": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 char. E.g.  DEV, QA, UAT and PRD"
+            },
+            "defaultValue": "DEV"
         },
         "Role": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
+            },
+            "defaultValue": "GEN"
+        },
+        "Azure_Service": {
+            "type": "string",
+            "allowedValues": [
+                "Network_Interface-nic"
+            ]
         },
         "Tenant": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars  Shared (SRD), Tenant Acronym)"
+            },
+            "defaultValue": "SRD"
         },
         "Custom": {
-            "type": "string"
+            "type": "string",
+            "maxLength": 8,
+            "metadata": {
+                "description": "(Product Specific) Space. 8 chars (OPTIONAL)"
+            },
+            "defaultValue": ""
+        },
+        "existingvirtualNetworkRG": {
+            "type": "string",
+            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+        },
+        "existingvirtualNetworkName": {
+            "type": "string",
+            "defaultvalue": "efoqavn"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultvalue": "efoqacommonnet"
+        },
+        "virtualMachineName": {
+            "type": "string",
+            "defaultvalue": "emsmgr001"
+        },
+        "AvailabilitySet": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether the VM should be in AvailabilitySet or not."
+            }
+        },
+        "privateIpAddress": {
+            "type": "string",
+            "defaultvalue": "10.7.0.8"
+        },
+        "virtualMachineSize": {
+            "type": "string",
+            "defaultvalue": "Standard_DS4_v2"
+        },
+        "numberOfDataDisks": {
+            "type": "int",
+            "defaultvalue": 1
+        },
+        "DataDiskName": {
+            "type": "array",
+            "defaultvalue": [
+                "ADI"
+            ]
+        },
+        "DataDiskSize": {
+            "type": "int",
+            "defaultvalue": 1024
+        },
+        "omsWorkspaceResourceGroup": {
+            "type": "string",
+            "defaultvalue": "emssharedresources"
+        },
+        "omsWorkspaceName": {
+            "type": "string",
+            "defaultvalue": "emsLogAnalytiks"
+        },
+        "omsWorkspaceLocation": {
+            "type": "string",
+            "defaultvalue": "WestUS2"
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultvalue": "azadmin"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultvalue": ""
+        },
+        "DomainUserName": {
+            "type": "string",
+            "defaultvalue": ""
+        },
+        "DomainPassword": {
+            "type": "securestring",
+            "defaultvalue": ""
+        },
+        "baseUri": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager"
         }
     },
-    "variables": {},
+    "variables": {
+        "domainName": "efoqa.com",
+        "osDiskType": "Premium_GRS",
+        "StorageAccountName": "emsmgrstr00101",
+        "StorageAccountType": "Standard_GRS",
+        "azr-serv": "[if(contains(parameters('Azure_Service'), 'S'), 'Premium_LRS', if(contains(variables('vmSizeProfile'), 's'), 'Premium_LRS', 'Standard_LRS'))]",
+        "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
+        "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
+        "vnetId": "[concat(subscription().id, '/resourceGroups/', parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/nsg.json')]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/emsVM.json')]",
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]",
+        "rgTemplateURL": "[concat(parameters('baseUri'),'/NamingConventions/ResourceGroup.json')]"
+    },
     "resources": [
         {
-            "type": "Microsoft.Resources/resourceGroups",
+            "type": "Microsoft.Resources/deployments",
+            "name": "ResourceGroup",
             "apiVersion": "2018-05-01",
             "location": "[parameters('ResourceGroupLocation')]",
-            "name": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
-            "copy": {
-                "name": "rgloop",
-                "count": "[parameters('ResourceGroupCount')]"
-            },
-            "properties": {}
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('rgTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
+                    "shortLocation": {
+                        "value": "[parameters('shortLocation')]"
+                    },
+                    "ResourceGroupCount": {
+                        "value": "[parameters('ResourceGroupCount')]"
+                    },
+                    "Application_Acronym": {
+                        "value": "[parameters('Application_Acronym')]"
+                    },
+                    "Tier_Name": {
+                        "value": "[parameters('Tier_Name')]"
+                    },
+                    "Environment_Category": {
+                        "value": "[parameters('Environment_Category')]"
+                    },
+                    "Role": {
+                        "value": "[parameters('Role')]"
+                    },
+                    "Tenant": {
+                        "value": "[parameters('Tenant')]"
+                    },
+                    "Custom": {
+                        "value": "[parameters('Custom')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "nsg",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "dependsOn": [
+                "ResourceGroup"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "shortlocation": {
+                        "value": "[parameters('shortlocation')]"
+                    },
+                    "nsgCount": {
+                        "value": "[parameters('nsgCount')]"
+                    },
+                    "Application_Acronym": {
+                        "value": "[parameters('Application_Acronym')]"
+                    },
+                    "Environment_Category": {
+                        "value": "[parameters('Environment_Category')]"
+                    },
+                    "Azure_Service": {
+                        "value": "[parameters('Azure_Service')]"
+                    },
+                    "Custom": {
+                        "value": "[parameters('Custom')]"
+                    }
+                }
+            }
         }
-    ]
+    ],
+    "outputs": {
+        "adminUsername": {
+            "type": "string",
+            "value": "[parameters('adminUsername')]"
+        }
+    }
 }
