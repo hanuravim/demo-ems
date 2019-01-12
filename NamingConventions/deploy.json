@@ -177,7 +177,7 @@
                 },
                 "parameters": {
                     "ResourceGroupLocation": {
-                        "value": "[variables('ResourceGroupLocation')]"
+                        "value": "[parameters('ResourceGroupLocation')]"
                     },
                     "shortLocation": {
                         "value": "[parameters('shortLocation')]"
