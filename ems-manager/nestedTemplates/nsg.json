@@ -14,7 +14,7 @@
         "Environment_Category": {
             "type": "string"
         },
-        "azrserv": {
+        "Azure_Service": {
             "type": "string"
         },
         "Custom": {
