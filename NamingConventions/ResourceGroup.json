@@ -3,11 +3,7 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupLocation": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
-            }
+            "type": "string"
         },
         "shortLocation": {
             "type": "string"
@@ -39,7 +35,7 @@
         {
             "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
-            "location":"[parameters('ResourceGroupLocation')]",
+            "location": "[parameters('ResourceGroupLocation')]",
             "name": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','0',copyindex(1),'-',parameters('Custom')))]",
             "copy": {
                 "name": "rgloop",
