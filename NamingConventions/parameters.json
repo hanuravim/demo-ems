@@ -5,6 +5,9 @@
         "ResourceGroupCount": {
             "value": 1
         },
+        "nsgCount": {
+            "value": 1
+        },
         "ResourceGroupLocation": {
             "value": "WestUS2"
         },
