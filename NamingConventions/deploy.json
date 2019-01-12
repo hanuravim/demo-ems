@@ -149,7 +149,6 @@
     },
     "variables": {
         "domainName": "efoqa.com",
-        "ResourceGroupLocation": "replace(parameters('ResourceGroupLocation'),'WestUS2','WU2')",
         "osDiskType": "Premium_GRS",
         "StorageAccountName": "emsmgrstr00101",
         "StorageAccountType": "Standard_GRS",
