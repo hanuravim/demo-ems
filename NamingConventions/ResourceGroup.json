@@ -161,7 +161,7 @@
         "osDiskType": "Premium_GRS",
         "StorageAccountName": "emsmgrstr00101",
         "StorageAccountType": "Standard_GRS",
-        "azr-serv": "[if(contains(parameters('Azure_Service'), 'S'), 'Premium_LRS', if(contains(variables('vmSizeProfile'), 's'), 'Premium_LRS', 'Standard_LRS'))]",
+        "azr-serv": "[if(contains(parameters('Azure_Service'), 'Network_Interface-nic'), 'nic', if(contains(parameters('Azure_Service'), 'Storage_Account-str'), '', ''))]",
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "vnetId": "[concat(subscription().id, '/resourceGroups/', parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
