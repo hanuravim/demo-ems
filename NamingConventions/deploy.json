@@ -161,7 +161,8 @@
         "osDiskType": "Premium_GRS",
         "StorageAccountName": "emsmgrstr00101",
         "StorageAccountType": "Standard_GRS",
-        "azr-serv": "[if(contains(parameters('Azure_Service'), 'Network_Interface-nic'), 'nic', if(contains(parameters('Azure_Service'), 'Storage_Account-str'), '', ''))]",
+        "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
+        "azrserv": "[if(contains(parameters('Azure_Service'), 'Network_Interface-nic'), 'nic', if(contains(parameters('Azure_Service'), 'Storage_Account-str'), '', ''))]",
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "vnetId": "[concat(subscription().id, '/resourceGroups/', parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
@@ -173,54 +174,19 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/deployments",
-            "name": "ResourceGroup",
+            "type": "Microsoft.Resources/resourceGroups",
             "apiVersion": "2018-05-01",
             "location": "[parameters('ResourceGroupLocation')]",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('rgTemplateURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "ResourceGroupLocation": {
-                        "value": "[parameters('ResourceGroupLocation')]"
-                    },
-                    "shortLocation": {
-                        "value": "[parameters('shortLocation')]"
-                    },
-                    "ResourceGroupCount": {
-                        "value": "[parameters('ResourceGroupCount')]"
-                    },
-                    "Application_Acronym": {
-                        "value": "[parameters('Application_Acronym')]"
-                    },
-                    "Tier_Name": {
-                        "value": "[parameters('Tier_Name')]"
-                    },
-                    "Environment_Category": {
-                        "value": "[parameters('Environment_Category')]"
-                    },
-                    "Role": {
-                        "value": "[parameters('Role')]"
-                    },
-                    "Tenant": {
-                        "value": "[parameters('Tenant')]"
-                    },
-                    "Custom": {
-                        "value": "[parameters('Custom')]"
-                    }
-                }
-            }
+            "name": "[variables('ResourceGroupName')]",
+            "properties": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nsg",
             "apiVersion": "2018-05-01",
-            "location": "[parameters('ResourceGroupLocation')]",
             "dependsOn": [
-                "ResourceGroup"
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -229,6 +195,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
                     "shortlocation": {
                         "value": "[parameters('shortlocation')]"
                     },
@@ -242,7 +211,7 @@
                         "value": "[parameters('Environment_Category')]"
                     },
                     "Azure_Service": {
-                        "value": "[parameters('Azure_Service')]"
+                        "value": "[variables('azrserv')]"
                     },
                     "Custom": {
                         "value": "[parameters('Custom')]"
