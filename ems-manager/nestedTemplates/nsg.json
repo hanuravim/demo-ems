@@ -2,43 +2,30 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "shortlocation": {
+            "type": "string"
+        },
         "nsgCount": {
             "type": "int"
         },
         "Application_Acronym": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 chars e.g. nxt (Next Net), ems"
-            }
+            "type": "string"
         },
         "Environment_Category": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 char. E.g.  dev , qa , uat and prd"
-            }
+            "type": "string"
         },
         "Azure_Service": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 chars   e.g. Disk (dsk), Blob (blb), Storage Account (str) blb  etc"
-            }
+            "type": "string"
         },
         "Custom": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 chars"
-            }
+            "type": "string"
         }
     },
     "variables": {},
     "resources": [
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[tolower(concat('GAV-',resourcegroup().location,'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('Azure_Service'),'-',parameters('Custom'),copyindex(1)))]",
+            "name": "[tolower(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('Azure_Service'),'-',parameters('Custom'),'-','00',copyindex(1)))]",
             "location": "[resourcegroup().location]",
             "apiVersion": "2018-05-01",
             "copy": {
