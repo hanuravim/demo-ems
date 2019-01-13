@@ -52,12 +52,6 @@
             },
             "defaultValue": "GEN"
         },
-        "Azure_Service": {
-            "type": "string",
-            "allowedValues": [
-                "Network_Interface-nic"
-            ]
-        },
         "Tenant": {
             "type": "string",
             "maxLength": 3,
@@ -162,7 +156,6 @@
         "StorageAccountName": "emsmgrstr00101",
         "StorageAccountType": "Standard_GRS",
         "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
-        "azrserv": "[if(contains(parameters('Azure_Service'), 'Network_Interface-nic'), 'nic', if(contains(parameters('Azure_Service'), 'Storage_Account-str'), '', ''))]",
         "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
         "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
         "vnetId": "[concat(subscription().id, '/resourceGroups/', parameters('existingvirtualNetworkRG'), 'Microsoft.Network/virtualNetworks', parameters('existingvirtualNetworkName'))]",
@@ -209,9 +202,6 @@
                     },
                     "Environment_Category": {
                         "value": "[parameters('Environment_Category')]"
-                    },
-                    "Azure_Service": {
-                        "value": "[variables('azrserv')]"
                     },
                     "Custom": {
                         "value": "[parameters('Custom')]"
