@@ -5,12 +5,6 @@
         "ResourceGroupLocation": {
             "type": "string"
         },
-        "shortlocation": {
-            "type": "string"
-        },
-        "nicCount": {
-            "type": "int"
-        },
         "Application_Acronym": {
             "type": "string",
             "maxLength": 2,
@@ -85,9 +79,6 @@
         },
         "omsworkspacelocation": {
             "type": "string"
-        },
-        "location": {
-            "type": "string"
         }
     },
     "variables": {
@@ -124,7 +115,7 @@
             "type": "Microsoft.Compute/availabilitySets",
             "apiVersion": "2017-03-30",
             "name": "[variables('availabilitySetName')]",
-            "location": "[parameters('location')]",
+            "location": "[parameters('ResourceGroupLocation')]",
             "properties": {
                 "platformFaultDomainCount": 2,
                 "platformUpdateDomainCount": 3
@@ -137,7 +128,7 @@
             "name": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-06-01",
-            "location": "[parameters('location')]",
+            "location": "[parameters('ResourceGroupLocation')]",
             "dependsOn": [],
             "properties": {
                 "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
@@ -204,7 +195,7 @@
                 {
                     "name": "AzureFileShares",
                     "type": "extensions",
-                    "location": "[parameters('location')]",
+                    "location": "[parameters('ResourceGroupLocation')]",
                     "apiVersion": "2018-06-01",
                     "tags": {
                         "displayName": "AzureFileShares"
