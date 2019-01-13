@@ -23,9 +23,6 @@
         "Role": {
             "value": "WEB"
         },
-        "Azure_Service": {
-            "value": "Network_Interface-nic"
-        },
         "Tenant": {
             "value": "SRD"
         },
