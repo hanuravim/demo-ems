@@ -1,0 +1,257 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ResourceGroupCount": {
+            "type": "int"
+        },
+        "nsgCount": {
+            "type": "int"
+        },
+        "nicCount": {
+            "type": "int"
+        },
+        "ResourceGroupLocation": {
+            "type": "string",
+            "defaultValue": "WestUS2"
+        },
+        "shortLocation": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
+            },
+            "defaultValue": "WU2"
+        },
+        "Application_Acronym": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. nxt (Next Net), ems"
+            },
+            "defaultValue": "EMS"
+        },
+        "Tier_Name": {
+            "type": "string",
+            "maxLength": 2,
+            "metadata": {
+                "description": "2 chars E.g. Sanbox (SB), Live (LI) and training (TR)"
+            },
+            "defaultValue": "SB"
+        },
+        "Environment_Category": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 char. E.g.  DEV, QA, UAT and PRD"
+            },
+            "defaultValue": "DEV"
+        },
+        "Role": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
+            },
+            "defaultValue": "GEN"
+        },
+        "Tenant": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars  Shared (SRD), Tenant Acronym)"
+            },
+            "defaultValue": "SRD"
+        },
+        "Custom": {
+            "type": "string",
+            "maxLength": 8,
+            "metadata": {
+                "description": "(Product Specific) Space. 8 chars (OPTIONAL)"
+            },
+            "defaultValue": ""
+        },
+        "existingvirtualNetworkRG": {
+            "type": "string",
+            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+        },
+        "existingvirtualNetworkName": {
+            "type": "string",
+            "defaultvalue": "efoqavn"
+        },
+        "subnetName": {
+            "type": "string",
+            "defaultvalue": "efoqacommonnet"
+        },
+        "virtualMachineName": {
+            "type": "string",
+            "defaultvalue": "emsmgr001"
+        },
+        "AvailabilitySet": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ],
+            "metadata": {
+                "description": "Select whether the VM should be in AvailabilitySet or not."
+            }
+        },
+        "privateIpAddress": {
+            "type": "array",
+            "defaultvalue": [
+                "10.3.0.5",
+                "10.3.0.6"
+            ]
+        },
+        "virtualMachineSize": {
+            "type": "string",
+            "defaultvalue": "Standard_DS4_v2"
+        },
+        "numberOfDataDisks": {
+            "type": "int",
+            "defaultvalue": 1
+        },
+        "DataDiskName": {
+            "type": "array",
+            "defaultvalue": [
+                "ADI"
+            ]
+        },
+        "DataDiskSize": {
+            "type": "int",
+            "defaultvalue": 1024
+        },
+        "omsWorkspaceResourceGroup": {
+            "type": "string",
+            "defaultvalue": "emssharedresources"
+        },
+        "omsWorkspaceName": {
+            "type": "string",
+            "defaultvalue": "emsLogAnalytiks"
+        },
+        "omsWorkspaceLocation": {
+            "type": "string",
+            "defaultvalue": "WestUS2"
+        },
+        "adminUsername": {
+            "type": "string",
+            "defaultvalue": "azadmin"
+        },
+        "adminPassword": {
+            "type": "securestring",
+            "defaultvalue": ""
+        },
+        "DomainUserName": {
+            "type": "string",
+            "defaultvalue": ""
+        },
+        "DomainPassword": {
+            "type": "securestring",
+            "defaultvalue": ""
+        },
+        "baseUri": {
+            "type": "string",
+            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager"
+        }
+    },
+    "variables": {
+        "domainName": "efoqa.com",
+        "osDiskType": "Premium_GRS",
+        "StorageAccountName": "emsmgrstr00101",
+        "StorageAccountType": "Standard_GRS",
+        "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
+        "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
+        "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
+        "vnetId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', parameters('existingvirtualNetworkRG'),'/providers/','Microsoft.Network/virtualNetworks/',parameters('existingvirtualNetworkName'))]",
+        "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
+        "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
+        "nicTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkInterface.json')]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/emsVM.json')]",
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]",
+        "rgTemplateURL": "[concat(parameters('baseUri'),'/NamingConventions/ResourceGroup.json')]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "GAV-WU2-EMS-TR-DEV-WEB-SRD-01-EFOQA",
+            "name": "nsg",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
+                    "shortlocation": {
+                        "value": "[parameters('shortlocation')]"
+                    },
+                    "nsgCount": {
+                        "value": "[parameters('nsgCount')]"
+                    },
+                    "Application_Acronym": {
+                        "value": "[parameters('Application_Acronym')]"
+                    },
+                    "Environment_Category": {
+                        "value": "[parameters('Environment_Category')]"
+                    },
+                    "Custom": {
+                        "value": "[parameters('Custom')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "GAV-WU2-EMS-TR-DEV-WEB-SRD-01-EFOQA",
+            "name": "nic",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nicTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
+                    "shortlocation": {
+                        "value": "[parameters('shortlocation')]"
+                    },
+                    "nicCount": {
+                        "value": "[parameters('nicCount')]"
+                    },
+                    "Application_Acronym": {
+                        "value": "[parameters('Application_Acronym')]"
+                    },
+                    "Environment_Category": {
+                        "value": "[parameters('Environment_Category')]"
+                    },
+                    "Custom": {
+                        "value": "[parameters('Custom')]"
+                    },
+                    "subnetRef": {
+                        "value": "[variables('subnetRef')]"
+                    },
+                    "privateIpAddress": {
+                        "value": "[parameters('privateIpAddress')]"
+                    }
+                }
+            }
+        }
+    ],
+    "outputs": {
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('ResourceGroupName')]"
+        }
+    }
+}
