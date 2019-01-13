@@ -30,7 +30,6 @@
             "name": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','00',copyindex(1)))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2018-07-01",
-            "location": "[parameters('ResourceGroupLocation')]",
             "copy": {
                 "name": "strloop",
                 "count": "[parameters('strCount')]"
