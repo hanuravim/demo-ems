@@ -2,22 +2,31 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "ResourceGroupLocation": {
+            "type": "string"
+        },
+        "shortlocation": {
+            "type": "string"
+        },
+        "nicCount": {
+            "type": "int"
+        },
+        "Application_Acronym": {
+            "type": "string"
+        },
+        "Environment_Category": {
+            "type": "string"
+        },
+        "Azure_Service": {
+            "type": "string"
+        },
+        "Custom": {
+            "type": "string"
+        },
         "subnetRef": {
             "type": "string"
         },
-        "networkInterfaceName": {
-            "type": "string"
-        },
         "privateIpAddress": {
-            "type": "string"
-        },
-        "networkSecurityGroupName": {
-            "type": "string"
-        },
-        "nsgId": {
-            "type": "string"
-        },
-        "location": {
             "type": "string"
         }
     },
@@ -26,11 +35,14 @@
     },
     "resources": [
         {
-            "name": "[parameters('networkInterfaceName')]",
             "type": "Microsoft.Network/networkInterfaces",
-            "apiVersion": "2017-06-01",
-            "location": "[parameters('location')]",
-            "dependsOn": [],
+            "name": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('Azure_Service'),'-',parameters('Custom'),'-','00',copyindex(1)))]",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                "name": "nicloop",
+                "count": "[parameters('nicCount')]"
+            },
             "properties": {
                 "ipConfigurations": [
                     {
@@ -45,10 +57,7 @@
                         }
                     }
                 ],
-                "enableAcceleratedNetworking": "[variables('enableAcceleratedNetworking')]",
-                "networkSecurityGroup": {
-                    "id": "[parameters('nsgId')]"
-                }
+                "enableAcceleratedNetworking": "[variables('enableAcceleratedNetworking')]"
             },
             "tags": {}
         }
