@@ -2,7 +2,7 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vmCount":{
+        "vmCount": {
             "type": "int"
         },
         "ResourceGroupLocation": {
@@ -79,9 +79,6 @@
             "type": "string"
         },
         "omsWorkspaceName": {
-            "type": "string"
-        },
-        "omsworkspacelocation": {
             "type": "string"
         }
     },
@@ -185,7 +182,7 @@
                     "type": "extensions",
                     "name": "Microsoft.EnterpriseCloud.Monitoring",
                     "apiVersion": "2018-06-01",
-                    "location": "[parameters('omsworkspacelocation')]",
+                    "location": "[parameters('ResourceGroupLocation')]",
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
