@@ -1,39 +1,61 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "networkSecurityGroupName": {
+        "ResourceGroupLocation": {
             "type": "string"
         },
-        "location": {
+        "shortlocation": {
+            "type": "string"
+        },
+        "nsgCount": {
+            "type": "int"
+        },
+        "Application_Acronym": {
+            "type": "string"
+        },
+        "Environment_Category": {
+            "type": "string"
+        },
+        "Custom": {
             "type": "string"
         }
     },
     "variables": {},
     "resources": [
         {
-            "name": "[parameters('networkSecurityGroupName')]",
             "type": "Microsoft.Network/networkSecurityGroups",
-            "apiVersion": "2018-08-01",
-            "location": "[parameters('location')]",
+            "name": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nsg','-',parameters('Custom'),'-','00',copyindex(1)))]",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                "name": "nsgloop",
+                "count": "[parameters('nsgCount')]"
+            },
             "properties": {
                 "securityRules": [
                     {
-                        "name": "HTTPS",
+                        "name": "SSH",
                         "properties": {
-                            "priority": 300,
+                            "description": "Allows SSH traffic",
                             "protocol": "Tcp",
-                            "access": "Allow",
-                            "direction": "Inbound",
-                            "sourceAddressPrefix": "*",
                             "sourcePortRange": "*",
+                            "destinationPortRange": "22",
+                            "sourceAddressPrefix": "*",
                             "destinationAddressPrefix": "*",
-                            "destinationPortRange": "443"
+                            "access": "Deny",
+                            "priority": 100,
+                            "direction": "Inbound"
                         }
                     }
                 ]
-            },
-            "tags": {}
+            }
         }
-    ]
+    ],
+    "outputs": {
+        "nsgID": {
+            "type": "string",
+            "value": "Need the NSG Id of this newly created NSG"
+        }
+    }
 }
