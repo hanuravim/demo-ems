@@ -24,7 +24,7 @@
             "type": "string"
         },
         "privateIpAddress": {
-            "type": "string"
+            "type": "array"
         }
     },
     "variables": {
@@ -48,7 +48,7 @@
                             "subnet": {
                                 "id": "[parameters('subnetRef')]"
                             },
-                            "privateIpAddress": "[parameters('privateIpAddress')]",
+                            "privateIpAddress": "[parameters('privateIpAddress')[copyIndex()]]",
                             "privateIpAddressVersion": "IPv4",
                             "privateIPAllocationMethod": "Static"
                         }
