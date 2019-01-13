@@ -174,11 +174,20 @@
     },
     "resources": [
         {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "name": "[variables('ResourceGroupName')]",
+            "properties": {}
+        },
+        {
             "type": "Microsoft.Resources/deployments",
-            "resourcegroup": "GAV-WU2-EMS-TR-DEV-WEB-SRD-01-EFOQA",
+            "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nsg",
             "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -209,10 +218,12 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "resourcegroup": "GAV-WU2-EMS-TR-DEV-WEB-SRD-01-EFOQA",
+            "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nic",
             "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
