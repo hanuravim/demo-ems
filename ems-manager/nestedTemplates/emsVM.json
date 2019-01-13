@@ -2,6 +2,9 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "vmCount":{
+            "type": "int"
+        },
         "ResourceGroupLocation": {
             "type": "string",
             "defaultValue": "WestUS2"
@@ -130,7 +133,10 @@
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-06-01",
             "location": "[parameters('ResourceGroupLocation')]",
-            "dependsOn": [],
+            "copy": {
+                "name": "vmloop",
+                "count": "[parameters('vmCount')]"
+            },
             "properties": {
                 "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
@@ -159,7 +165,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00'))]",
+                    "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
