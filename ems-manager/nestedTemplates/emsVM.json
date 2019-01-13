@@ -70,7 +70,7 @@
             "type": "string"
         },
         "adminPassword": {
-            "type": "string"
+            "type": "securestring"
         },
         "omsWorkspaceResourceGroup": {
             "type": "string"
@@ -159,7 +159,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
+                    "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00'))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
