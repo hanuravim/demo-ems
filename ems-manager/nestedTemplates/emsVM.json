@@ -3,7 +3,8 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupLocation": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "WestUS2"
         },
         "Application_Acronym": {
             "type": "string",
