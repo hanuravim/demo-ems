@@ -17,9 +17,6 @@
         "Environment_Category": {
             "type": "string"
         },
-        "Azure_Service": {
-            "type": "string"
-        },
         "Custom": {
             "type": "string"
         },
@@ -36,7 +33,7 @@
     "resources": [
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('Azure_Service'),'-',parameters('Custom'),'-','00',copyindex(1)))]",
+            "name": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nic','-',parameters('Custom'),'-','00',copyindex(1)))]",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-05-01",
             "copy": {
