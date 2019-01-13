@@ -2,8 +2,46 @@
     "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "virtualMachineName": {
+        "ResourceGroupLocation": {
             "type": "string"
+        },
+        "shortlocation": {
+            "type": "string"
+        },
+        "nicCount": {
+            "type": "int"
+        },
+        "Application_Acronym": {
+            "type": "string",
+            "maxLength": 2,
+            "metadata": {
+                "description": "2 chars e.g. fa"
+            },
+            "defaultValue": "fa"
+        },
+        "Environment_Category": {
+            "type": "string",
+            "maxLength": 1,
+            "metadata": {
+                "description": "1 chars e.g. Development - d, Production - p"
+            },
+            "defaultValue": "d"
+        },
+        "Role": {
+            "type": "string",
+            "maxLength": 1,
+            "metadata": {
+                "description": "1 chars e.g. RDP - d, Mgmt - m"
+            },
+            "defaultValue": "m"
+        },
+        "Custom": {
+            "type": "string",
+            "maxLength": 5,
+            "metadata": {
+                "description": "5 chars e.g. Tenant,Region"
+            },
+            "defaultValue": "aal"
         },
         "AvailabilitySet": {
             "type": "string",
@@ -48,8 +86,8 @@
         "omsworkspacelocation": {
             "type": "string"
         },
-        "location":{
-            "type":"string"
+        "location": {
+            "type": "string"
         }
     },
     "variables": {
@@ -96,7 +134,7 @@
             }
         },
         {
-            "name": "[parameters('virtualMachineName')]",
+            "name": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-06-01",
             "location": "[parameters('location')]",
@@ -129,7 +167,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[parameters('virtualMachineName')]",
+                    "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -150,19 +188,16 @@
                     "name": "Microsoft.EnterpriseCloud.Monitoring",
                     "apiVersion": "2018-06-01",
                     "location": "[parameters('omsworkspacelocation')]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
-                    ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
                         "typeHandlerVersion": "1.0",
                         "autoUpgradeMinorVersion": true,
                         "settings": {
-                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').customerId]"
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
                         },
                         "protectedSettings": {
-                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('workspaceName')), '2015-03-20').primarySharedKey]"
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
                         }
                     }
                 },
@@ -170,10 +205,7 @@
                     "name": "AzureFileShares",
                     "type": "extensions",
                     "location": "[parameters('location')]",
-                    "apiVersion": "2017-03-30",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachineName'))]"
-                    ],
+                    "apiVersion": "2018-06-01",
                     "tags": {
                         "displayName": "AzureFileShares"
                     },
