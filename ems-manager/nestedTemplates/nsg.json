@@ -1,26 +1,14 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupLocation": {
             "type": "string"
         },
-        "shortlocation": {
-            "type": "string"
-        },
         "nsgCount": {
-            "type": "int"
-        },
-        "Application_Acronym": {
             "type": "string"
         },
-        "Environment_Category": {
-            "type": "string"
-        },
-        "Azure_Service": {
-            "type": "string"
-        },
-        "Custom": {
+        "networkSecurityGroupName": {
             "type": "string"
         }
     },
@@ -28,7 +16,7 @@
     "resources": [
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-',parameters('Azure_Service'),'-',parameters('Custom'),'-','00',copyindex(1)))]",
+            "name": "[parameters('networkSecurityGroupName')[copyIndex(1)]]",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-05-01",
             "copy": {
@@ -54,5 +42,11 @@
                 ]
             }
         }
-    ]
+    ],
+    "outputs": {
+        "nsgID": {
+            "type": "string",
+            "value": "Need the NSG Id of this newly created NSG"
+        }
+    }
 }
