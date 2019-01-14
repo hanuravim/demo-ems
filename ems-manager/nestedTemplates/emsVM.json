@@ -128,7 +128,7 @@
                     "vmSize": "[parameters('virtualMachineSize')]"
                 },
                 "osProfile": {
-                    "computerName": "[concat(parameters('virtualmachineName'), copyIndex(1))]",
+                    "computerName": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]"
                 },
@@ -155,7 +155,7 @@
                                 "caching": "ReadWrite",
                                 "diskSizeGB": "[parameters('DataDiskSize')]",
                                 "lun": "[copyIndex('dataDisks')]",
-                                "name": "[concat(parameters('dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
+                                "name": "[concat(parameters('dataDiskName'),copyIndex(1))]",
                                 "createOption": "Empty"
                             }
                         }
