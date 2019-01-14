@@ -6,7 +6,7 @@
             "type": "int"
         },
         "nicCount": {
-            "type": "string"
+            "type": "int"
         },
         "ResourceGroupLocation": {
             "type": "string",
