@@ -1,5 +1,5 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupCount": {
@@ -9,6 +9,12 @@
             "type": "int"
         },
         "nicCount": {
+            "type": "int"
+        },
+        "storageCount": {
+            "type": "int"
+        },
+        "vmCount": {
             "type": "int"
         },
         "ResourceGroupLocation": {
@@ -83,10 +89,6 @@
             "type": "string",
             "defaultvalue": "efoqacommonnet"
         },
-        "virtualMachineName": {
-            "type": "string",
-            "defaultvalue": "emsmgr001"
-        },
         "AvailabilitySet": {
             "type": "string",
             "defaultValue": "No",
@@ -125,15 +127,11 @@
         },
         "omsWorkspaceResourceGroup": {
             "type": "string",
-            "defaultvalue": "emssharedresources"
+            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
         },
         "omsWorkspaceName": {
             "type": "string",
-            "defaultvalue": "emsLogAnalytiks"
-        },
-        "omsWorkspaceLocation": {
-            "type": "string",
-            "defaultvalue": "WestUS2"
+            "defaultvalue": "emsLogAnalytics"
         },
         "adminUsername": {
             "type": "string",
@@ -158,36 +156,27 @@
     },
     "variables": {
         "domainName": "efoqa.com",
-        "osDiskType": "Premium_GRS",
-        "StorageAccountName": "emsmgrstr00101",
-        "StorageAccountType": "Standard_GRS",
+        "StorageAccountType": "Standard_LRS",
         "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
-        "networkInterfaceName": "[concat(parameters('virtualMachineName'),'-nic-001')]",
-        "networkSecurityGroupName": "[concat(parameters('virtualMachineName'),'-nsg')]",
+        "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','00'))]",
+        "networkInterfaceName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nic','-',parameters('Custom'),'-','00'))]",
+        "networkSecurityGroupName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nsg','-',parameters('Custom'),'-','00'))]",
+        "virtualmachineName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00'))]",
         "vnetId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', parameters('existingvirtualNetworkRG'),'/providers/','Microsoft.Network/virtualNetworks/',parameters('existingvirtualNetworkName'))]",
         "subnetRef": "[concat(variables('vnetId'), '/subnets/', parameters('subnetName'))]",
         "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
         "nicTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkInterface.json')]",
+        "StorageAccountTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/StorageAccount.json')]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/emsVM.json')]",
-        "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]",
-        "rgTemplateURL": "[concat(parameters('baseUri'),'/NamingConventions/ResourceGroup.json')]"
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]"
     },
     "resources": [
-        {
-            "type": "Microsoft.Resources/resourceGroups",
-            "apiVersion": "2018-05-01",
-            "location": "[parameters('ResourceGroupLocation')]",
-            "name": "[variables('ResourceGroupName')]",
-            "properties": {}
-        },
         {
             "type": "Microsoft.Resources/deployments",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nsg",
             "apiVersion": "2018-05-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -198,20 +187,11 @@
                     "ResourceGroupLocation": {
                         "value": "[parameters('ResourceGroupLocation')]"
                     },
-                    "shortlocation": {
-                        "value": "[parameters('shortlocation')]"
-                    },
                     "nsgCount": {
                         "value": "[parameters('nsgCount')]"
                     },
-                    "Application_Acronym": {
-                        "value": "[parameters('Application_Acronym')]"
-                    },
-                    "Environment_Category": {
-                        "value": "[parameters('Environment_Category')]"
-                    },
-                    "Custom": {
-                        "value": "[parameters('Custom')]"
+                    "networkSecurityGroupName": {
+                        "value": "[variables('networkSecurityGroupName')]"
                     }
                 }
             }
@@ -221,9 +201,7 @@
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nic",
             "apiVersion": "2018-05-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -234,26 +212,103 @@
                     "ResourceGroupLocation": {
                         "value": "[parameters('ResourceGroupLocation')]"
                     },
-                    "shortlocation": {
-                        "value": "[parameters('shortlocation')]"
-                    },
                     "nicCount": {
                         "value": "[parameters('nicCount')]"
                     },
-                    "Application_Acronym": {
-                        "value": "[parameters('Application_Acronym')]"
-                    },
-                    "Environment_Category": {
-                        "value": "[parameters('Environment_Category')]"
-                    },
-                    "Custom": {
-                        "value": "[parameters('Custom')]"
+                    "networkInterfaceName": {
+                        "value": "[variables('networkInterfaceName')]"
                     },
                     "subnetRef": {
                         "value": "[variables('subnetRef')]"
                     },
                     "privateIpAddress": {
                         "value": "[parameters('privateIpAddress')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "name": "StorageAccount",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('StorageAccountTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
+                    "strCount": {
+                        "value": "[parameters('storageCount')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[variables('StorageAccountName')]"
+                    },
+                    "StorageAccountType": {
+                        "value": "[variables('StorageAccountType')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "name": "virtualMachine",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "nic",
+                "StorageAccount"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('virtualMachineTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
+                    },
+                    "AvailabilitySet": {
+                        "value": "[parameters('AvailabilitySet')]"
+                    },
+                    "virtualMachineSize": {
+                        "value": "[parameters('virtualMachineSize')]"
+                    },
+                    "StorageAccountType": {
+                        "value": "[variables('StorageAccountType')]"
+                    },
+                    "networkInterfaceName": {
+                        "value": "[variables('networkInterfaceName')]"
+                    },
+                    "DataDiskName": {
+                        "value": "[parameters('DataDiskName')]"
+                    },
+                    "numberOfDataDisks": {
+                        "value": "[parameters('numberOfDataDisks')]"
+                    },
+                    "DataDiskSize": {
+                        "value": "[parameters('DataDiskSize')]"
+                    },
+                    "adminUsername": {
+                        "value": "[parameters('adminUsername')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "omsWorkspaceResourceGroup": {
+                        "value": "[parameters('omsWorkspaceResourceGroup')]"
+                    },
+                    "omsWorkspaceName": {
+                        "value": "[parameters('omsWorkspaceName')]"
                     }
                 }
             }
