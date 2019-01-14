@@ -5,6 +5,9 @@
         "vmCount": {
             "type": "int"
         },
+        "nicCount": {
+            "type": "string"
+        },
         "ResourceGroupLocation": {
             "type": "string",
             "defaultValue": "WestUS2"
@@ -28,9 +31,15 @@
             "type": "string",
             "defaultValue": "Standard_LRS"
         },
+        "subnetRef": {
+            "type": "string"
+        },
         "networkInterfaceName": {
             "type": "string",
             "defaultValue": "gavwu2-ems-dev-nic-efoqa-00"
+        },
+        "privateIpAddress": {
+            "type": "string"
         },
         "DataDiskName": {
             "type": "array",
@@ -103,6 +112,32 @@
             }
         },
         {
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('networkInterfaceName'),copyIndex(1))]",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "apiVersion": "2018-05-01",
+            "copy": {
+                "name": "nicloop",
+                "count": "[parameters('nicCount')]"
+            },
+            "properties": {
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "subnet": {
+                                "id": "[parameters('subnetRef')]"
+                            },
+                            "privateIpAddress": "[parameters('privateIpAddress')[copyIndex()]]",
+                            "privateIpAddressVersion": "IPv4",
+                            "privateIPAllocationMethod": "Static"
+                        }
+                    }
+                ]
+            },
+            "tags": {}
+        },
+        {
             "name": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-06-01",
@@ -148,6 +183,9 @@
                     }
                 }
             },
+            "dependsOn": [
+                "nicloop"
+            ],
             "resources": [
                 {
                     "type": "extensions",
