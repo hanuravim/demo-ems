@@ -34,6 +34,9 @@
         "subnetRef": {
             "type": "string"
         },
+        "existingvirtualNetworkRG": {
+            "type": "string"
+        },
         "networkInterfaceName": {
             "type": "string",
             "defaultValue": "gavwu2-ems-dev-nic-efoqa-00"
@@ -169,7 +172,7 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', resourceGroup().name,'/providers/','Microsoft.Network/networkInterfaces/',parameters('networkInterfaceName'),copyIndex(1))]"
+                            "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', parameters('existingvirtualNetworkRG'),'/providers/','Microsoft.Network/networkInterfaces/',parameters('networkInterfaceName'),copyIndex(1))]"
                         }
                     ]
                 },
