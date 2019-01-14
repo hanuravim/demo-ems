@@ -1,27 +1,60 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentParameters.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "location": {
-            "value": "westus2"
+        "ResourceGroupCount": {
+            "value": 1
+        },
+        "nsgCount": {
+            "value": 2
+        },
+        "nicCount": {
+            "value": 2
+        },
+        "storageCount": {
+            "value": 2
+        },
+        "vmCount": {
+            "value": 2
+        },
+        "ResourceGroupLocation": {
+            "value": "WestUS2"
+        },
+        "Application_Acronym": {
+            "value": "EMS"
+        },
+        "Tier_Name": {
+            "value": "TR"
+        },
+        "Environment_Category": {
+            "value": "DEV"
+        },
+        "Role": {
+            "value": "WEB"
+        },
+        "Tenant": {
+            "value": "SRD"
+        },
+        "Custom": {
+            "value": "EFOQA"
         },
         "existingvirtualNetworkRG": {
-            "value": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+            "value": "emsSharedResources"
         },
         "existingvirtualNetworkName": {
-            "value": "efoqavn"
+            "value": "emsVNET"
         },
         "subnetName": {
-            "value": "efoqacommonnet"
-        },
-        "virtualMachineName": {
-            "value": "emsmgr001"
+            "value": "default"
         },
         "AvailabilitySet": {
             "value": "No"
         },
         "privateIpAddress": {
-            "value": "10.7.0.8"
+            "value": [
+                "10.3.0.5",
+                "10.3.0.7"
+            ]
         },
         "virtualMachineSize": {
             "value": "Standard_DS4_v2"
@@ -30,16 +63,24 @@
             "value": 2
         },
         "DataDiskName": {
-            "value": ["ADI"]
+            "value": [
+                "ADI"
+            ]
         },
         "DataDiskSize": {
-            "value": 1023
+            "value": 1024
+        },
+        "omsWorkspaceResourceGroup": {
+            "value": "emsSharedResources"
+        },
+        "omsWorkspaceName": {
+            "value": "emsLogAnalytiks"
         },
         "adminUsername": {
-            "value": "adAdministrator"
+            "value": "azadmin"
         },
         "adminPassword": {
-            "value": "Testuser@123"
+            "value": ""
         },
         "DomainUserName": {
             "value": ""
@@ -48,7 +89,7 @@
             "value": ""
         },
         "baseUri": {
-            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager"
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
         }
     }
 }
