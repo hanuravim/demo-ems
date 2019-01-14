@@ -3,13 +3,15 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupLocation": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue":"WestUS2"
         },
         "nicCount": {
-            "type": "string"
+            "type": "int"
         },
         "networkInterfaceName": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue":"gavwu2-ems-dev-nic-efoqa-00"
         },
         "subnetRef": {
             "type": "string"
@@ -24,7 +26,7 @@
     "resources": [
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[parameters('networkInterfaceName')]",
+            "name": "[concat(parameters('networkInterfaceName'),copyIndex(1))]",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-05-01",
             "copy": {
