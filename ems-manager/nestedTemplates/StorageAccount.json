@@ -8,16 +8,7 @@
         "strCount": {
             "type": "int"
         },
-        "shortlocation": {
-            "type": "string"
-        },
-        "Application_Acronym": {
-            "type": "string"
-        },
-        "Tier_Name": {
-            "type": "string"
-        },
-        "Environment_Category": {
+        "StorageAccountName": {
             "type": "string"
         },
         "StorageAccountType": {
@@ -27,7 +18,7 @@
     "variables": {},
     "resources": [
         {
-            "name": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','00',copyindex(1)))]",
+            "name": "[parameters('StorageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-07-01",
