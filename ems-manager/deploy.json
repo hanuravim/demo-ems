@@ -172,11 +172,20 @@
     },
     "resources": [
         {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "name": "[variables('ResourceGroupName')]",
+            "properties": {}
+        },
+        {
             "type": "Microsoft.Resources/deployments",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nsg",
             "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -201,7 +210,9 @@
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nic",
             "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -232,7 +243,9 @@
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "StorageAccount",
             "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -309,6 +322,35 @@
                     },
                     "omsWorkspaceName": {
                         "value": "[parameters('omsWorkspaceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "domainJoin",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "virtualMachine"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('domainJoinTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "virtualMachineName": {
+                        "value": "[variables('virtualMachineName')]"
+                    },
+                    "domainName": {
+                        "value": "[variables('domainName')]"
+                    },
+                    "DomainUserName": {
+                        "value": "[parameters('DomainUserName')]"
+                    },
+                    "DomainPassword": {
+                        "value": "[parameters('DomainPassword')]"
                     }
                 }
             }
