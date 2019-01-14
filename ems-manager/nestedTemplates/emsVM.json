@@ -53,6 +53,15 @@
         },
         "adminPassword": {
             "type": "securestring"
+        },
+        "omsWorkspaceLocation": {
+            "type": "string"
+        },
+        "omsWorkspaceResourceGroup": {
+            "type": "string"
+        },
+        "omsWorkspaceName": {
+            "type": "string"
         }
     },
     "variables": {
@@ -159,7 +168,30 @@
                         }
                     ]
                 }
-            }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "Microsoft.EnterpriseCloud.Monitoring",
+                    "apiVersion": "2018-06-01",
+                    "location": "[parameters('omsWorkspaceLocation')]",
+                    "dependsOn": [
+                        "[concat(parameters('virtualmachineName'),copyIndex(1))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
+                        }
+                    }
+                }
+            ]
         }
     ]
 }
