@@ -9,37 +9,8 @@
             "type": "string",
             "defaultValue": "WestUS2"
         },
-        "Application_Acronym": {
-            "type": "string",
-            "maxLength": 2,
-            "metadata": {
-                "description": "2 chars e.g. fa"
-            },
-            "defaultValue": "fa"
-        },
-        "Environment_Category": {
-            "type": "string",
-            "maxLength": 1,
-            "metadata": {
-                "description": "1 chars e.g. Development - d, Production - p"
-            },
-            "defaultValue": "d"
-        },
-        "Role": {
-            "type": "string",
-            "maxLength": 1,
-            "metadata": {
-                "description": "1 chars e.g. RDP - d, Mgmt - m"
-            },
-            "defaultValue": "m"
-        },
-        "Custom": {
-            "type": "string",
-            "maxLength": 5,
-            "metadata": {
-                "description": "5 chars e.g. Tenant,Region"
-            },
-            "defaultValue": "aal"
+        "virtualmachineName": {
+            "type": "string"
         },
         "AvailabilitySet": {
             "type": "string",
@@ -123,7 +94,7 @@
             }
         },
         {
-            "name": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
+            "name": "[parameters('virtualmachineName')[copyIndex(1)]]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-06-01",
             "location": "[parameters('ResourceGroupLocation')]",
@@ -159,7 +130,7 @@
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
+                    "computerName": "[parameters('virtualmachineName')[copyIndex(1)]]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -175,7 +146,7 @@
                     "apiVersion": "2018-06-01",
                     "location": "[parameters('ResourceGroupLocation')]",
                     "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1))))]"
+                        "[parameters('virtualmachineName')[copyIndex(1)]]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
