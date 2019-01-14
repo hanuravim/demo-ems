@@ -54,6 +54,9 @@
         "StorageAccountType": {
             "type": "string"
         },
+        "networkInterfaceName": {
+            "type": "string"
+        },
         "DataDiskName": {
             "type": "array"
         },
@@ -149,7 +152,11 @@
                     "dataDisks": "[take(variables('dataDisks'),parameters('numberOfDataDisks'))]"
                 },
                 "networkProfile": {
-                   
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName')[copyIndex()])]"
+                        }
+                    ]
                 },
                 "osProfile": {
                     "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
