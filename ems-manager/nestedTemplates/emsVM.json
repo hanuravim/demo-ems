@@ -1,57 +1,45 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "vmCount": {
             "type": "int"
         },
+        "virtualmachineName": {
+            "type": "string"
+        },
         "nicCount": {
             "type": "int"
-        },
-        "ResourceGroupLocation": {
-            "type": "string",
-            "defaultValue": "WestUS2"
-        },
-        "virtualmachineName": {
-            "type": "string",
-            "defaultValue": "fadmaal00"
-        },
-        "AvailabilitySet": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ]
-        },
-        "virtualMachineSize": {
-            "type": "string",
-            "defaultValue": "Standard_DS4_v2"
-        },
-        "StorageAccountType": {
-            "type": "string",
-            "defaultValue": "Standard_LRS"
-        },
-        "subnetRef": {
-            "type": "string"
-        },
-        "existingvirtualNetworkRG": {
-            "type": "string"
-        },
-        "networkInterfaceName": {
-            "type": "string",
-            "defaultValue": "gavwu2-ems-dev-nic-efoqa-00"
         },
         "privateIpAddress": {
             "type": "array"
         },
-        "DataDiskName": {
-            "type": "array",
-            "defaultvalue": [
-                "ADI"
-            ]
+        "virtualMachineSize": {
+            "type": "string"
+        },
+        "virtualNetworkName": {
+            "type": "string"
+        },
+        "virtualNetworkResourceGroup": {
+            "type": "string"
+        },
+        "subnet1Name": {
+            "type": "string"
+        },
+        "networkInterfaceName": {
+            "type": "string"
+        },
+        "StorageAccountType": {
+            "type": "string"
         },
         "numberOfDataDisks": {
             "type": "int"
+        },
+        "osDiskName": {
+            "type": "string"
+        },
+        "dataDiskName": {
+            "type": "string"
         },
         "DataDiskSize": {
             "type": "int"
@@ -61,159 +49,96 @@
         },
         "adminPassword": {
             "type": "securestring"
-        },
-        "omsWorkspaceResourceGroup": {
-            "type": "string",
-            "defaultValue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
-        },
-        "omsWorkspaceName": {
-            "type": "string",
-            "defaultValue": "emsLogAnalytics"
         }
     },
     "variables": {
-        "availabilitySetName": "emsmgravset",
-        "availabilitySetId": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets', variables('availabilitySetName'))]"
-        },
-        "dataDisks": [
-            {
-                "diskSizeGB": "[parameters('DataDiskSize')]",
-                "lun": 0,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 1,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 2,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 3,
-                "createOption": "Empty"
-            }
-        ]
+        "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]"
     },
     "resources": [
         {
-            "condition": "[equals(parameters('AvailabilitySet'), 'Yes')]",
-            "type": "Microsoft.Compute/availabilitySets",
-            "apiVersion": "2017-03-30",
-            "name": "[variables('availabilitySetName')]",
-            "location": "[parameters('ResourceGroupLocation')]",
-            "properties": {
-                "platformFaultDomainCount": 2,
-                "platformUpdateDomainCount": 3
-            },
-            "sku": {
-                "name": "Aligned"
-            }
-        },
-        {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('networkInterfaceName'),copyIndex(1))]",
-            "location": "[parameters('ResourceGroupLocation')]",
+            "name": "[concat(parameters('networkInterfaceName'), copyindex(1))]",
             "apiVersion": "2018-05-01",
+            "location": "[resourcegroup().location]",
             "copy": {
-                "name": "nicloop",
+                "name": "nicLoop",
                 "count": "[parameters('nicCount')]"
             },
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
                         "properties": {
-                            "subnet": {
-                                "id": "[parameters('subnetRef')]"
-                            },
                             "privateIpAddress": "[parameters('privateIpAddress')[copyIndex()]]",
                             "privateIpAddressVersion": "IPv4",
-                            "privateIPAllocationMethod": "Static"
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[variables('subnet1Ref')]"
+                            }
                         }
                     }
                 ]
-            },
-            "tags": {}
+            }
         },
         {
-            "name": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
             "type": "Microsoft.Compute/virtualMachines",
-            "apiVersion": "2018-06-01",
-            "location": "[parameters('ResourceGroupLocation')]",
+            "name": "[concat(parameters('virtualmachineName'), copyIndex(1))]",
+            "apiVersion": "2018-10-01",
+            "location": "[resourcegroup().location]",
             "copy": {
-                "name": "vmloop",
+                "name": "virtualMachineLoop",
                 "count": "[parameters('vmCount')]"
             },
+            "dependsOn": [
+                "nicLoop"
+            ],
             "properties": {
-                "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
                     "vmSize": "[parameters('virtualMachineSize')]"
                 },
+                "osProfile": {
+                    "computerName": "[concat(parameters('virtualmachineName'), copyIndex(1))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
                 "storageProfile": {
-                    "osDisk": {
-                        "createOption": "FromImage",
-                        "managedDisk": {
-                            "storageAccountType": "[parameters('storageAccountType')]"
-                        }
-                    },
                     "imageReference": {
                         "publisher": "MicrosoftWindowsServer",
                         "offer": "WindowsServer",
                         "sku": "2016-Datacenter",
                         "version": "latest"
                     },
-                    "dataDisks": "[take(variables('dataDisks'),parameters('numberOfDataDisks'))]"
+                    "osDisk": {
+                        "name": "[concat(parameters('osDiskName'), copyIndex(1))]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('StorageAccountType')]"
+                        }
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[parameters('numberOfDataDisks')]",
+                            "input": {
+                                "caching": "ReadWrite",
+                                "diskSizeGB": "[parameters('DataDiskSize')]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "name": "[concat(parameters('dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
+                                "createOption": "Empty"
+                            }
+                        }
+                    ]
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('networkInterfaceName'), copyindex(1)))]"
                         }
                     ]
-                },
-                "osProfile": {
-                    "computerName": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "windowsConfiguration": {
-                        "enableAutomaticUpdates": true,
-                        "provisionVmAgent": true
-                    }
                 }
-            },
-            "dependsOn": [
-                "nicloop"
-            ],
-            "resources": [
-                {
-                    "type": "extensions",
-                    "name": "Microsoft.EnterpriseCloud.Monitoring",
-                    "apiVersion": "2018-06-01",
-                    "location": "[parameters('ResourceGroupLocation')]",
-                    "dependsOn": [
-                        "[concat(parameters('virtualmachineName'),copyIndex(1))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                        "type": "MicrosoftMonitoringAgent",
-                        "typeHandlerVersion": "1.0",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
-                        },
-                        "protectedSettings": {
-                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
-                        }
-                    }
-                }
-            ],
-            "tags": {
-                "vmrole": "ems manager"
             }
         }
     ]
