@@ -10,7 +10,8 @@
             "defaultValue": "WestUS2"
         },
         "virtualmachineName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "fadmaal00"
         },
         "AvailabilitySet": {
             "type": "string",
@@ -20,16 +21,22 @@
             ]
         },
         "virtualMachineSize": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Standard_DS4_v2"
         },
         "StorageAccountType": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "Standard_LRS"
         },
         "networkInterfaceName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "gavwu2-ems-dev-nic-efoqa-00"
         },
         "DataDiskName": {
-            "type": "array"
+            "type": "array",
+            "defaultvalue": [
+                "ADI"
+            ]
         },
         "numberOfDataDisks": {
             "type": "int"
@@ -44,10 +51,12 @@
             "type": "securestring"
         },
         "omsWorkspaceResourceGroup": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
         },
         "omsWorkspaceName": {
-            "type": "string"
+            "type": "string",
+            "defaultValue": "emsLogAnalytics"
         }
     },
     "variables": {
@@ -94,7 +103,7 @@
             }
         },
         {
-            "name": "[parameters('virtualmachineName')[copyIndex(1)]]",
+            "name": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
             "type": "Microsoft.Compute/virtualMachines",
             "apiVersion": "2018-06-01",
             "location": "[parameters('ResourceGroupLocation')]",
@@ -125,12 +134,12 @@
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName')[copyIndex()])]"
+                            "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/', resourceGroup().name,'/providers/','Microsoft.Network/networkInterfaces/',parameters('networkInterfaceName'),copyIndex(1))]"
                         }
                     ]
                 },
                 "osProfile": {
-                    "computerName": "[parameters('virtualmachineName')[copyIndex(1)]]",
+                    "computerName": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
                     "adminPassword": "[parameters('adminPassword')]",
                     "windowsConfiguration": {
@@ -146,7 +155,7 @@
                     "apiVersion": "2018-06-01",
                     "location": "[parameters('ResourceGroupLocation')]",
                     "dependsOn": [
-                        "[parameters('virtualmachineName')[copyIndex(1)]]"
+                        "[concat(parameters('virtualmachineName'),copyIndex(1))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
