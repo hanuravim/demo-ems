@@ -39,7 +39,7 @@
             "defaultValue": "gavwu2-ems-dev-nic-efoqa-00"
         },
         "privateIpAddress": {
-            "type": "string"
+            "type": "array"
         },
         "DataDiskName": {
             "type": "array",
