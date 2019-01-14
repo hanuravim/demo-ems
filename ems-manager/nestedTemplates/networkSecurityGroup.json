@@ -1,31 +1,24 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupLocation": {
-            "type": "string"
-        },
-        "shortlocation": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue":"WestUS2"
         },
         "nsgCount": {
             "type": "int"
         },
-        "Application_Acronym": {
-            "type": "string"
-        },
-        "Environment_Category": {
-            "type": "string"
-        },
-        "Custom": {
-            "type": "string"
+        "networkSecurityGroupName": {
+            "type": "string",
+            "defaultvalue":"gavwu2-ems-dev-nsg-efoqa-00"
         }
     },
     "variables": {},
     "resources": [
         {
             "type": "Microsoft.Network/networkSecurityGroups",
-            "name": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nsg','-',parameters('Custom'),'-','00',copyindex(1)))]",
+            "name": "[concat(parameters('networkSecurityGroupName'),copyIndex(1))]",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-05-01",
             "copy": {
