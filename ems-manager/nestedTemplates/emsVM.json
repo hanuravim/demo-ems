@@ -48,12 +48,6 @@
                 "No"
             ]
         },
-        "networkInterfaceName": {
-            "type": "string"
-        },
-        "StorageAccountName": {
-            "type": "string"
-        },
         "virtualMachineSize": {
             "type": "string"
         },
@@ -155,11 +149,7 @@
                     "dataDisks": "[take(variables('dataDisks'),parameters('numberOfDataDisks'))]"
                 },
                 "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces', parameters('networkInterfaceName')[copyIndex()])]"
-                        }
-                    ]
+                   
                 },
                 "osProfile": {
                     "computerName": "[tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1)))]",
@@ -168,12 +158,6 @@
                     "windowsConfiguration": {
                         "enableAutomaticUpdates": true,
                         "provisionVmAgent": true
-                    }
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[concat('https://', parameters('StorageAccountName'), '.blob.core.windows.net/')]"
                     }
                 }
             },
@@ -196,32 +180,6 @@
                         },
                         "protectedSettings": {
                             "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
-                        }
-                    }
-                },
-                {
-                    "name": "AzureFileShares",
-                    "type": "extensions",
-                    "location": "[parameters('ResourceGroupLocation')]",
-                    "dependsOn": [
-                        "[concat('Microsoft.Compute/virtualMachines/', tolower(concat(parameters('Application_Acronym'),parameters('Environment_Category'),parameters('Role'),parameters('Custom'),'00',copyindex(1))))]"
-                    ],
-                    "apiVersion": "2018-06-01",
-                    "tags": {
-                        "displayName": "AzureFileShares"
-                    },
-                    "properties": {
-                        "publisher": "Microsoft.Compute",
-                        "type": "CustomScriptExtension",
-                        "typeHandlerVersion": "1.9",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "fileUris": [
-                                "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/nestedTemplates/AzFileShare.ps1"
-                            ]
-                        },
-                        "protectedSettings": {
-                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','AzFileShare.ps1 -SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2015-06-15').key1)]"
                         }
                     }
                 }
