@@ -3,22 +3,25 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupLocation": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue": "WestUS2"
         },
         "strCount": {
             "type": "int"
         },
         "StorageAccountName": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue": "emswu2trdevstr00"
         },
         "StorageAccountType": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue": "Standard_LRS"
         }
     },
     "variables": {},
     "resources": [
         {
-            "name": "[parameters('StorageAccountName')]",
+            "name": "[concat(parameters('StorageAccountName'),copyIndex(1))]",
             "type": "Microsoft.Storage/storageAccounts",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-07-01",
