@@ -1,11 +1,15 @@
 param (
         [Parameter(Mandatory=$false)]
         [string]
-        $ResourceGroupName='GAV-WE2-NET-SB-PRD-NET-SRD-01',
+        $ResourceGroupName='fa-dr-poc',
 
         [Parameter(Mandatory=$false)]
         [string]
-        $SQLTemplateFileUri="https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/masterTemplate.json"
+        $TemplateUri="https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/deploy.json",
+
+        [Parameter(Mandatory=$false)]
+        [string]
+        $ParameterUri="https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/deploy.parameters.json"
 )
 
 # Authenticate to Azure if running from Azure Automation
@@ -17,7 +21,7 @@ Login-AzureRmAccount `
     -CertificateThumbprint $ServicePrincipalConnection.CertificateThumbprint | Write-Verbose
 
 # Domain Join credential asset
-$myCredential = Get-AutomationPSCredential -Name 'DomainJoinEfoqa'
+$myCredential = Get-AutomationPSCredential -Name 'DomainAdmin'
 
 # Template parameters
 $Parameters = @{
@@ -26,4 +30,4 @@ $Parameters = @{
     "adminPassword"="Testuser@123"
 }
 
-New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateFile $SQLTemplateFileUri -TemplateParameterObject $Parameters
+New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateUri $TemplateUri -TemplateParameterUri $ParameterUri
