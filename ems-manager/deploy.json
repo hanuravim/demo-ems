@@ -187,7 +187,7 @@
             "type": "Microsoft.Resources/deployments",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "nsg",
-            "apiVersion": "2018-05-01",
+            "apiVersion": "2017-08-01",
             "dependsOn": [
                 "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
             ],
