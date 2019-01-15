@@ -23,8 +23,8 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('virtualMachineName'),'/domainJoin')]",
-            "apiVersion": "2018-10-01",
+            "name": "[concat(parameters('virtualMachineName'), copyIndex(1),'/domainJoin')]",
+            "apiVersion": "2018-05-01",
             "location": "[parameters('ResourceGroupLocation')]",
             "properties": {
                 "publisher": "Microsoft.Compute",
