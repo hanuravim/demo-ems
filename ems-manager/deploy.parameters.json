@@ -38,13 +38,13 @@
         "Custom": {
             "value": "EFOQA"
         },
-        "existingvirtualNetworkRG": {
-            "value": "emsSharedResources"
+        "virtualNetworkResourceGroup": {
+            "value": "fa-dr-poc"
         },
-        "existingvirtualNetworkName": {
-            "value": "emsVNET"
+        "virtualNetworkName": {
+            "value": "DREFOQAPOC"
         },
-        "subnetName": {
+        "subnet1Name": {
             "value": "default"
         },
         "AvailabilitySet": {
@@ -52,8 +52,8 @@
         },
         "privateIpAddress": {
             "value": [
-                "10.3.0.5",
-                "10.3.0.7"
+                "10.5.0.29",
+                "10.5.0.30"
             ]
         },
         "virtualMachineSize": {
@@ -62,25 +62,23 @@
         "numberOfDataDisks": {
             "value": 2
         },
-        "DataDiskName": {
-            "value": [
-                "ADI"
-            ]
-        },
         "DataDiskSize": {
             "value": 1024
         },
         "omsWorkspaceResourceGroup": {
-            "value": "emsSharedResources"
+            "value": "fa-dr-poc"
         },
         "omsWorkspaceName": {
-            "value": "emsLogAnalytiks"
+            "value": "fa-log-analytics"
         },
         "adminUsername": {
-            "value": "azadmin"
+            "value": ""
         },
         "adminPassword": {
             "value": ""
+        },
+        "domainName": {
+            "value": "drefoqa.com"
         },
         "DomainUserName": {
             "value": ""
