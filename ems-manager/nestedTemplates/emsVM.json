@@ -174,7 +174,7 @@
                     "type": "extensions",
                     "name": "Microsoft.EnterpriseCloud.Monitoring",
                     "apiVersion": "2018-06-01",
-                    "location": "[parameters('omsWorkspaceLocation')]",
+                    "location": "[resourcegroup().location]",
                     "dependsOn": [
                         "[concat(parameters('virtualmachineName'),copyIndex(1))]"
                     ],
