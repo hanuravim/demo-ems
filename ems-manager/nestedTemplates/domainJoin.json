@@ -6,6 +6,9 @@
             "type": "string",
             "defaultvalue": "WestUS2"
         },
+        "vmCount": {
+            "type": "int"
+        },
         "virtualMachineName": {
             "type": "string"
         },
@@ -23,7 +26,11 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('virtualMachineName'),'/domainJoin')]",
+            "name": "[concat(parameters('virtualMachineName'), copyIndex(1),'/domainJoin')]",
+            "copy": {
+                "name": "nicloop",
+                "count": "[parameters('vmCount')]"
+            },
             "apiVersion": "2018-05-01",
             "location": "[parameters('ResourceGroupLocation')]",
             "properties": {
