@@ -54,9 +54,6 @@
         "adminPassword": {
             "type": "securestring"
         },
-        "omsWorkspaceLocation": {
-            "type": "string"
-        },
         "omsWorkspaceResourceGroup": {
             "type": "string"
         },
