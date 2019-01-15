@@ -3,19 +3,24 @@
     "contentVersion": "1.0.0.0",
     "parameters": {
         "ResourceGroupCount": {
-            "type": "int"
+            "type": "int",
+            "defaultvalue":1
         },
         "nsgCount": {
-            "type": "int"
+            "type": "int",
+            "defaultvalue":1
         },
         "nicCount": {
-            "type": "int"
+            "type": "int",
+            "defaultvalue":1
         },
         "storageCount": {
-            "type": "int"
+            "type": "int",
+            "defaultvalue":1
         },
         "vmCount": {
-            "type": "int"
+            "type": "int",
+            "defaultvalue":1
         },
         "ResourceGroupLocation": {
             "type": "string",
@@ -75,7 +80,7 @@
             "metadata": {
                 "description": "(Product Specific) Space. 8 chars (OPTIONAL)"
             },
-            "defaultValue": ""
+            "defaultValue": "EFOQA"
         },
         "virtualNetworkResourceGroup": {
             "type": "string",
@@ -136,7 +141,8 @@
             "defaultvalue": ""
         },
         "domainName": {
-            "type": "string"
+            "type": "string",
+            "defaultvalue":"efoqa.local"
         },
         "DomainUserName": {
             "type": "string",
