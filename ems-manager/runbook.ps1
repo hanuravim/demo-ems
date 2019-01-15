@@ -25,11 +25,7 @@ $DomainCredential = Get-AutomationPSCredential -Name 'DomainAdmin'
 $LocalCredential = Get-AutomationPSCredential -Name 'LocalAdmin'
 
 # Template parameters
-$Parameters = @{
-    "DomainUserName"=$DomainCredential.UserName;
-    "DomainPassword"=$DomainCredential.Password;
-    "adminUsername"$LocalCredential.UserName;
-    "adminPassword"$LocalCredential.Password
-}
+$Parameters = @{"DomainUserName"=$DomainCredential.UserName;"DomainPassword"=$DomainCredential.Password;
+"adminUsername"=$LocalCredential.UserName;"adminPassword"=$LocalCredential.Password}
 
 New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateUri $TemplateUri -TemplateParameterUri $ParameterUri
