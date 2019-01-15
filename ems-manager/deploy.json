@@ -4,23 +4,23 @@
     "parameters": {
         "ResourceGroupCount": {
             "type": "int",
-            "defaultvalue":1
+            "defaultvalue": 1
         },
         "nsgCount": {
             "type": "int",
-            "defaultvalue":1
+            "defaultvalue": 1
         },
         "nicCount": {
             "type": "int",
-            "defaultvalue":1
+            "defaultvalue": 1
         },
         "storageCount": {
             "type": "int",
-            "defaultvalue":1
+            "defaultvalue": 1
         },
         "vmCount": {
             "type": "int",
-            "defaultvalue":1
+            "defaultvalue": 1
         },
         "ResourceGroupLocation": {
             "type": "string",
@@ -142,7 +142,7 @@
         },
         "domainName": {
             "type": "string",
-            "defaultvalue":"efoqa.local"
+            "defaultvalue": "efoqa.local"
         },
         "DomainUserName": {
             "type": "string",
@@ -168,7 +168,7 @@
         "virtualmachineName": "[tolower(concat(take(parameters('Application_Acronym'),variables('CharactersForvmName')),first(parameters('Environment_Category')),first(parameters('Role')),parameters('Custom'),'00'))]",
         "osDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','osd','-','dsk','-',parameters('Role'),'00'))]",
         "dataDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','dat','-','dsk','-',parameters('Role'),'00'))]",
-        "vnetID": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "vnetID": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
         "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
         "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/StorageAccount.json')]",
@@ -189,7 +189,7 @@
             "name": "nsg",
             "apiVersion": "2018-05-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"   
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
             ],
             "properties": {
                 "mode": "Incremental",
