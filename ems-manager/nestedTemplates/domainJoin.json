@@ -1,22 +1,18 @@
 {
-    "$schema": "http://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "ResourceGroupLocation": {
-            "type": "string",
-            "defaultvalue": "WestUS2"
-        },
         "vmCount": {
             "type": "int"
         },
-        "virtualMachineName": {
+        "virtualmachineName": {
             "type": "string"
         },
         "domainName": {
             "type": "string"
         },
         "DomainUserName": {
-            "type": "securestring"
+            "type": "string"
         },
         "DomainPassword": {
             "type": "securestring"
@@ -26,13 +22,13 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('virtualMachineName'), copyIndex(1),'/domainJoin')]",
+            "name": "[concat(parameters('virtualmachineName'), copyindex(), '/joindomain')]",
+            "apiVersion": "2015-06-15",
+            "location": "[resourceGroup().location]",
             "copy": {
-                "name": "nicloop",
+                "name": "domainjoinloop",
                 "count": "[parameters('vmCount')]"
             },
-            "apiVersion": "2018-10-01",
-            "location": "[parameters('ResourceGroupLocation')]",
             "properties": {
                 "publisher": "Microsoft.Compute",
                 "type": "JsonADDomainExtension",
