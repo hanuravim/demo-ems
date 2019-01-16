@@ -93,7 +93,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(parameters('networkInterfaceName'), copyindex(1))]",
             "apiVersion": "2018-05-01",
-            "location": "[resourcegroup().location]",
+            "location": "CentralUS",
             "copy": {
                 "name": "nicLoop",
                 "count": "[parameters('nicCount')]"
