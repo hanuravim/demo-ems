@@ -126,11 +126,11 @@
         },
         "omsWorkspaceResourceGroup": {
             "type": "string",
-            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+            "defaultvalue": "fa-dr-poc"
         },
         "omsWorkspaceName": {
             "type": "string",
-            "defaultvalue": "emsLogAnalytics"
+            "defaultvalue": "fa-log-analytics"
         },
         "adminUsername": {
             "type": "string",
