@@ -315,6 +315,7 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "domainJoin",
+            "location": "[resourceGroup().location]",
             "apiVersion": "2018-05-01",
             "dependsOn": [
                 "virtualMachine"
