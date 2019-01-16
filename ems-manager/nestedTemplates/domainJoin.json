@@ -1,7 +1,10 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
+        "ResourceGroupLocation": {
+            "type": "string"
+        },
         "vmCount": {
             "type": "int"
         },
@@ -24,6 +27,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/joindomain')]",
             "apiVersion": "2015-06-15",
+            "location": "[parameters('ResourceGroupLocation')]",
             "copy": {
                 "name": "domainjoinloop",
                 "count": "[parameters('vmCount')]"
