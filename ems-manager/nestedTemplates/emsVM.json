@@ -27,13 +27,7 @@
         "virtualMachineSize": {
             "type": "string"
         },
-        "virtualNetworkResourceGroup": {
-            "type": "string"
-        },
-        "virtualNetworkName": {
-            "type": "string"
-        },
-        "subnet1Name": {
+        "Subnet1Ref": {
             "type": "string"
         },
         "networkInterfaceName": {
@@ -70,9 +64,7 @@
     "variables": {
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
-        },
-        "vmTeplateVNETId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
-        "vmTeplateSubnet1Ref": "[concat(variables('vmTeplateVNETId'),'/subnets/', parameters('subnet1Name'))]"
+        }
     },
     "resources": [
         {
@@ -108,7 +100,7 @@
                             "privateIpAddressVersion": "IPv4",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('vmTeplateSubnet1Ref')]"
+                                "id": "[parameters('Subnet1Ref')]"
                             }
                         }
                     }
