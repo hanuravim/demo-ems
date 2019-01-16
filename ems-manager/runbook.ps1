@@ -1,15 +1,7 @@
 param (
         [Parameter(Mandatory=$false)]
         [string]
-        $ResourceGroupName='fa-dr-poc',
-
-        [Parameter(Mandatory=$false)]
-        [string]
-        $TemplateUri="https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/deploy.json",
-
-        [Parameter(Mandatory=$false)]
-        [string]
-        $ParameterUri="https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/deploy.parameters.json"
+        $TemplateUri="https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/deploy.json"
 )
 
 # Authenticate to Azure if running from Azure Automation
@@ -28,4 +20,4 @@ $LocalCredential = Get-AutomationPSCredential -Name 'LocalAdmin'
 $Parameters = @{"DomainUserName"=$DomainCredential.UserName;"DomainPassword"=$DomainCredential.Password;
 "adminUsername"=$LocalCredential.UserName;"adminPassword"=$LocalCredential.Password}
 
-New-AzureRmResourceGroupDeployment -ResourceGroupName $ResourceGroupName -TemplateUri $TemplateUri -TemplateParameterUri $ParameterUri
+New-AzureRmDeployment -Location 'westus2'  -TemplateFile $TemplateUri  -TemplateParameterObject $Parameters
