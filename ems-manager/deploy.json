@@ -24,7 +24,7 @@
         },
         "ResourceGroupLocation": {
             "type": "string",
-            "defaultValue": "WestUS2"
+            "defaultValue": "CentralUS"
         },
         "shortLocation": {
             "type": "string",
@@ -32,7 +32,7 @@
             "metadata": {
                 "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
             },
-            "defaultValue": "WU2"
+            "defaultValue": "cu"
         },
         "Application_Acronym": {
             "type": "string",
