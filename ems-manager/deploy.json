@@ -84,15 +84,15 @@
         },
         "virtualNetworkResourceGroup": {
             "type": "string",
-            "defaultvalue": "GAV-WE2-NET-SB-PRD-NET-SRD-01"
+            "defaultvalue": "fa-dr-poc"
         },
         "virtualNetworkName": {
             "type": "string",
-            "defaultvalue": "efoqavn"
+            "defaultvalue": "DREFOQAPOC"
         },
         "subnet1Name": {
             "type": "string",
-            "defaultvalue": "efoqacommonnet"
+            "defaultvalue": "default"
         },
         "AvailabilitySet": {
             "type": "string",
@@ -108,8 +108,8 @@
         "privateIpAddress": {
             "type": "array",
             "defaultvalue": [
-                "10.3.0.5",
-                "10.3.0.6"
+                "10.5.0.29",
+                "10.5.0.30"
             ]
         },
         "virtualMachineSize": {
@@ -122,7 +122,7 @@
         },
         "DataDiskSize": {
             "type": "int",
-            "defaultvalue": 1024
+            "defaultvalue": 1
         },
         "omsWorkspaceResourceGroup": {
             "type": "string",
@@ -312,7 +312,6 @@
                 }
             }
         }
-      
     ],
     "outputs": {
         "ResourceGroupName": {
