@@ -261,8 +261,8 @@
                     "nicCount": {
                         "value": "[parameters('nicCount')]"
                     },
-                    "subnet1Name": {
-                        "value": "[parameters('subnet1Name')]"
+                    "subnet1Ref": {
+                        "value": "[variables('subnet1Ref')]"
                     },
                     "privateIpAddress": {
                         "value": "[parameters('privateIpAddress')]"
@@ -278,12 +278,6 @@
                     },
                     "virtualMachineSize": {
                         "value": "[parameters('virtualMachineSize')]"
-                    },
-                    "virtualNetworkResourceGroup": {
-                        "value": "[parameters('virtualNetworkResourceGroup')]"
-                    },
-                    "virtualNetworkName":{
-                        "value": "[parameters('virtualNetworkName')]"
                     },
                     "StorageAccountType": {
                         "value": "[variables('StorageAccountType')]"
@@ -314,6 +308,38 @@
                     },
                     "omsWorkspaceName": {
                         "value": "[parameters('omsWorkspaceName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "domainJoin",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "virtualMachine"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('domainJoinTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "DomainUserName": {
+                        "value": "[parameters('DomainUserName')]"
+                    },
+                    "DomainPassword": {
+                        "value": "[parameters('DomainPassword')]"
                     }
                 }
             }
