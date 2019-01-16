@@ -71,7 +71,7 @@
         "availabilitySetId": {
             "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
         },
-        "vmTeplateVNETId": "[resourceId(parameters('virtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('virtualNetworkName'))]",
+        "vmTeplateVNETId": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
         "vmTeplateSubnet1Ref": "[concat(variables('vmTeplateVNETId'),'/subnets/', parameters('subnet1Name'))]"
     },
     "resources": [
