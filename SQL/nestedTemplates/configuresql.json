@@ -2,11 +2,11 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sqlNodeCount": {
-            "type": "int"
-        },
-        "SqlVmPrefix": {
+        "virtualmachineName": {
             "type": "string"
+        },
+        "vmCount": {
+            "type": "int"
         },
         "domainName": {
             "type": "string"
@@ -31,12 +31,12 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('SqlVmPrefix'), copyindex(1), '/configuresql', copyindex(1))]",
+            "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/joindomain')]",
             "apiVersion": "2016-03-30",
             "location": "[resourceGroup().location]",
             "copy": {
                 "name": "sqlconfigloop",
-                "count": "[parameters('sqlNodeCount')]",
+                "count": "[parameters('vmCount')]",
                 "mode": "Serial",
                 "batchSize": 1
             },
@@ -55,7 +55,7 @@
                             "password": "PrivateSettingsRef:adminPassword"
                         },
                         "ClusterName": "SQLClusterAG",
-                        "ClusterOwnerNode": "[concat(parameters('SqlVmPrefix'), '0')]",
+                        "ClusterOwnerNode": "[concat(parameters('virtualmachineName'), copyindex(1), '0')]",
                         "ClusterIP": "[parameters('clusterIpAddress')]"
                     }
                 },
