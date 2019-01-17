@@ -35,9 +35,7 @@
             "apiVersion": "2015-06-15",
             "copy": {
                 "name": "sqlconfigloop",
-                "count": "[parameters('vmCount')]",
-                "mode": "Serial",
-                "batchSize": 1
+                "count": "[parameters('vmCount')]"
             },
             "properties": {
                 "publisher": "Microsoft.Powershell",
@@ -54,7 +52,7 @@
                             "password": "PrivateSettingsRef:adminPassword"
                         },
                         "ClusterName": "SQLClusterAG",
-                        "ClusterOwnerNode": "[concat(parameters('virtualmachineName'),'0')]",
+                        "ClusterOwnerNode": "[concat(parameters('virtualmachineName'), copyindex(1))]",
                         "ClusterIP": "[parameters('clusterIpAddress')]"
                     }
                 },
