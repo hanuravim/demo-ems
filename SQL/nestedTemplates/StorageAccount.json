@@ -1,23 +1,39 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "diagStorageAccountName": {
-            "type": "string"
+        "ResourceGroupLocation": {
+            "type": "string",
+            "defaultvalue": "WestUS2"
+        },
+        "strCount": {
+            "type": "int"
+        },
+        "StorageAccountName": {
+            "type": "string",
+            "defaultvalue": "emswu2trdevstr00"
+        },
+        "StorageAccountType": {
+            "type": "string",
+            "defaultvalue": "Standard_LRS"
         }
     },
     "variables": {},
     "resources": [
         {
+            "name": "[concat(parameters('StorageAccountName'),copyIndex(1))]",
             "type": "Microsoft.Storage/storageAccounts",
-            "sku": {
-                "name": "Standard_LRS"
+            "location": "[parameters('ResourceGroupLocation')]",
+            "apiVersion": "2018-07-01",
+            "copy": {
+                "name": "strloop",
+                "count": "[parameters('strCount')]"
             },
-            "kind": "Storage",
-            "name": "[parameters('diagStorageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "location": "[resourceGroup().location]",
-            "properties": {}
+            "properties": {},
+            "sku": {
+                "name": "[parameters('StorageAccountType')]"
+            },
+            "tags": {}
         }
     ]
 }
