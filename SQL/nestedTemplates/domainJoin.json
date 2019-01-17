@@ -2,10 +2,10 @@
     "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sqlNodeCount": {
+        "vmCount": {
             "type": "int"
         },
-        "SqlVmPrefix": {
+        "virtualmachineName": {
             "type": "string"
         },
         "domainName": {
@@ -22,13 +22,11 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('SqlVmPrefix'), copyindex(1), '/joindomain')]",
-            "location": "[resourceGroup().location]",
+            "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/joindomain')]",
             "apiVersion": "2015-06-15",
-            "location": "[resourceGroup().location]",
             "copy": {
-                "name": "sqlvmjoinloop",
-                "count": "[parameters('sqlNodeCount')]"
+                "name": "domainjoinloop",
+                "count": "[parameters('vmCount')]"
             },
             "properties": {
                 "publisher": "Microsoft.Compute",
