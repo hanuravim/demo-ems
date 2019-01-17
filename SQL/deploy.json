@@ -354,6 +354,7 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "configuresql",
             "apiVersion": "2018-05-01",
             "location": "[parameters('ResourceGroupLocation')]",
