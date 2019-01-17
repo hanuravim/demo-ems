@@ -33,7 +33,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/configsql')]",
             "apiVersion": "2015-06-15",
-            "location": "[parameters('ResourceGroupLocation')]",
+            "location": "[resourceGroup().location]",
             "copy": {
                 "name": "sqlconfigloop",
                 "count": "[parameters('vmCount')]"
