@@ -178,7 +178,7 @@
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/StorageAccount.json')]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/sqlvm.json')]",
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
-        "configuresql": "[concat(parameters('baseUri'),'/nestedTemplates/configuresql.json')]",
+        "configuresql": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/configuresql.json')]",
         "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
