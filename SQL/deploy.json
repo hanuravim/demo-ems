@@ -357,7 +357,6 @@
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "configuresql",
             "apiVersion": "2018-05-01",
-            
             "dependsOn": [
                 "virtualMachine",
                 "domainJoin"
