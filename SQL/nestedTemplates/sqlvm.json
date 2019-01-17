@@ -1,9 +1,52 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vmName": {
+        "AvailabilitySet": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "availabilitySetName": {
             "type": "string"
+        },
+        "vmCount": {
+            "type": "int"
+        },
+        "virtualmachineName": {
+            "type": "string"
+        },
+        "nicCount": {
+            "type": "int"
+        },
+        "privateIpAddress": {
+            "type": "array"
+        },
+        "virtualMachineSize": {
+            "type": "string"
+        },
+        "Subnet1Ref": {
+            "type": "string"
+        },
+        "networkInterfaceName": {
+            "type": "string"
+        },
+        "StorageAccountType": {
+            "type": "string"
+        },
+        "numberOfDataDisks": {
+            "type": "int"
+        },
+        "osDiskName": {
+            "type": "string"
+        },
+        "dataDiskName": {
+            "type": "string"
+        },
+        "DataDiskSize": {
+            "type": "int"
         },
         "adminUsername": {
             "type": "string"
@@ -11,98 +54,53 @@
         "adminPassword": {
             "type": "securestring"
         },
-        "vmSize": {
-            "type": "string",
-            "defaultValue": "Standard_D2"
-        },
-        "existingVirtualNetworkResourceGroup": {
+        "omsWorkspaceResourceGroup": {
             "type": "string"
         },
-        "existingVirtualNetworkName": {
-            "type": "string"
-        },
-        "subnetName1": {
-            "type": "string"
-        },
-        "imagePublisher": {
-            "type": "string",
-            "defaultValue": "MicrosoftWindowsServer"
-        },
-        "imageOffer": {
-            "type": "string",
-            "defaultValue": "WindowsServer"
-        },
-        "imageSku": {
-            "type": "string",
-            "defaultValue": "2016-Datacenter"
-        },
-        "fixedPrivateIp": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "dataDiskSize": {
-            "type": "int",
-            "defaultValue": 100
-        },
-        "numberOfDataDisks": {
-            "type": "int",
-            "minValue": 0,
-            "maxValue": 8
-            
-        },
-        "secrets": {
-            "type": "array",
-            "defaultValue": []
-        },
-        "diagStorageAccountName": {
-            "type": "string"
-        },
-        "rglocation": {
+        "omsWorkspaceName": {
             "type": "string"
         }
     },
     "variables": {
-        "nicName": "[concat(parameters('vmName'),'-nic')]",
-        "subnetId1": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks/subnets/', parameters('existingVirtualNetworkName'), parameters('subnetName1'))]",
-        "diagStorageAccountId": "[concat('/subscriptions/', subscription().subscriptionId, '/resourceGroups/',resourceGroup().name, '/providers/','Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
-        "dataDisks": [
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 0,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 1,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 2,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 3,
-                "createOption": "Empty"
-            }
-        ]
+        "availabilitySetId": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+        }
     },
     "resources": [
         {
-            "name": "[variables('nicName')]",
+            "condition": "[equals(parameters('AvailabilitySet'), 'Yes')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2017-03-30",
+            "name": "[parameters('availabilitySetName')]",
+            "location": "[resourcegroup().location]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 3
+            },
+            "sku": {
+                "name": "Aligned"
+            }
+        },
+        {
             "type": "Microsoft.Network/networkInterfaces",
-            "location": "[parameters('rgLocation')]",
-            "apiVersion": "2017-06-01",
+            "name": "[concat(parameters('networkInterfaceName'), copyindex(1))]",
+            "apiVersion": "2018-05-01",
+            "location": "CentralUS",
+            "copy": {
+                "name": "nicLoop",
+                "count": "[parameters('nicCount')]"
+            },
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
                         "properties": {
-                            "privateIPAllocationMethod": "[if(empty(parameters('fixedPrivateIp')), 'Dynamic', 'Static')]",
-                            "privateIPAddress": "[parameters('fixedPrivateIp')]",
+                            "privateIpAddress": "[parameters('privateIpAddress')[copyIndex()]]",
+                            "privateIpAddressVersion": "IPv4",
+                            "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('subnetId1')]"
+                                "id": "[parameters('Subnet1Ref')]"
                             }
                         }
                     }
@@ -110,57 +108,93 @@
             }
         },
         {
-            "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('vmName')]",
-            "location": "[parameters('rgLocation')]",
+            "name": "[concat(parameters('virtualmachineName'), copyIndex(1))]",
+            "apiVersion": "2018-10-01",
+            "location": "[resourcegroup().location]",
+            "copy": {
+                "name": "virtualMachineLoop",
+                "count": "[parameters('vmCount')]"
+            },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+                "nicLoop"
             ],
             "properties": {
+                "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
-                    "vmSize": "[parameters('vmSize')]"
+                    "vmSize": "[parameters('virtualMachineSize')]"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('vmName')]",
+                    "computerName": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "secrets": "[parameters('secrets')]"
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[parameters('imagePublisher')]",
-                        "offer": "[parameters('imageOffer')]",
-                        "sku": "[parameters('imageSku')]",
+                        "publisher": "MicrosoftSqlServer",
+                        "offer": "SQL2016SP1-WS2016",
+                        "sku": "Enterprise",
                         "version": "latest"
                     },
                     "osDisk": {
-                        "createOption": "FromImage"
+                        "name": "[concat(parameters('osDiskName'), copyIndex(1))]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('StorageAccountType')]"
+                        }
                     },
-                    "dataDisks": "[take(variables('dataDisks'),parameters('numberOfDataDisks'))]"
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[parameters('numberOfDataDisks')]",
+                            "input": {
+                                "caching": "ReadWrite",
+                                "diskSizeGB": "[parameters('DataDiskSize')]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "name": "[concat(parameters('dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
+                                "createOption": "Empty"
+                            }
+                        }
+                    ]
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('networkInterfaceName'), copyindex(1)))]"
                         }
                     ]
-                },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[reference(variables('diagStorageAccountId'),'2016-01-01').primaryEndpoints.blob]"
-                    }
                 }
             },
             "resources": [
                 {
                     "type": "extensions",
+                    "name": "Microsoft.EnterpriseCloud.Monitoring",
+                    "apiVersion": "2018-06-01",
+                    "location": "[resourcegroup().location]",
+                    "dependsOn": [
+                        "[concat(parameters('virtualmachineName'),copyIndex(1))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
+                        }
+                    }
+                },
+                {
+                    "type": "extensions",
                     "name": "diskPartExtension",
                     "apiVersion": "2017-03-30",
-                    "location": "[parameters('rgLocation')]",
+                    "location": "[resourcegroup().location]",
                     "dependsOn": [
-                        "[parameters('vmName')]"
+                        "[concat(parameters('virtualmachineName'),copyIndex(1))]"
                     ],
                     "properties": {
                         "publisher": "Microsoft.Compute",
@@ -177,6 +211,5 @@
                 }
             ]
         }
-    ],
-    "outputs": {}
+    ]
 }
