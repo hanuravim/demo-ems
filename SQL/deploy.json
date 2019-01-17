@@ -358,7 +358,7 @@
             "name": "configuresql",
             "apiVersion": "2017-05-10",
             "dependsOn": [
-                "sqlvmloop",
+                "virtualMachine",
                 "domainJoin"
             ],
             "properties": {
