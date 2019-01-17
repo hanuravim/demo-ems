@@ -31,7 +31,7 @@
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/joindomain')]",
+            "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/configsql')]",
             "apiVersion": "2016-03-30",
             "location": "[resourceGroup().location]",
             "copy": {
