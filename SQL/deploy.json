@@ -318,6 +318,78 @@
                     }
                 }
             }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "domainJoin",
+            "apiVersion": "2018-05-01",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "dependsOn": [
+                "virtualMachine"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('domainJoinTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "DomainUserName": {
+                        "value": "[parameters('DomainUserName')]"
+                    },
+                    "DomainPassword": {
+                        "value": "[parameters('DomainPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "configuresql",
+            "apiVersion": "2017-05-10",
+            "dependsOn": [
+                "virtualMachine",
+                "domainJoin"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configuresql')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "SQLPrepareModuleURL": {
+                        "value": "[variables('SQLPrepareModuleURL')]"
+                    },
+                    "DomainPassword": {
+                        "value": "[parameters('DomainPassword')]"
+                    },
+                    "DomainUserName": {
+                        "value": "[parameters('DomainUserName')]"
+                    },
+                    "clusterIpAddress": {
+                        "value": "[parameters('clusterIpAddress')]"
+                    },
+                    "SQLPrepareFunction": {
+                        "value": "[variables('SQLPrepareFunction')]"
+                    }
+                }
+            }
         }
     ],
     "outputs": {
