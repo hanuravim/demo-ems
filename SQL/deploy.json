@@ -356,6 +356,7 @@
             "type": "Microsoft.Resources/deployments",
             "name": "configuresql",
             "apiVersion": "2018-05-01",
+            "location": "[resourceGroup().location]",
             "dependsOn": [
                 "virtualMachine",
                 "domainJoin"
