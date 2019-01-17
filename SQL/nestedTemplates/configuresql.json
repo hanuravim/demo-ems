@@ -33,7 +33,6 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/configsql')]",
             "apiVersion": "2015-06-15",
-            
             "copy": {
                 "name": "sqlconfigloop",
                 "count": "[parameters('vmCount')]",
@@ -55,7 +54,7 @@
                             "password": "PrivateSettingsRef:adminPassword"
                         },
                         "ClusterName": "SQLClusterAG",
-                        "ClusterOwnerNode": "[concat(parameters('virtualmachineName'), copyindex(1), '0')]",
+                        "ClusterOwnerNode": "[concat(parameters('virtualmachineName'),'0')]",
                         "ClusterIP": "[parameters('clusterIpAddress')]"
                     }
                 },
