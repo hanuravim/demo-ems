@@ -1,92 +1,230 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "sqlNodeCount": {
+        "ResourceGroupCount": {
             "type": "int",
-            "defaultValue": 2
+            "defaultvalue": 1
         },
-        "nodeIpAddresses": {
-            "defaultValue": [
-                "10.5.0.27",
-                "10.5.0.28"
+        "nsgCount": {
+            "type": "int",
+            "defaultvalue": 1
+        },
+        "nicCount": {
+            "type": "int",
+            "defaultvalue": 2
+        },
+        "storageCount": {
+            "type": "int",
+            "defaultvalue": 1
+        },
+        "vmCount": {
+            "type": "int",
+            "defaultvalue": 2
+        },
+        "ResourceGroupLocation": {
+            "type": "string",
+            "defaultValue": "CentralUS"
+        },
+        "shortLocation": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
+            },
+            "defaultValue": "cu"
+        },
+        "Application_Acronym": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. nxt (Next Net), ems"
+            },
+            "defaultValue": "EMS"
+        },
+        "Tier_Name": {
+            "type": "string",
+            "maxLength": 2,
+            "metadata": {
+                "description": "2 chars E.g. Sanbox (SB), Live (LI) and training (TR)"
+            },
+            "defaultValue": "SB"
+        },
+        "Environment_Category": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 char. E.g.  DEV, QA, UAT and PRD"
+            },
+            "defaultValue": "DEV"
+        },
+        "Role": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
+            },
+            "defaultValue": "GEN"
+        },
+        "Tenant": {
+            "type": "string",
+            "maxLength": 3,
+            "metadata": {
+                "description": "3 chars  Shared (SRD), Tenant Acronym)"
+            },
+            "defaultValue": "SRD"
+        },
+        "Custom": {
+            "type": "string",
+            "maxLength": 8,
+            "metadata": {
+                "description": "(Product Specific) Space. 8 chars (OPTIONAL)"
+            },
+            "defaultValue": "EFOQA"
+        },
+        "virtualNetworkResourceGroup": {
+            "type": "string",
+            "defaultvalue": "fa-dr-poc"
+        },
+        "virtualNetworkName": {
+            "type": "string",
+            "defaultvalue": "DREFOQAPOC"
+        },
+        "subnet1Name": {
+            "type": "string",
+            "defaultvalue": "default"
+        },
+        "AvailabilitySet": {
+            "type": "string",
+            "defaultValue": "No",
+            "allowedValues": [
+                "Yes",
+                "No"
             ],
-            "type": "array"
+            "metadata": {
+                "description": "Select whether the VM should be in AvailabilitySet or not."
+            }
+        },
+        "privateIpAddress": {
+            "type": "array",
+            "defaultvalue": [
+                "10.5.0.29",
+                "10.5.0.30"
+            ]
         },
         "clusterIpAddress": {
             "defaultValue": "10.5.0.29",
             "type": "string"
         },
+        "virtualMachineSize": {
+            "type": "string",
+            "defaultvalue": "Standard_DS4_v2"
+        },
+        "numberOfDataDisks": {
+            "type": "int",
+            "defaultvalue": 1
+        },
+        "DataDiskSize": {
+            "type": "int",
+            "defaultvalue": 1
+        },
+        "omsWorkspaceResourceGroup": {
+            "type": "string",
+            "defaultvalue": "fa-dr-poc"
+        },
+        "omsWorkspaceName": {
+            "type": "string",
+            "defaultvalue": "fa-log-analytics"
+        },
         "adminUsername": {
             "type": "string",
-            "defaultValue": "azadmin"
+            "defaultvalue": ""
         },
         "adminPassword": {
             "type": "securestring",
-            "defaultValue":""
-        },
-        "DomainUserName": {
-            "type": "string"
-        },
-        "DomainPassword": {
-            "type": "securestring"
+            "defaultvalue": ""
         },
         "domainName": {
-            "defaultValue": "drefoqa.com",
-            "type": "string"
+            "type": "string",
+            "defaultvalue": "drefoqa.com"
         },
-        "sqlVmSize": {
-            "defaultValue": "Standard_DS1_v2",
-            "allowedValues": [
-                "Standard_E32-16s_v3",
-                "Standard_DS3_v2",
-                "Standard_DS2_v2",
-                "Standard_DS1_v2"
-            ],
-            "type": "string"
+        "DomainUserName": {
+            "type": "string",
+            "defaultvalue": ""
         },
-        "sqlVmImagePublisher": {
-            "defaultValue": "MicrosoftSqlServer",
-            "type": "string"
-        },
-        "sqlVmImageOffer": {
-            "defaultValue": "SQL2016SP1-WS2016",
-            "type": "string"
-        },
-        "sqlVmImageSku": {
-            "defaultValue": "Enterprise",
-            "type": "string"
-        },
-        "numberOfDataDisks": {
-            "defaultValue": 3,
-            "type": "int"
+        "DomainPassword": {
+            "type": "securestring",
+            "defaultvalue": ""
         },
         "baseUri": {
             "type": "string",
-            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL"
+            "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
         }
     },
     "variables": {
-        "diagStorageAccountName": "efoqasqlvmdiag010",
-        "existingVirtualNetworkResourceGroup": "fa-dr-poc",
-        "existingVirtualNetworkName": "DREFOQAPOC",
-        "subnetName1": "default",
-        "SqlVmPrefix": "hanutestsql00",
-        "workspaceName": "fa-log-analytics",
-        "StorageAccountTemplate": "[concat(parameters('baseUri'),'/nestedTemplates/StorageAccount.json')]",
-        "SQLVMTemplateURL": "[concat(parameters('baseUri'),'/nestedTemplates/sqlvm.json')]",
-        "SqlIaaSExtension": "[concat(parameters('baseUri'),'/nestedTemplates/SqlIaaSExtension.json')]",
-        "domainJoinExtension": "[concat(parameters('baseUri'),'/nestedTemplates/domainJoin.json')]",
-        "omsAgent": "[concat(parameters('baseUri'),'/nestedTemplates/omsAgent.json')]",
+        "CharactersForvmName": 2,
+        "StorageAccountType": "Standard_LRS",
+        "availabilitySetName": "[tolower(concat(parameters('Application_Acronym'),'-avset'))]",
+        "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
+        "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','00'))]",
+        "vnetID": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
+        "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
+        "networkInterfaceName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nic','-',parameters('Custom'),'-','00'))]",
+        "networkSecurityGroupName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nsg','-',parameters('Custom'),'-','00'))]",
+        "virtualmachineName": "[tolower(concat(take(parameters('Application_Acronym'),variables('CharactersForvmName')),first(parameters('Environment_Category')),first(parameters('Role')),parameters('Custom'),'00'))]",
+        "osDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','osd','-','dsk','-',parameters('Role'),'00'))]",
+        "dataDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','dat','-','dsk','-',parameters('Role'),'00'))]",
+        "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
+        "StorageAccountTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/StorageAccount.json')]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/emsVM.json')]",
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "configuresql": "[concat(parameters('baseUri'),'/nestedTemplates/configuresql.json')]",
         "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
     "resources": [
         {
+            "type": "Microsoft.Resources/resourceGroups",
+            "apiVersion": "2018-05-01",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "name": "[variables('ResourceGroupName')]",
+            "properties": {}
+        },
+        {
             "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "name": "nsg",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('nsgTemplateURL')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
+                    "nsgCount": {
+                        "value": "[parameters('nsgCount')]"
+                    },
+                    "networkSecurityGroupName": {
+                        "value": "[variables('networkSecurityGroupName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "StorageAccount",
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -94,32 +232,77 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "diagStorageAccountName": {
-                        "value": "[variables('diagStorageAccountName')]"
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
+                    "strCount": {
+                        "value": "[parameters('storageCount')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[variables('StorageAccountName')]"
+                    },
+                    "StorageAccountType": {
+                        "value": "[variables('StorageAccountType')]"
                     }
                 }
             }
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "[concat('SqlVmDeploy', copyindex(1))]",
-            "apiVersion": "2017-05-10",
-            "copy": {
-                "name": "sqlvmloop",
-                "count": "[parameters('sqlNodeCount')]"
-            },
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "name": "virtualMachine",
+            "apiVersion": "2018-05-01",
             "dependsOn": [
                 "StorageAccount"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('SQLVMTemplateURL')]",
+                    "uri": "[variables('virtualMachineTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "vmName": {
-                        "value": "[concat(variables('SqlVmPrefix'), copyindex(1))]"
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "nicCount": {
+                        "value": "[parameters('nicCount')]"
+                    },
+                    "subnet1Ref": {
+                        "value": "[variables('subnet1Ref')]"
+                    },
+                    "privateIpAddress": {
+                        "value": "[parameters('privateIpAddress')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
+                    },
+                    "AvailabilitySet": {
+                        "value": "[parameters('AvailabilitySet')]"
+                    },
+                    "availabilitySetName": {
+                        "value": "[variables('availabilitySetName')]"
+                    },
+                    "virtualMachineSize": {
+                        "value": "[parameters('virtualMachineSize')]"
+                    },
+                    "StorageAccountType": {
+                        "value": "[variables('StorageAccountType')]"
+                    },
+                    "networkInterfaceName": {
+                        "value": "[variables('networkInterfaceName')]"
+                    },
+                    "osDiskName": {
+                        "value": "[variables('osDiskName')]"
+                    },
+                    "dataDiskName": {
+                        "value": "[variables('dataDiskName')]"
+                    },
+                    "numberOfDataDisks": {
+                        "value": "[parameters('numberOfDataDisks')]"
+                    },
+                    "DataDiskSize": {
+                        "value": "[parameters('DataDiskSize')]"
                     },
                     "adminUsername": {
                         "value": "[parameters('adminUsername')]"
@@ -127,35 +310,11 @@
                     "adminPassword": {
                         "value": "[parameters('adminPassword')]"
                     },
-                    "vmSize": {
-                        "value": "[parameters('sqlVmSize')]"
+                    "omsWorkspaceResourceGroup": {
+                        "value": "[parameters('omsWorkspaceResourceGroup')]"
                     },
-                    "existingVirtualNetworkResourceGroup": {
-                        "value": "[variables('existingVirtualNetworkResourceGroup')]"
-                    },
-                    "existingVirtualNetworkName": {
-                        "value": "[variables('existingVirtualNetworkName')]"
-                    },
-                    "subnetName1": {
-                        "value": "[variables('subnetName1')]"
-                    },
-                    "fixedPrivateIp": {
-                        "value": "[parameters('nodeIpAddresses')[copyIndex()]]"
-                    },
-                    "diagStorageAccountName": {
-                        "value": "[variables('diagStorageAccountName')]"
-                    },
-                    "imagePublisher": {
-                        "value": "[parameters('sqlVmImagePublisher')]"
-                    },
-                    "imageOffer": {
-                        "value": "[parameters('sqlVmImageOffer')]"
-                    },
-                    "imageSku": {
-                        "value": "[parameters('sqlVmImageSku')]"
-                    },
-                    "numberOfDataDisks": {
-                        "value": "[parameters('numberOfDataDisks')]"
+                    "omsWorkspaceName": {
+                        "value": "[parameters('omsWorkspaceName')]"
                     }
                 }
             }
@@ -163,22 +322,24 @@
         {
             "type": "Microsoft.Resources/deployments",
             "name": "domainJoin",
-            "apiVersion": "2017-05-10",
+            "apiVersion": "2018-05-01",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "location": "[parameters('ResourceGroupLocation')]",
             "dependsOn": [
-                "sqlvmloop"
+                "virtualMachine"
             ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('domainJoinExtension')]",
+                    "uri": "[variables('domainJoinTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "sqlNodeCount": {
-                        "value": "[parameters('sqlNodeCount')]"
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
                     },
-                    "SqlVmPrefix": {
-                        "value": "[variables('SqlVmPrefix')]"
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
                     },
                     "domainName": {
                         "value": "[parameters('domainName')]"
@@ -188,32 +349,6 @@
                     },
                     "DomainPassword": {
                         "value": "[parameters('DomainPassword')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "omsAgent",
-            "apiVersion": "2017-05-10",
-            "dependsOn": [
-                "sqlvmloop"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('omsAgent')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "sqlNodeCount": {
-                        "value": "[parameters('sqlNodeCount')]"
-                    },
-                    "SqlVmPrefix": {
-                        "value": "[variables('SqlVmPrefix')]"
-                    },
-                    "workspaceName": {
-                        "value": "[variables('workspaceName')]"
                     }
                 }
             }
@@ -233,11 +368,8 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
-                    "sqlNodeCount": {
-                        "value": "[parameters('sqlNodeCount')]"
-                    },
-                    "SqlVmPrefix": {
-                        "value": "[variables('sqlvmprefix')]"
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
                     },
                     "domainName": {
                         "value": "[parameters('domainName')]"
@@ -261,5 +393,10 @@
             }
         }
     ],
-    "outputs": {}
+    "outputs": {
+        "ResourceGroupName": {
+            "type": "string",
+            "value": "[variables('ResourceGroupName')]"
+        }
+    }
 }
