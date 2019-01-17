@@ -24,6 +24,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/joindomain')]",
             "apiVersion": "2015-06-15",
+            "location": "[resourcegroup().location]",
             "copy": {
                 "name": "domainjoinloop",
                 "count": "[parameters('vmCount')]"
