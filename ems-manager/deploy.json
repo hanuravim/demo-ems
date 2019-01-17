@@ -142,7 +142,7 @@
         },
         "domainName": {
             "type": "string",
-            "defaultvalue": "efoqa.local"
+            "defaultvalue": "drefoqa.com"
         },
         "DomainUserName": {
             "type": "string",
@@ -316,6 +316,7 @@
             "type": "Microsoft.Resources/deployments",
             "name": "domainJoin",
             "apiVersion": "2018-05-01",
+            "location": "[parameters('ResourceGroupLocation')]",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "dependsOn": [
                 "virtualMachine"
