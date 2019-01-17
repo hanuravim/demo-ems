@@ -368,6 +368,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
+                    },
                     "vmCount": {
                         "value": "[parameters('vmCount')]"
                     },
