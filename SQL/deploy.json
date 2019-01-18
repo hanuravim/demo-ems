@@ -389,7 +389,9 @@
             "apiVersion": "2018-05-01",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "dependsOn": [
-                "virtualMachine"
+                "virtualMachine",
+                "domainJoin",
+                "omsAgent"
             ],
             "properties": {
                 "mode": "Incremental",
