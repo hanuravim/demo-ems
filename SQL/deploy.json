@@ -374,10 +374,10 @@
                         "value": "[variables('virtualmachineName')]"
                     },
                     "omsWorkspaceResourceGroup": {
-                        "type": "string"
+                        "value": "[parameters('omsWorkspaceResourceGroup')]"
                     },
                     "omsWorkspaceName": {
-                        "type": "string"
+                        "value": "[parameters('omsWorkspaceName')]"
                     }
                 }
             }
@@ -398,10 +398,10 @@
                 },
                 "parameters": {
                     "vmCount": {
-                        "type": "int"
+                        "value": "[parameters('vmCount')]"
                     },
                     "virtualmachineName": {
-                        "type": "string"
+                        "value": "[variables('virtualmachineName')]"
                     }
                 }
             }
