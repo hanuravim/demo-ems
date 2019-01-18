@@ -166,50 +166,7 @@
                     ]
                 }
             },
-            "resources": [
-                {
-                    "type": "extensions",
-                    "name": "Microsoft.EnterpriseCloud.Monitoring",
-                    "apiVersion": "2018-06-01",
-                    "location": "[resourcegroup().location]",
-                    "dependsOn": [
-                        "[concat(parameters('virtualmachineName'),copyIndex(1))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-                        "type": "MicrosoftMonitoringAgent",
-                        "typeHandlerVersion": "1.0",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
-                        },
-                        "protectedSettings": {
-                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
-                        }
-                    }
-                },
-                {
-                    "type": "extensions",
-                    "name": "diskPartExtension",
-                    "apiVersion": "2017-03-30",
-                    "location": "[resourcegroup().location]",
-                    "dependsOn": [
-                        "[concat(parameters('virtualmachineName'),copyIndex(1))]"
-                    ],
-                    "properties": {
-                        "publisher": "Microsoft.Compute",
-                        "type": "CustomScriptExtension",
-                        "typeHandlerVersion": "1.9",
-                        "autoUpgradeMinorVersion": true,
-                        "settings": {
-                            "fileUris": [
-                                "https://dremsblobstore.blob.core.windows.net/scripts/diskInitialize.ps1"
-                            ],
-                            "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File diskInitialize.ps1"
-                        }
-                    }
-                }
-            ]
+            "resources": []
         }
     ]
 }
