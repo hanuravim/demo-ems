@@ -173,7 +173,8 @@
         "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/StorageAccount.json')]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/emsVM.json')]",
-        "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]"
+        "domainJoinTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/domainJoin.json')]",
+        "omsAgentTemplate": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/omsAgent.json')]"
     },
     "resources": [
         {
@@ -344,6 +345,36 @@
                     },
                     "DomainPassword": {
                         "value": "[parameters('DomainPassword')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "omsAgent",
+            "apiVersion": "2018-05-01",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "dependsOn": [
+                "virtualMachine"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('omsAgentTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
+                    },
+                    "omsWorkspaceResourceGroup": {
+                        "value": "[parameters('omsWorkspaceResourceGroup')]"
+                    },
+                    "omsWorkspaceName": {
+                        "value": "[parameters('omsWorkspaceName')]"
                     }
                 }
             }
