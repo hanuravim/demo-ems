@@ -9,8 +9,18 @@ $count = 0
         Format-Volume -FileSystem NTFS -NewFileSystemLabel $letter[$count] -Confirm:$false -Force
     $count++
     }
+	
+$DvdDrive = Get-CimInstance -Class Win32_Volume -Filter "driveletter='E:'"
+Set-CimInstance -InputObject $DvdDrive -Arguments @{DriveLetter="Z:"}
 
-Get-WmiObject -Class Win32_volume -Filter "DriveLetter = 'E:'" |Set-WmiInstance -Arguments @{DriveLetter='Z:'}
-Get-WmiObject -Class Win32_volume -Filter "DriveLetter = 'F:'" |Set-WmiInstance -Arguments @{DriveLetter='E:';Label='sqlData:'}
-Get-WmiObject -Class Win32_volume -Filter "DriveLetter = 'L:'" |Set-WmiInstance -Arguments @{Label='sqlLog:'}
-Get-WmiObject -Class Win32_volume -Filter "DriveLetter = 'S:'" |Set-WmiInstance -Arguments @{Label='sqlSystem:'}
+$EDrive = Get-CimInstance -Class Win32_Volume -Filter "driveletter='F:'"
+Set-CimInstance -InputObject $EDrive -Arguments @{DriveLetter="E:"}
+
+$FDrive = Get-CimInstance -Class Win32_Volume -Filter "Label='F'"
+Set-CimInstance -InputObject $FDrive -Arguments @{Label='sqlData:'}
+
+$LDrive = Get-CimInstance -Class Win32_Volume -Filter "driveletter='L:'"
+Set-CimInstance -InputObject $LDrive -Arguments @{Label='sqlLog:'}
+
+$SDrive = Get-CimInstance -Class Win32_Volume -Filter "driveletter='S:'"
+Set-CimInstance -InputObject $SDrive -Arguments @{Label='sqlSystem:'}
