@@ -328,6 +328,9 @@
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
                   "vmCount": {
                         "value": "[parameters('vmCount')]"
                     },
