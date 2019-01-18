@@ -122,7 +122,8 @@
         },
         "numberOfDataDisks": {
             "type": "int",
-            "defaultvalue": 1
+            "minValue": 3,
+            "defaultvalue": 3
         },
         "DataDiskSize": {
             "type": "int",
@@ -180,8 +181,6 @@
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
         "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]"
-
-        
     },
     "resources": [
         {
