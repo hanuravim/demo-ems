@@ -64,7 +64,7 @@
             "metadata": {
                 "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
             },
-            "defaultValue": "GEN"
+            "defaultValue": "SQL"
         },
         "Tenant": {
             "type": "string",
