@@ -178,9 +178,10 @@
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/StorageAccount.json')]",
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/sqlvm.json')]",
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
-        "configuresql": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/configuresql.json')]",
-        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/SQL/DSC/PrepareSQLServer.ps1.zip')]",
-        "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
+        "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
+        "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]"
+
+        
     },
     "resources": [
         {
@@ -363,7 +364,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('domainJoinTemplate')]",
+                    "uri": "[variables('omsAgentTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
@@ -393,7 +394,7 @@
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
-                    "uri": "[variables('domainJoinTemplate')]",
+                    "uri": "[variables('diskInitializeTemplate')]",
                     "contentVersion": "1.0.0.0"
                 },
                 "parameters": {
