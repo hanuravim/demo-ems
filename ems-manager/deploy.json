@@ -20,7 +20,7 @@
         },
         "vmCount": {
             "type": "int",
-            "defaultvalue": 1
+            "defaultvalue": 2
         },
         "ResourceGroupLocation": {
             "type": "string",
