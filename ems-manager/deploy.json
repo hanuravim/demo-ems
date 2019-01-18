@@ -64,7 +64,7 @@
             "metadata": {
                 "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
             },
-            "defaultValue": "GEN"
+            "defaultValue": "EMS"
         },
         "Tenant": {
             "type": "string",
@@ -317,7 +317,7 @@
             "name": "domainJoin",
             "apiVersion": "2018-05-01",
             "resourcegroup": "[variables('ResourceGroupName')]",
-            
+            "location": "[parameters('ResourceGroupLocation')]",
             "dependsOn": [
                 "virtualMachine"
             ],
@@ -331,7 +331,7 @@
                     "ResourceGroupLocation": {
                         "value": "[parameters('ResourceGroupLocation')]"
                     },
-                  "vmCount": {
+                    "vmCount": {
                         "value": "[parameters('vmCount')]"
                     },
                     "virtualmachineName": {
