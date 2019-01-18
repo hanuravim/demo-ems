@@ -108,8 +108,8 @@
         "privateIpAddress": {
             "type": "array",
             "defaultvalue": [
-                "10.5.0.29",
-                "10.5.0.30"
+                "10.5.0.31",
+                "10.5.0.32"
             ]
         },
         "virtualMachineSize": {
