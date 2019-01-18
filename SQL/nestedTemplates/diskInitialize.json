@@ -27,7 +27,7 @@
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
-                        "https://dremsblobstore.blob.core.windows.net/scripts/diskInitialize.ps1"
+                        "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQL/nestedTemplates/diskInitialize.ps1"
                     ],
                     "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File diskInitialize.ps1"
                 }
