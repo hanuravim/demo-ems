@@ -428,7 +428,7 @@
                         "ClusterName": "SQLClusterAG",
                         "ClusterOwnerNode": "[concat(variables('virtualmachineName'),copyIndex(1), '0')]",
                         "ClusterIP": "[parameters('clusterIpAddress')]",
-                        "witnessStorageBlobEndpoint": "[reference(concat(variables('StorageAccountName'),copyIndex(1), '2016-01-01').primaryEndpoints.blob)]",
+                        "witnessStorageBlobEndpoint": "[reference(concat(variables('StorageAccountName'),copyIndex(1)), '2016-01-01').primaryEndpoints.blob]",
                         "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountName'),copyIndex(1))), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
                     }
                 },
