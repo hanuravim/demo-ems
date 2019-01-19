@@ -1,1 +1,287 @@
-
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualNetworkResourceGroup": {
+      "type": "string",
+      "defaultvalue": "fa-dr-poc"
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "defaultvalue": "DREFOQAPOC"
+    },
+    "subnet1Name": {
+      "type": "string",
+      "defaultvalue": "default"
+    },
+    "privateIpAddress": {
+      "type": "array",
+      "defaultValue": [
+        "10.5.0.29",
+        "10.5.0.30"
+      ]
+    },
+    "clusterIpAddress": {
+      "type": "string",
+      "defaultValue": "10.0.1.31"
+    },
+    "adminUsername": {
+      "type": "string",
+      "defaultValue": "testuser"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "domainName": {
+      "type": "string",
+      "defaultValue": "drefoqa.com"
+    },
+    "sqlVmSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_DS4_v2"
+      ],
+      "defaultValue": "Standard_DS2_v2"
+    },
+    "sqlVmImagePublisher": {
+      "type": "string",
+      "defaultValue": "MicrosoftSqlServer"
+    },
+    "sqlVmImageOffer": {
+      "type": "string",
+      "defaultValue": "SQL2017-WS2016"
+    },
+    "sqlVmImageSku": {
+      "type": "string",
+      "defaultValue": "Enterprise"
+    },
+    "ResourceGroupCount": {
+      "type": "int",
+      "defaultvalue": 1
+    },
+    "nsgCount": {
+      "type": "int",
+      "defaultvalue": 1
+    },
+    "nicCount": {
+      "type": "int",
+      "defaultvalue": 2
+    },
+    "storageCount": {
+      "type": "int",
+      "defaultvalue": 1
+    },
+    "vmCount": {
+      "type": "int",
+      "defaultvalue": 2
+    },
+    "ResourceGroupLocation": {
+      "type": "string",
+      "defaultValue": "CentralUS"
+    },
+    "shortLocation": {
+      "type": "string",
+      "maxLength": 3,
+      "metadata": {
+        "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
+      },
+      "defaultValue": "cu"
+    },
+    "Application_Acronym": {
+      "type": "string",
+      "maxLength": 3,
+      "metadata": {
+        "description": "3 chars e.g. nxt (Next Net), ems"
+      },
+      "defaultValue": "EMS"
+    },
+    "Tier_Name": {
+      "type": "string",
+      "maxLength": 2,
+      "metadata": {
+        "description": "2 chars E.g. Sanbox (SB), Live (LI) and training (TR)"
+      },
+      "defaultValue": "SB"
+    },
+    "Environment_Category": {
+      "type": "string",
+      "maxLength": 3,
+      "metadata": {
+        "description": "3 char. E.g.  DEV, QA, UAT and PRD"
+      },
+      "defaultValue": "DEV"
+    },
+    "Role": {
+      "type": "string",
+      "maxLength": 3,
+      "metadata": {
+        "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
+      },
+      "defaultValue": "SQL"
+    },
+    "Tenant": {
+      "type": "string",
+      "maxLength": 3,
+      "metadata": {
+        "description": "3 chars  Shared (SRD), Tenant Acronym)"
+      },
+      "defaultValue": "SRD"
+    },
+    "Custom": {
+      "type": "string",
+      "maxLength": 8,
+      "metadata": {
+        "description": "(Product Specific) Space. 8 chars (OPTIONAL)"
+      },
+      "defaultValue": "EFOQA"
+    },
+    "AvailabilitySet": {
+      "type": "string",
+      "defaultValue": "No",
+      "allowedValues": [
+        "Yes",
+        "No"
+      ],
+      "metadata": {
+        "description": "Select whether the VM should be in AvailabilitySet or not."
+      }
+    },
+    "virtualMachineSize": {
+      "type": "string",
+      "defaultvalue": "Standard_DS4_v2"
+    },
+    "numberOfDataDisks": {
+      "type": "int",
+      "minValue": 3,
+      "defaultvalue": 3
+    },
+    "DataDiskSize": {
+      "type": "int",
+      "defaultvalue": 1
+    },
+    "omsWorkspaceResourceGroup": {
+      "type": "string",
+      "defaultvalue": "fa-dr-poc"
+    },
+    "omsWorkspaceName": {
+      "type": "string",
+      "defaultvalue": "fa-log-analytics"
+    },
+    "DomainUserName": {
+      "type": "string",
+      "defaultvalue": ""
+    },
+    "DomainPassword": {
+      "type": "securestring",
+      "defaultvalue": ""
+    },
+    "baseUri": {
+      "type": "string",
+      "defaultValue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
+    }
+  },
+  "variables": {
+    "CharactersForvmName": 2,
+    "vnetID": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
+    "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
+    "virtualmachineName": "[tolower(concat(take(parameters('Application_Acronym'),variables('CharactersForvmName')),first(parameters('Environment_Category')),first(parameters('Role')),parameters('Custom'),'00'))]",
+    "cloudWitnessStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'sqlw')]",
+    "SQLPrepareModuleURL": "[uri(parameters('baseUri'), 'DSC/PrepareSQLServer.ps1.zip')]",
+    "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
+    "windowsVmTemplateURL": "[uri(parameters('baseUri'),'../primitives/windowsvm.json')]"
+  },
+  "resources": [
+    {
+      "name": "[concat('SqlVmDeploy', copyindex())]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2017-05-10",
+      "dependsOn": [],
+      "copy": {
+        "name": "sqlvmloop",
+        "count": 2
+      },
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('windowsVmTemplateURL')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "virtualmachineName": {
+            "value": "[variables('virtualmachineName')]"
+          },
+          "vmSize": {
+            "value": "[parameters('sqlVmSize')]"
+          },
+          "subnetId": {
+            "value": "[variables('subnet1Ref')]"
+          },
+          "fixedPrivateIp": {
+            "value": "[parameters('privateIpAddress')[copyIndex()]]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "imagePublisher": {
+            "value": "[parameters('sqlVmImagePublisher')]"
+          },
+          "imageOffer": {
+            "value": "[parameters('sqlVmImageOffer')]"
+          },
+          "imageSku": {
+            "value": "[parameters('sqlVmImageSku')]"
+          }
+        }
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(variables('virtualmachineName'), copyindex(1), '/configuresql', copyindex())]",
+      "dependsOn": [
+        "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualmachineName'), copyindex(1))), '/extensions/joindomain')]"
+      ],
+      "apiVersion": "2016-03-30",
+      "copy": {
+        "name": "sqlconfigloop",
+        "count": 2,
+        "mode": "Serial",
+        "batchSize": 1
+      },
+      "location": "[resourceGroup().location]",
+      "properties": {
+        "publisher": "Microsoft.Powershell",
+        "type": "DSC",
+        "typeHandlerVersion": "2.21",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "modulesURL": "[variables('SQLPrepareModuleURL')]",
+          "configurationFunction": "[variables('SQLPrepareFunction')]",
+          "properties": {
+            "domainName": "[parameters('domainName')]",
+            "adminCreds": {
+              "userName": "[parameters('adminUserName')]",
+              "password": "privateSettingsRef:adminPassword"
+            },
+            "ClusterName": "SQLClusterAG",
+            "ClusterOwnerNode": "[concat(variables('virtualmachineName'), '0')]",
+            "ClusterIP": "[parameters('clusterIpAddress')]",
+            "witnessStorageBlobEndpoint": "[reference(variables('cloudWitnessStorageAccountName'), '2016-01-01').primaryEndpoints.blob]",
+            "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('cloudWitnessStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+          }
+        },
+        "protectedSettings": {
+          "items": {
+            "adminPassword": "[parameters('adminPassword')]"
+          }
+        }
+      }
+    }
+  ],
+  "outputs": {}
+}
