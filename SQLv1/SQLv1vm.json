@@ -61,7 +61,7 @@
     "resources": [
         {
             "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('networkInterfaceName'), copyindex(1))]",
+            "name": "[concat(parameters('networkInterfaceName'))]",
             "apiVersion": "2018-05-01",
             "location": "CentralUS",
             "copy": {
