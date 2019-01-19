@@ -71,7 +71,7 @@
     "cloudWitnessStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'sqlw')]",
     "HASetName": "SqlHASet",
     "SqlVmPrefix": "SQL",
-    "baseUri": "[deployment().properties.templateLink.uri]",
+    "baseUri": "https://raw.githubusercontent.com/hanuravim/demo-ems/master",
     "SQLPrepareModuleURL": "[uri(variables('baseUri'), 'DSC/PrepareSQLServer.ps1.zip')]",
     "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
     "windowsVmTemplateURL": "[uri(variables('baseUri'),'../primitives/windowsvm.json')]",
@@ -121,70 +121,11 @@
       }
     },
     {
-      "name": "[variables('LBName')]",
-      "type": "Microsoft.Network/loadBalancers",
-      "apiVersion": "2017-10-01",
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "frontendIPConfigurations": [
-          {
-            "name": "[variables('LBFEName')]",
-            "properties": {
-              "privateIPAddress": "[parameters('clusterIpAddress')]",
-              "privateIPAllocationMethod": "Static",
-              "subnet": {
-                "id": "[parameters('subnetId')]"
-              }
-            }
-          }
-        ],
-        "backendAddressPools": [
-          {
-            "name": "[variables('LBBEName')]"
-          }
-        ],
-        "loadBalancingRules": [
-          {
-            "name": "SQLLBRule",
-            "properties": {
-              "frontendIPConfiguration": {
-                "id": "[variables('sqllbFEConfigID')]"
-              },
-              "backendAddressPool": {
-                "id": "[variables('sqlBEAddressPoolID')]"
-              },
-              "probe": {
-                "id": "[variables('sqllbProbeID')]"
-              },
-              "frontendPort": 1433,
-              "backendPort": 1433,
-              "enableFloatingIP": true,
-              "idleTimeoutInMinutes": 4,
-              "protocol": "Tcp",
-              "loadDistribution": "Default"
-            }
-          }
-        ],
-        "probes": [
-          {
-            "name": "[variables('LBProbeName')]",
-            "properties": {
-              "protocol": "Tcp",
-              "port": 59999,
-              "intervalInSeconds": 5,
-              "numberOfProbes": 2
-            }
-          }
-        ]
-      }
-    },
-    {
       "name": "[concat('SqlVmDeploy', copyindex())]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2017-05-10",
       "dependsOn": [
-        "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]",
-        "[resourceId('Microsoft.Network/loadBalancers', variables('LBName'))]"
+        "[resourceId('Microsoft.Storage/storageAccounts', variables('diagStorageAccountName'))]"
       ],
       "copy": {
         "name": "sqlvmloop",
@@ -239,65 +180,9 @@
     {
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/SqlIaasExtension')]",
-      "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', concat('SqlVmDeploy', copyindex()))]"
-      ],
-      "copy": {
-        "name": "sqliaasextensionsloop",
-        "count": 2
-      },
-      "properties": {
-        "type": "SqlIaaSAgent",
-        "publisher": "Microsoft.SqlServer.Management",
-        "typeHandlerVersion": "1.2",
-        "autoUpgradeMinorVersion": "true",
-        "settings": {
-          "AutoTelemetrySettings": {
-            "Region": "[resourceGroup().location]"
-          },
-          "AutoPatchingSettings": {
-            "PatchCategory": "WindowsMandatoryUpdates",
-            "Enable": true,
-            "DayOfWeek": "Sunday",
-            "MaintenanceWindowStartingHour": "2",
-            "MaintenanceWindowDuration": "60"
-          },
-          "KeyVaultCredentialSettings": {
-            "Enable": false,
-            "CredentialName": ""
-          },
-          "ServerConfigurationsManagementSettings": {
-            "SQLConnectivityUpdateSettings": {
-              "ConnectivityType": "Private",
-              "Port": "1433"
-            },
-            "SQLWorkloadTypeUpdateSettings": {
-              "SQLWorkloadType": "GENERAL"
-            },
-            "SQLStorageUpdateSettings": {
-              "DiskCount": "1",
-              "NumberOfColumns": "1",
-              "StartingDeviceID": "2",
-              "DiskConfigurationType": "NEW"
-            },
-            "AdditionalFeaturesServerConfigurations": {
-              "IsRServicesEnabled": "false"
-            }
-          }
-        },
-        "protectedSettings": {}
-      }
-    },
-    {
-      "apiVersion": "2015-06-15",
-      "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(variables('SqlVmPrefix'), copyindex(), '/joindomain')]",
       "location": "[resourceGroup().location]",
-      "dependsOn": [
-        "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('SqlVmPrefix'), copyindex())), '/extensions/SqlIaasExtension')]"
-      ],
+      "dependsOn": [],
       "copy": {
         "name": "sqlvmjoinloop",
         "count": 2
