@@ -114,20 +114,7 @@
                     },
                     "osDisk": {
                         "createOption": "FromImage"
-                    },
-                    "copy": [
-                        {
-                            "name": "dataDisks",
-                            "count": "[parameters('numberOfDataDisks')]",
-                            "input": {
-                                "caching": "ReadWrite",
-                                "diskSizeGB": "[parameters('DataDiskSize')]",
-                                "lun": "[copyIndex('dataDisks')]",
-                                "name": "[concat(parameters('dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
-                                "createOption": "Empty"
-                            }
-                        }
-                    ]
+                    }
                 },
                 "networkProfile": {
                     "networkInterfaces": [
