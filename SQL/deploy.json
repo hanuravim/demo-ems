@@ -427,7 +427,7 @@
                 "mode": "Serial",
                 "batchSize": 1
             },
-            "location": "[resourceGroup().location]",
+            "location": "[parameters('ResourceGroupLocation')]",
             "properties": {
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
