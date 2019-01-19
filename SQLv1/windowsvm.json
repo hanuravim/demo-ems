@@ -67,15 +67,10 @@
         }
     },
     "variables": {
-        "publicipTemplateUrl": "[uri(deployment().properties.templateLink.uri, 'publicip.json')]",
         "nicName": "[concat(parameters('vmName'),'-nic')]",
         "genDiagStorageAccountName": "[concat('vmdiag', uniqueString( resourceGroup().id, deployment().name ))]",
         "genStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', variables('genDiagStorageAccountName'))]",
-        "genVnetName": "[concat(parameters('vmName'),'-vnet')]",
         "diagStorageAccountId": "[if(equals(parameters('diagStorageAccountId'),'null'), variables('genStorageAccountId'), parameters('diagStorageAccountId'))]",
-        "genVnetid": "[resourceId('Microsoft.Network/virtualNetworks', variables('genVnetName'))]",
-        "genSubnetId": "[concat(variables('genVnetid'), '/subnets/default')]",
-        "subnetId": "[if(equals(parameters('subnetId'),'null'), variables('genSubnetId'), parameters('subnetId'))]",
         "availabilitySetId": {
             "id": "[parameters('availabilitySetId')]"
         },
@@ -113,9 +108,7 @@
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
             "apiVersion": "2016-03-30",
-            "dependsOn": [
-                "[variables('genVnetid')]"
-            ],
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
@@ -124,7 +117,7 @@
                             "privateIPAllocationMethod": "[if(empty(parameters('fixedPrivateIp')), 'Dynamic', 'Static')]",
                             "privateIPAddress": "[parameters('fixedPrivateIp')]",
                             "subnet": {
-                                "id": "[variables('subnetId')]"
+                                "id": "[parameters('subnetId')]"
                             },
                             "loadBalancerBackendAddressPools": "[if(not(empty(parameters('LoadBalancerBEId'))),variables('loadBalancerBEIds'),json('null'))]"
                         }
@@ -187,7 +180,7 @@
         },
         "subnetId": {
             "type": "string",
-            "value": "[variables('subnetId')]"
+            "value": "[parameters('subnetId')]"
         }
     }
 }
