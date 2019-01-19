@@ -131,8 +131,8 @@
             "name": "[parameters('vmName')]",
             "location": "[resourceGroup().location]",
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
-                "[variables('genStorageAccountId')]"
+                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+                
             ],
             "properties": {
                 "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
