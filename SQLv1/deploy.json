@@ -189,20 +189,16 @@
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
     "virtualmachineName": "[tolower(concat(take(parameters('Application_Acronym'),variables('CharactersForvmName')),first(parameters('Environment_Category')),first(parameters('Role')),parameters('Custom'),'00'))]",
     "cloudWitnessStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'sqlw')]",
-    "SQLPrepareModuleURL": "[uri(parameters('baseUri'), 'DSC/PrepareSQLServer.ps1.zip')]",
+    "SQLPrepareModuleURL": "[uri(parameters('baseUri'), '/SQL/DSC/PrepareSQLServer.ps1.zip')]",
     "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
-    "windowsVmTemplateURL": "[uri(parameters('baseUri'),'../primitives/windowsvm.json')]"
+    "windowsVmTemplateURL": "[uri(parameters('baseUri'),'/SQLv1/SQLv1vm.json')]"
   },
   "resources": [
     {
-      "name": "[concat('SqlVmDeploy', copyindex())]",
+      "name": "virtualMachine",
       "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2017-05-10",
+      "apiVersion": "2018-05-01",
       "dependsOn": [],
-      "copy": {
-        "name": "sqlvmloop",
-        "count": 2
-      },
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -216,10 +212,10 @@
           "vmSize": {
             "value": "[parameters('sqlVmSize')]"
           },
-          "subnetId": {
+          "Subnet1Ref": {
             "value": "[variables('subnet1Ref')]"
           },
-          "fixedPrivateIp": {
+          "privateIpAddress": {
             "value": "[parameters('privateIpAddress')[copyIndex()]]"
           },
           "adminUsername": {
