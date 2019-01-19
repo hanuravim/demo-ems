@@ -415,6 +415,7 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('virtualmachineName'), copyIndex(1), '/configuresql', copyindex())]",
             "dependsOn": [
+                "StorageAccount",
                 "domainJoin",
                 "omsAgent",
                 "diskInitialize",
