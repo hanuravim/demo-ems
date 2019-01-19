@@ -180,7 +180,9 @@
         "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/sqlvm.json')]",
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
-        "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]"
+        "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]",
+        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), 'SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
+        "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
     "resources": [
         {
@@ -405,6 +407,49 @@
                     },
                     "virtualmachineName": {
                         "value": "[variables('virtualmachineName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(variables('virtualmachinename'), copyindex(1), '/configuresql', copyindex())]",
+            "dependsOn": [
+                "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualmachinename'), copyindex())), '/extensions/joindomain')]",
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
+            ],
+            "apiVersion": "2016-03-30",
+            "copy": {
+                "name": "sqlconfigloop",
+                "count": 2,
+                "mode": "Serial",
+                "batchSize": 1
+            },
+            "location": "[resourceGroup().location]",
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.21",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesURL": "[variables('SQLPrepareModuleURL')]",
+                    "configurationFunction": "[variables('SQLPrepareFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "privateSettingsRef:adminPassword"
+                        },
+                        "ClusterName": "SQLClusterAG",
+                        "ClusterOwnerNode": "[concat(variables('virtualmachinename'), '0')]",
+                        "ClusterIP": "[parameters('clusterIpAddress')]",
+                        "witnessStorageBlobEndpoint": "[reference(variables('StorageAccountName'), '2016-01-01').primaryEndpoints.blob]",
+                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]"
                     }
                 }
             }
