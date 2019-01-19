@@ -109,46 +109,11 @@
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('genDiagStorageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "condition": "[equals(parameters('diagStorageAccountId'),'null')]",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "properties": {}
-        },
-        {
-            "name": "[variables('genVnetName')]",
-            "type": "Microsoft.Network/virtualNetworks",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "condition": "[equals(parameters('subnetId'),'null')]",
-            "dependsOn": [],
-            "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "10.0.0.0/16"
-                    ]
-                },
-                "subnets": [
-                    {
-                        "name": "default",
-                        "properties" : {
-                            "addressPrefix": "10.0.0.0/24"
-                        }
-                    }
-                ]
-            }
-        },
-        {
             "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
             "location": "[resourceGroup().location]",
             "apiVersion": "2016-03-30",
-            "dependsOn":  [
+            "dependsOn": [
                 "[variables('genVnetid')]"
             ],
             "properties": {
@@ -165,30 +130,6 @@
                         }
                     }
                 ]
-            }
-        },
-        {
-            "apiVersion": "2017-05-10",
-            "name": "[concat(parameters('vmName'),'-publicip')]",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[parameters('assignPublicIP')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines',parameters('vmName'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('publicipTemplateUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "nicName": {
-                        "value": "[variables('nicName')]"
-                    },
-                    "subnetId": {
-                        "value": "[variables('subnetId')]"
-                    }
-                }
             }
         },
         {
