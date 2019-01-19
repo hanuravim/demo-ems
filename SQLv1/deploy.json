@@ -187,11 +187,12 @@
     "CharactersForvmName": 2,
     "vnetID": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
     "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
+    "networkInterfaceName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nic','-',parameters('Custom'),'-','00'))]",
     "virtualmachineName": "[tolower(concat(take(parameters('Application_Acronym'),variables('CharactersForvmName')),first(parameters('Environment_Category')),first(parameters('Role')),parameters('Custom'),'00'))]",
     "cloudWitnessStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'sqlw')]",
     "SQLPrepareModuleURL": "[uri(parameters('baseUri'), '/SQL/DSC/PrepareSQLServer.ps1.zip')]",
     "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc",
-    "windowsVmTemplateURL": "[uri(parameters('baseUri'),'/SQLv1/SQLv1vm.json')]"
+    "windowsVmTemplateURL": "[concat(parameters('baseUri'),'/SQLv1/SQLv1vm.json')]"
   },
   "resources": [
     {
@@ -209,6 +210,12 @@
           "virtualmachineName": {
             "value": "[variables('virtualmachineName')]"
           },
+          "networkInterfaceName": {
+            "value": "[variables('networkInterfaceName')]"
+          },
+          "nicCount": {
+            "value": "[parameters('nicCount')]"
+          },
           "vmSize": {
             "value": "[parameters('sqlVmSize')]"
           },
@@ -216,7 +223,7 @@
             "value": "[variables('subnet1Ref')]"
           },
           "privateIpAddress": {
-            "value": "[parameters('privateIpAddress')[copyIndex()]]"
+            "value": "[parameters('privateIpAddress')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -232,48 +239,6 @@
           },
           "imageSku": {
             "value": "[parameters('sqlVmImageSku')]"
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Compute/virtualMachines/extensions",
-      "name": "[concat(variables('virtualmachineName'), copyindex(1), '/configuresql', copyindex())]",
-      "dependsOn": [
-        "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualmachineName'), copyindex(1))), '/extensions/joindomain')]"
-      ],
-      "apiVersion": "2016-03-30",
-      "copy": {
-        "name": "sqlconfigloop",
-        "count": 2,
-        "mode": "Serial",
-        "batchSize": 1
-      },
-      "location": "[resourceGroup().location]",
-      "properties": {
-        "publisher": "Microsoft.Powershell",
-        "type": "DSC",
-        "typeHandlerVersion": "2.21",
-        "autoUpgradeMinorVersion": true,
-        "settings": {
-          "modulesURL": "[variables('SQLPrepareModuleURL')]",
-          "configurationFunction": "[variables('SQLPrepareFunction')]",
-          "properties": {
-            "domainName": "[parameters('domainName')]",
-            "adminCreds": {
-              "userName": "[parameters('adminUserName')]",
-              "password": "privateSettingsRef:adminPassword"
-            },
-            "ClusterName": "SQLClusterAG",
-            "ClusterOwnerNode": "[concat(variables('virtualmachineName'), '0')]",
-            "ClusterIP": "[parameters('clusterIpAddress')]",
-            "witnessStorageBlobEndpoint": "[reference(variables('cloudWitnessStorageAccountName'), '2016-01-01').primaryEndpoints.blob]",
-            "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('cloudWitnessStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
-          }
-        },
-        "protectedSettings": {
-          "items": {
-            "adminPassword": "[parameters('adminPassword')]"
           }
         }
       }
