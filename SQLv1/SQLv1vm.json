@@ -48,7 +48,7 @@
             "type": "int"
         },
         "privateIpAddress": {
-            "type": "string"
+            "type": "array"
         },
         "Subnet1Ref": {
             "type": "string"
