@@ -165,6 +165,7 @@
     "variables": {
         "CharactersForvmName": 2,
         "StorageAccountType": "Standard_LRS",
+        "cloudWitnessStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'sqlw')]",
         "availabilitySetName": "[tolower(concat(parameters('Application_Acronym'),'-avset'))]",
         "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
         "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','00'))]",
@@ -220,22 +221,44 @@
             }
         },
         {
-            "name": "[variables('StorageAccountName')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "location": "[parameters('ResourceGroupLocation')]",
-            "apiVersion": "2018-07-01",
-            "properties": {},
-            "sku": {
-                "name": "[variables('StorageAccountType')]"
-            },
-            "tags": {}
+            "type": "Microsoft.Resources/deployments",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "name": "StorageAccount",
+            "apiVersion": "2018-05-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('StorageAccountTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    },
+                    "strCount": {
+                        "value": "[parameters('storageCount')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[variables('StorageAccountName')]"
+                    },
+                    "StorageAccountType": {
+                        "value": "[variables('StorageAccountType')]"
+                    }
+                }
+            }
         },
+       
         {
             "type": "Microsoft.Resources/deployments",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "virtualMachine",
             "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "StorageAccount"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -397,7 +420,7 @@
                 "domainJoin",
                 "omsAgent",
                 "diskInitialize",
-                "[resourceId('Microsoft.Storage/storageAccounts',variables('StorageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
             ],
             "apiVersion": "2016-03-30",
             "copy": {
@@ -406,7 +429,7 @@
                 "mode": "Serial",
                 "batchSize": 1
             },
-            "location": "[parameters('ResourceGroupLocation')]",
+            "location": "[resourceGroup().location]",
             "properties": {
                 "publisher": "Microsoft.Powershell",
                 "type": "DSC",
