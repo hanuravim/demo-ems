@@ -220,43 +220,26 @@
             }
         },
         {
-            "type": "Microsoft.Resources/deployments",
-            "resourcegroup": "[variables('ResourceGroupName')]",
-            "name": "StorageAccount",
-            "apiVersion": "2018-05-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('StorageAccountTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "ResourceGroupLocation": {
-                        "value": "[parameters('ResourceGroupLocation')]"
-                    },
-                    "strCount": {
-                        "value": "[parameters('storageCount')]"
-                    },
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "StorageAccountType": {
-                        "value": "[variables('StorageAccountType')]"
-                    }
-                }
-            }
+            "name": "[concat(variables('StorageAccountName'),copyIndex(1))]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[parameters('ResourceGroupLocation')]",
+            "apiVersion": "2018-07-01",
+            "copy": {
+                "name": "strloop",
+                "count": "[parameters('storageCount')]"
+            },
+            "properties": {},
+            "sku": {
+                "name": "[variables('StorageAccountType')]"
+            },
+            "tags": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "virtualMachine",
             "apiVersion": "2018-05-01",
-            "dependsOn": [
-                "StorageAccount"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
@@ -415,7 +398,6 @@
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(variables('virtualmachineName'), copyIndex(1), '/configuresql', copyindex())]",
             "dependsOn": [
-                "StorageAccount",
                 "domainJoin",
                 "omsAgent",
                 "diskInitialize",
