@@ -165,7 +165,6 @@
     "variables": {
         "CharactersForvmName": 2,
         "StorageAccountType": "Standard_LRS",
-        "cloudWitnessStorageAccountName": "[concat(uniquestring(resourceGroup().id), 'sqlw')]",
         "availabilitySetName": "[tolower(concat(parameters('Application_Acronym'),'-avset'))]",
         "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
         "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','00'))]",
@@ -249,17 +248,6 @@
                     }
                 }
             }
-        },
-        {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('cloudWitnessStorageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "location": "[parameters('ResourceGroupLocation')]",
-            "sku": {
-                "name": "Standard_LRS"
-            },
-            "kind": "Storage",
-            "properties": {}
         },
         {
             "type": "Microsoft.Resources/deployments",
@@ -457,8 +445,8 @@
                         "ClusterName": "SQLClusterAG",
                         "ClusterOwnerNode": "[concat(variables('virtualmachineName'),copyIndex(1), '0')]",
                         "ClusterIP": "[parameters('clusterIpAddress')]",
-                        "witnessStorageBlobEndpoint": "[reference(variables('cloudWitnessStorageAccountName'), '2016-01-01').primaryEndpoints.blob]",
-                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('cloudWitnessStorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                        "witnessStorageBlobEndpoint": "[reference(variables('StorageAccountName'), '2016-01-01').primaryEndpoints.blob]",
+                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
                     }
                 },
                 "protectedSettings": {
