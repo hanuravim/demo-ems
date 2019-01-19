@@ -401,7 +401,7 @@
                 "domainJoin",
                 "omsAgent",
                 "diskInitialize",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountName'),copyIndex(1)))]"
             ],
             "apiVersion": "2016-03-30",
             "copy": {
