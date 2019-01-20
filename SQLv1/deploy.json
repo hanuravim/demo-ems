@@ -362,8 +362,8 @@
             "resourcegroup": "[variables('ResourceGroupName')]",
             "dependsOn": [
                 "domainJoin",
-                "omsAgent",
-                "diskInitialize"
+                "omsAgent"
+               
             ],
             "properties": {
                 "mode": "Incremental",
