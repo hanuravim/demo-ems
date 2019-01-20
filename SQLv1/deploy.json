@@ -181,8 +181,8 @@
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
         "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]",
-        "configureSQLTemplate": "[concat(parameters('baseUri'), 'SQLv1/DSC/configuresql.json')]",
-        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), 'SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
+        "configureSQLTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/configuresql.json')]",
+        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
     "resources": [
