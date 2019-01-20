@@ -225,7 +225,9 @@
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "virtualMachine",
             "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/resourceGroups/', variables('ResourceGroupName'))]"
+            ],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
