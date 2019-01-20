@@ -177,7 +177,7 @@
         "dataDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','dat','-','dsk','-',parameters('Role'),'00'))]",
         "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/StorageAccount.json')]",
-        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/sqlvm.json')]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQLv1/sqlvm.json')]",
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
         "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]",
@@ -220,18 +220,6 @@
             }
         },
         {
-            "name": "[variables('StorageAccountName')]",
-            "type": "Microsoft.Storage/storageAccounts",
-            "resourcegroup": "[variables('ResourceGroupName')]",
-            "location": "[parameters('ResourceGroupLocation')]",
-            "apiVersion": "2018-07-01",
-            "properties": {},
-            "sku": {
-                "name": "[variables('StorageAccountType')]"
-            },
-            "tags": {}
-        },
-        {
             "type": "Microsoft.Resources/deployments",
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "virtualMachine",
@@ -246,6 +234,9 @@
                 "parameters": {
                     "vmCount": {
                         "value": "[parameters('vmCount')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[variables('subnet1Ref')]"
                     },
                     "nicCount": {
                         "value": "[parameters('nicCount')]"
