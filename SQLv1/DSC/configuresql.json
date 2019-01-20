@@ -1,0 +1,92 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "vmcount": {
+            "type": "int"
+        },
+        "virtualmachinename": {
+            "type": "string"
+        },
+        "clusterIpAddress": {
+            "type": "string"
+        },
+        "StorageAccountName": {
+            "type": "string"
+        },
+        "StorageAccountType": {
+            "type": "string"
+        },
+        "domainName": {
+            "type": "string"
+        },
+        "adminUserName": {
+            "type": "string"
+        },
+        "adminPassword": {
+            "type": "securestring"
+        },
+        "baseUri": {
+            "type": "string"
+        }
+    },
+    "variables": {
+        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), 'SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
+        "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
+    },
+    "resources": [
+        {
+            "name": "[parameters('StorageAccountName')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "location": "[resourcegroup().location]",
+            "apiVersion": "2018-07-01",
+            "properties": {},
+            "sku": {
+                "name": "[parameters('StorageAccountType')]"
+            },
+            "tags": {}
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualmachinename'), copyindex(1), '/configuresql', copyindex())]",
+            "apiVersion": "2016-03-30",
+            "dependsOn": [
+                "[parameters('StorageAccountName')]"
+            ],
+            "copy": {
+                "name": "sqlconfigloop",
+                "count": "[parameters('vmcount')]",
+                "mode": "Serial",
+                "batchSize": 1
+            },
+            "location": "[resourcegroup().location]",
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.21",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesURL": "[variables('SQLPrepareModuleURL')]",
+                    "configurationFunction": "[variables('SQLPrepareFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "privateSettingsRef:adminPassword"
+                        },
+                        "ClusterName": "SQLClusterAG",
+                        "ClusterOwnerNode": "[concat(parameters('virtualmachinename'), '0')]",
+                        "ClusterIP": "[parameters('clusterIpAddress')]",
+                        "witnessStorageBlobEndpoint": "[reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob]",
+                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]"
+                    }
+                }
+            }
+        }
+    ]
+}
