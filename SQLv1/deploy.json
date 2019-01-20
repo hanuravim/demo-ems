@@ -177,7 +177,7 @@
         "dataDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','dat','-','dsk','-',parameters('Role'),'00'))]",
         "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
         "StorageAccountTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/StorageAccount.json')]",
-        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQL/sqlvm.json')]",
+        "virtualMachineTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/sqlvm.json')]",
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
         "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]",
