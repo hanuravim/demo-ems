@@ -182,7 +182,8 @@
         "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]",
         "configureSQLTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/configuresql.json')]",
         "sqlserviceTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/sqlservice.json')]",
-        "sysadminTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/sysadmin.json')]"
+        "sysadminTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/sysadmin.json')]",
+        "customscriptTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/customscript.json')]"
     },
     "resources": [
         {
@@ -363,7 +364,6 @@
             "dependsOn": [
                 "domainJoin",
                 "omsAgent"
-               
             ],
             "properties": {
                 "mode": "Incremental",
@@ -398,6 +398,30 @@
                     },
                     "baseUri": {
                         "value": "[parameters('baseUri')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "customScripts",
+            "apiVersion": "2018-05-01",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "dependsOn": [
+                "domainJoin"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('customscriptTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
                     }
                 }
             }
