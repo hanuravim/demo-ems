@@ -20,10 +20,10 @@
         "domainName": {
             "type": "string"
         },
-        "adminUserName": {
+        "DomainUserName": {
             "type": "string"
         },
-        "adminPassword": {
+        "DomainPassword": {
             "type": "securestring"
         },
         "baseUri": {
@@ -71,8 +71,8 @@
                     "properties": {
                         "domainName": "[parameters('domainName')]",
                         "adminCreds": {
-                            "userName": "[parameters('adminUserName')]",
-                            "password": "privateSettingsRef:adminPassword"
+                            "userName": "[parameters('DomainUserName')]",
+                            "password": "privateSettingsRef:DomainPassword"
                         },
                         "ClusterName": "SQLClusterAG",
                         "ClusterOwnerNode": "[concat(parameters('virtualmachinename'), '0')]",
@@ -83,7 +83,7 @@
                 },
                 "protectedSettings": {
                     "items": {
-                        "adminPassword": "[parameters('adminPassword')]"
+                        "adminPassword": "[parameters('DomainPassword')]"
                     }
                 }
             }
