@@ -222,6 +222,7 @@
         {
             "name": "[variables('StorageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
+            "resourcegroup": "[variables('ResourceGroupName')]",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-07-01",
             "properties": {},
