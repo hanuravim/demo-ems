@@ -167,7 +167,7 @@
         "StorageAccountType": "Standard_LRS",
         "availabilitySetName": "[tolower(concat(parameters('Application_Acronym'),'-avset'))]",
         "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
-        "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','00'))]",
+        "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'str','001'))]",
         "vnetID": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
         "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
         "networkInterfaceName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nic','-',parameters('Custom'),'-','00'))]",
@@ -220,14 +220,10 @@
             }
         },
         {
-            "name": "[concat(variables('StorageAccountName'),copyIndex(1))]",
+            "name": "[variables('StorageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
             "location": "[parameters('ResourceGroupLocation')]",
             "apiVersion": "2018-07-01",
-            "copy": {
-                "name": "strloop",
-                "count": "[parameters('storageCount')]"
-            },
             "properties": {},
             "sku": {
                 "name": "[variables('StorageAccountType')]"
@@ -399,7 +395,7 @@
             "name": "[concat(variables('virtualmachinename'), copyindex(1), '/configuresql', copyindex())]",
             "dependsOn": [
                 "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualmachinename'), copyindex())), '/extensions/joindomain')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountName'),copyIndex(1)))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
             ],
             "apiVersion": "2016-03-30",
             "copy": {
@@ -426,8 +422,8 @@
                         "ClusterName": "SQLClusterAG",
                         "ClusterOwnerNode": "[concat(variables('virtualmachinename'), '0')]",
                         "ClusterIP": "[parameters('clusterIpAddress')]",
-                        "witnessStorageBlobEndpoint": "[reference(concat(variables('StorageAccountName'),copyIndex(1)), '2016-01-01').primaryEndpoints.blob]",
-                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountName'),copyIndex(1))), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                        "witnessStorageBlobEndpoint": "[reference(variables('StorageAccountName'), '2016-01-01').primaryEndpoints.blob]",
+                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
                     }
                 },
                 "protectedSettings": {
