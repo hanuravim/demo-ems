@@ -414,11 +414,11 @@
                     "domainName": {
                         "value": "[parameters('domainName')]"
                     },
-                    "adminUserName": {
-                        "value": "[parameters('adminUserName')]"
+                    "DomainUserName": {
+                        "value": "[parameters('DomainUserName')]"
                     },
-                    "adminPassword": {
-                        "value": "[parameters('adminPassword')]"
+                    "DomainPassword": {
+                        "value": "[parameters('DomainPassword')]"
                     },
                     "baseUri": {
                         "value": "[parameters('baseUri')]"
