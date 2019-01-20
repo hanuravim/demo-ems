@@ -404,7 +404,7 @@
             "apiVersion": "2016-03-30",
             "copy": {
                 "name": "sqlconfigloop",
-                "count": 2,
+                "count": "[parameters('vmcount')]",
                 "mode": "Serial",
                 "batchSize": 1
             },
