@@ -399,7 +399,7 @@
             "name": "[concat(variables('virtualmachinename'), copyindex(1), '/configuresql', copyindex())]",
             "dependsOn": [
                 "[concat(resourceId('Microsoft.Compute/virtualMachines', concat(variables('virtualmachinename'), copyindex())), '/extensions/joindomain')]",
-                "[resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName'))]"
+                "[resourceId('Microsoft.Storage/storageAccounts', concat(variables('StorageAccountName'),copyIndex(1)))]"
             ],
             "apiVersion": "2016-03-30",
             "copy": {
