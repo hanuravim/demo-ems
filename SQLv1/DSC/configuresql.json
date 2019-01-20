@@ -31,7 +31,7 @@
         }
     },
     "variables": {
-        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), 'SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
+        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
     "resources": [
