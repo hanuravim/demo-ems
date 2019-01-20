@@ -180,7 +180,9 @@
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
         "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]",
-        "configureSQLTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/configuresql.json')]"
+        "configureSQLTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/configuresql.json')]",
+        "sqlserviceTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/sqlservice.json')]",
+        "sysadminTemplate": "[concat(parameters('baseUri'), '/SQLv1/DSC/sysadmin.json')]"
     },
     "resources": [
         {
@@ -422,6 +424,56 @@
                     },
                     "baseUri": {
                         "value": "[parameters('baseUri')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sqlservice",
+            "apiVersion": "2018-05-01",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "dependsOn": [
+                "domainJoin",
+                "omsAgent"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sqlserviceTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Resources/deployments",
+            "name": "sysadmin",
+            "apiVersion": "2018-05-01",
+            "resourcegroup": "[variables('ResourceGroupName')]",
+            "dependsOn": [
+                "domainJoin",
+                "omsAgent"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('sysadminTemplate')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachineName": {
+                        "value": "[variables('virtualmachineName')]"
                     }
                 }
             }
