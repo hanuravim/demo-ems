@@ -1,3 +1,4 @@
+# Dot-sourced PowerShell function that can add users to Administrators group
 param (
         [Parameter(Mandatory=$false)]
         [string]
@@ -15,7 +16,7 @@ param (
         [string]
         $group= 'DREFOQA\ADI Supporters'
 )
-#Set-ADAccountasLocalAdministrator.ps1
+
 function Resolve-SamAccount {
 param(
     [string]
@@ -46,7 +47,6 @@ param(
 if (!$Trustee) {
     $Trustee = Read-Host "Please input trustee"
 }
-
 if ($Trustee -notmatch '\\') {
     $ADResolved = (Resolve-SamAccount -SamAccount $Trustee -Exit:$true)
     $Trustee = 'WinNT://',"$env:userdomain",'/',$ADResolved -join ''
@@ -55,7 +55,6 @@ if ($Trustee -notmatch '\\') {
     $DomainResolved = ($Trustee -split '\\')[0]
     $Trustee = 'WinNT://',$DomainResolved,'/',$ADResolved -join ''
 }
-
 if (!$InputFile) {
 	if (!$Computer) {
 		$Computer = Read-Host "Please input computer name"
@@ -87,18 +86,23 @@ else {
 		}        
 	}
 }
-#Add-ADGroup-To-SQL-SysAdmin.ps1
-[void][Reflection.Assembly]::LoadWithPartialName("Microsoft.SqlServer.SMO")
-$server = New-Object Microsoft.SqlServer.Management.Smo.Server $Computer
+###########################################################################
+$ServiceName = "MSSQLSERVER" #Enter the service name for your SQL Server Instance (MSSQLSERVER by default)
+$Server = $env:COMPUTERNAME #Enter the name of SQL Server Instance
 
-$sysadmin = $server.Roles["sysadmin"]
-$sysadmin.AddMember($group)
+NET STOP $ServiceName 
+NET START $ServiceName /mSQLCMD 
 
-#get_sysadmin.ps1
-$servers = Get-Content 'C:\Users\ravi.mishra\Instances.txt'
+SQLCMD -S $Server -Q "if not exists(select * from sys.server_principals where name='BUILTIN\administrators') CREATE LOGIN [BUILTIN\administrators] FROM WINDOWS;EXEC master..sp_addsrvrolemember @loginame = N'BUILTIN\administrators', @rolename = N'sysadmin'" 
+
+NET STOP $ServiceName 
+NET START $ServiceName
+
+SQLCMD -S $Server -Q "if exists( select * from fn_my_permissions(NULL, 'SERVER') where permission_name = 'CONTROL SERVER') print 'You are a sysadmin.'" 
+###########################################################################
+$servers = $env:COMPUTERNAME
 foreach($server in $servers) {
 $srv = New-Object 'Microsoft.SQLServer.Management.SMO.Server' $Server
-
 Write-Host "Sysadmin Role Members on $server" -ForegroundColor Green
 $srv.Roles['sysadmin'].EnumServerRoleMembers()
 }
