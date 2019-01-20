@@ -1,36 +1,14 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "AvailabilitySet": {
-            "type": "string",
-            "allowedValues": [
-                "Yes",
-                "No"
-            ]
-        },
-        "availabilitySetName": {
-            "type": "string"
-        },
-        "vmCount": {
+        "vmcount": {
             "type": "int"
         },
-        "virtualmachineName": {
+        "virtualmachinename": {
             "type": "string"
         },
-        "nicCount": {
-            "type": "int"
-        },
-        "privateIpAddress": {
-            "type": "array"
-        },
-        "virtualMachineSize": {
-            "type": "string"
-        },
-        "Subnet1Ref": {
-            "type": "string"
-        },
-        "networkInterfaceName": {
+        "clusterIpAddress": {
             "type": "string"
         },
         "StorageAccountName": {
@@ -39,51 +17,24 @@
         "StorageAccountType": {
             "type": "string"
         },
-        "numberOfDataDisks": {
-            "type": "int"
-        },
-        "osDiskName": {
+        "domainName": {
             "type": "string"
         },
-        "dataDiskName": {
-            "type": "string"
-        },
-        "DataDiskSize": {
-            "type": "int"
-        },
-        "adminUsername": {
+        "adminUserName": {
             "type": "string"
         },
         "adminPassword": {
             "type": "securestring"
         },
-        "omsWorkspaceResourceGroup": {
-            "type": "string"
-        },
-        "omsWorkspaceName": {
+        "baseUri": {
             "type": "string"
         }
     },
     "variables": {
-        "availabilitySetId": {
-            "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
-        }
+        "SQLPrepareModuleURL": "[concat(parameters('baseUri'), '/SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
+        "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
     "resources": [
-        {
-            "condition": "[equals(parameters('AvailabilitySet'), 'Yes')]",
-            "type": "Microsoft.Compute/availabilitySets",
-            "apiVersion": "2017-03-30",
-            "name": "[parameters('availabilitySetName')]",
-            "location": "[resourcegroup().location]",
-            "properties": {
-                "platformFaultDomainCount": 2,
-                "platformUpdateDomainCount": 3
-            },
-            "sku": {
-                "name": "Aligned"
-            }
-        },
         {
             "name": "[parameters('StorageAccountName')]",
             "type": "Microsoft.Storage/storageAccounts",
@@ -96,91 +47,46 @@
             "tags": {}
         },
         {
-            "type": "Microsoft.Network/networkInterfaces",
-            "name": "[concat(parameters('networkInterfaceName'), copyindex(1))]",
-            "apiVersion": "2018-05-01",
-            "location": "CentralUS",
-            "copy": {
-                "name": "nicLoop",
-                "count": "[parameters('nicCount')]"
-            },
-            "dependsOn": [],
-            "properties": {
-                "ipConfigurations": [
-                    {
-                        "name": "ipconfig1",
-                        "properties": {
-                            "privateIpAddress": "[parameters('privateIpAddress')[copyIndex()]]",
-                            "privateIpAddressVersion": "IPv4",
-                            "privateIPAllocationMethod": "Static",
-                            "subnet": {
-                                "id": "[parameters('Subnet1Ref')]"
-                            }
-                        }
-                    }
-                ]
-            }
-        },
-        {
-            "type": "Microsoft.Compute/virtualMachines",
-            "name": "[concat(parameters('virtualmachineName'), copyIndex(1))]",
-            "apiVersion": "2018-10-01",
-            "location": "[resourcegroup().location]",
-            "copy": {
-                "name": "virtualMachineLoop",
-                "count": "[parameters('vmCount')]"
-            },
+            "type": "Microsoft.Compute/virtualMachines/extensions",
+            "name": "[concat(parameters('virtualmachinename'), copyindex(1), '/configuresql', copyindex())]",
+            "apiVersion": "2016-03-30",
             "dependsOn": [
-                "nicLoop"
+                "[parameters('StorageAccountName')]"
             ],
-            "properties": {
-                "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
-                "hardwareProfile": {
-                    "vmSize": "[parameters('virtualMachineSize')]"
-                },
-                "osProfile": {
-                    "computerName": "[concat(parameters('virtualmachineName'),copyIndex(1))]",
-                    "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]"
-                },
-                "storageProfile": {
-                    "imageReference": {
-                        "publisher": "MicrosoftSqlServer",
-                        "offer": "SQL2016SP1-WS2016",
-                        "sku": "Enterprise",
-                        "version": "latest"
-                    },
-                    "osDisk": {
-                        "name": "[concat(parameters('osDiskName'), copyIndex(1))]",
-                        "caching": "ReadWrite",
-                        "createOption": "FromImage",
-                        "managedDisk": {
-                            "storageAccountType": "[parameters('StorageAccountType')]"
-                        }
-                    },
-                    "copy": [
-                        {
-                            "name": "dataDisks",
-                            "count": "[parameters('numberOfDataDisks')]",
-                            "input": {
-                                "caching": "ReadWrite",
-                                "diskSizeGB": "[parameters('DataDiskSize')]",
-                                "lun": "[copyIndex('dataDisks')]",
-                                "name": "[concat(parameters('dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
-                                "createOption": "Empty"
-                            }
-                        }
-                    ]
-                },
-                "networkProfile": {
-                    "networkInterfaces": [
-                        {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('networkInterfaceName'), copyindex(1)))]"
-                        }
-                    ]
-                }
+            "copy": {
+                "name": "sqlconfigloop",
+                "count": "[parameters('vmcount')]",
+                "mode": "Serial",
+                "batchSize": 1
             },
-            "resources": []
+            "location": "[resourcegroup().location]",
+            "properties": {
+                "publisher": "Microsoft.Powershell",
+                "type": "DSC",
+                "typeHandlerVersion": "2.21",
+                "autoUpgradeMinorVersion": true,
+                "settings": {
+                    "modulesURL": "[variables('SQLPrepareModuleURL')]",
+                    "configurationFunction": "[variables('SQLPrepareFunction')]",
+                    "properties": {
+                        "domainName": "[parameters('domainName')]",
+                        "adminCreds": {
+                            "userName": "[parameters('adminUserName')]",
+                            "password": "privateSettingsRef:adminPassword"
+                        },
+                        "ClusterName": "SQLClusterAG",
+                        "ClusterOwnerNode": "[concat(parameters('virtualmachinename'), '0')]",
+                        "ClusterIP": "[parameters('clusterIpAddress')]",
+                        "witnessStorageBlobEndpoint": "[reference(concat('Microsoft.Storage/storageAccounts/', parameters('storageAccountName')), '2016-01-01').primaryEndpoints.blob]",
+                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
+                    }
+                },
+                "protectedSettings": {
+                    "items": {
+                        "adminPassword": "[parameters('adminPassword')]"
+                    }
+                }
+            }
         }
     ]
 }
