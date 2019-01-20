@@ -181,6 +181,7 @@
         "domainJoinTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/domainJoin.json')]",
         "omsAgentTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/omsAgent.json')]",
         "diskInitializeTemplate": "[concat(parameters('baseUri'),'/SQL/nestedTemplates/diskInitialize.json')]",
+        "configureSQLTemplate": "[concat(parameters('baseUri'), 'SQLv1/DSC/configuresql.json')]",
         "SQLPrepareModuleURL": "[concat(parameters('baseUri'), 'SQLv1/DSC/PrepareSQLServer.ps1.zip')]",
         "SQLPrepareFunction": "PrepareSQLServer.ps1\\SQLServerPrepareDsc"
     },
@@ -383,43 +384,48 @@
             }
         },
         {
-            "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(variables('virtualmachinename'), copyindex(1), '/configuresql', copyindex())]",
+            "type": "Microsoft.Resources/deployments",
+            "name": "configureSQL",
+            "apiVersion": "2018-05-01",
+            "resourcegroup": "[variables('ResourceGroupName')]",
             "dependsOn": [
-                "domainJoin"
+                "domainJoin",
+                "omsAgent",
+                "diskInitialize"
             ],
-            "apiVersion": "2016-03-30",
-            "copy": {
-                "name": "sqlconfigloop",
-                "count": "[parameters('vmcount')]",
-                "mode": "Serial",
-                "batchSize": 1
-            },
-            "location": "[parameters('ResourceGroupLocation')]",
             "properties": {
-                "publisher": "Microsoft.Powershell",
-                "type": "DSC",
-                "typeHandlerVersion": "2.21",
-                "autoUpgradeMinorVersion": true,
-                "settings": {
-                    "modulesURL": "[variables('SQLPrepareModuleURL')]",
-                    "configurationFunction": "[variables('SQLPrepareFunction')]",
-                    "properties": {
-                        "domainName": "[parameters('domainName')]",
-                        "adminCreds": {
-                            "userName": "[parameters('adminUserName')]",
-                            "password": "privateSettingsRef:adminPassword"
-                        },
-                        "ClusterName": "SQLClusterAG",
-                        "ClusterOwnerNode": "[concat(variables('virtualmachinename'), '0')]",
-                        "ClusterIP": "[parameters('clusterIpAddress')]",
-                        "witnessStorageBlobEndpoint": "[reference(concat('Microsoft.Storage/storageAccounts/', variables('storageAccountName')), '2016-01-01').primaryEndpoints.blob]",
-                        "witnessStorageAccountKey": "[listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('StorageAccountName')), providers('Microsoft.Storage', 'storageAccounts').apiVersions[0]).keys[0].value]"
-                    }
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('configureSQLTemplate')]",
+                    "contentVersion": "1.0.0.0"
                 },
-                "protectedSettings": {
-                    "items": {
-                        "adminPassword": "[parameters('adminPassword')]"
+                "parameters": {
+                    "vmcount": {
+                        "value": "[parameters('vmCount')]"
+                    },
+                    "virtualmachinename": {
+                        "value": "[variables('virtualmachinename')]"
+                    },
+                    "clusterIpAddress": {
+                        "value": "[parameters('clusterIpAddress')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[variables('StorageAccountName')]"
+                    },
+                    "StorageAccountType": {
+                        "value": "[variables('StorageAccountType')]"
+                    },
+                    "domainName": {
+                        "value": "[parameters('domainName')]"
+                    },
+                    "adminUserName": {
+                        "value": "[parameters('adminUserName')]"
+                    },
+                    "adminPassword": {
+                        "value": "[parameters('adminPassword')]"
+                    },
+                    "baseUri": {
+                        "value": "[parameters('baseUri')]"
                     }
                 }
             }
