@@ -29,7 +29,7 @@
                     "fileUris": [
                         "https://raw.githubusercontent.com/hanuravim/demo-ems/master/SQLv1/DSC/customScripts.ps1"
                     ],
-                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File diskInitialize.ps1"
+                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File customScripts.ps1"
                 }
             }
         }
