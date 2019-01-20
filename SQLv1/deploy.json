@@ -236,7 +236,7 @@
                         "value": "[parameters('vmCount')]"
                     },
                     "StorageAccountName": {
-                        "value": "[variables('subnet1Ref')]"
+                        "value": "[variables('StorageAccountName')]"
                     },
                     "nicCount": {
                         "value": "[parameters('nicCount')]"
