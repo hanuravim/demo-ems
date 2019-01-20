@@ -239,9 +239,7 @@
             "resourcegroup": "[variables('ResourceGroupName')]",
             "name": "virtualMachine",
             "apiVersion": "2018-05-01",
-            "dependsOn": [
-                "StorageAccount"
-            ],
+            "dependsOn": [],
             "properties": {
                 "mode": "Incremental",
                 "templateLink": {
