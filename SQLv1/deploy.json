@@ -357,32 +357,6 @@
         },
         {
             "type": "Microsoft.Resources/deployments",
-            "name": "diskInitialize",
-            "apiVersion": "2018-05-01",
-            "resourcegroup": "[variables('ResourceGroupName')]",
-            "dependsOn": [
-                "virtualMachine",
-                "domainJoin",
-                "omsAgent"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('diskInitializeTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "vmCount": {
-                        "value": "[parameters('vmCount')]"
-                    },
-                    "virtualmachineName": {
-                        "value": "[variables('virtualmachineName')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
             "name": "configureSQL",
             "apiVersion": "2018-05-01",
             "resourcegroup": "[variables('ResourceGroupName')]",
@@ -424,56 +398,6 @@
                     },
                     "baseUri": {
                         "value": "[parameters('baseUri')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "sqlservice",
-            "apiVersion": "2018-05-01",
-            "resourcegroup": "[variables('ResourceGroupName')]",
-            "dependsOn": [
-                "domainJoin",
-                "omsAgent"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('sqlserviceTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "vmCount": {
-                        "value": "[parameters('vmCount')]"
-                    },
-                    "virtualmachineName": {
-                        "value": "[variables('virtualmachineName')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "sysadmin",
-            "apiVersion": "2018-05-01",
-            "resourcegroup": "[variables('ResourceGroupName')]",
-            "dependsOn": [
-                "domainJoin",
-                "omsAgent"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('sysadminTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "vmCount": {
-                        "value": "[parameters('vmCount')]"
-                    },
-                    "virtualmachineName": {
-                        "value": "[variables('virtualmachineName')]"
                     }
                 }
             }
