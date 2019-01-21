@@ -33,6 +33,12 @@
         "networkInterfaceName": {
             "type": "string"
         },
+        "StorageAccountName": {
+            "type": "string"
+        },
+        "AzureFileShareName": {
+            "type": "string"
+        },
         "StorageAccountType": {
             "type": "string"
         },
@@ -166,7 +172,30 @@
                     ]
                 }
             },
-            "resources": []
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/customscript')]",
+                    "apiVersion": "2015-06-15",
+                    "location": "[resourcegroup().location]",
+                    "copy": {
+                        "name": "customscriptloop",
+                        "count": "[parameters('vmCount')]"
+                    },
+                    "properties": {
+                        "publisher": "Microsoft.Compute",
+                        "type": "CustomScriptExtension",
+                        "typeHandlerVersion": "1.9",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "fileUris": [
+                                "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/nestedTemplates/customScripts.ps1"
+                            ],
+                            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','customScripts.ps1 -SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', parameters('AzureFileShareName')), '2015-06-15').key1)]"
+                        }
+                    }
+                }
+            ]
         }
     ]
 }
