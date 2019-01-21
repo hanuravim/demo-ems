@@ -282,6 +282,12 @@
                     "virtualMachineSize": {
                         "value": "[parameters('virtualMachineSize')]"
                     },
+                    "StorageAccountName": {
+                        "value": "[variables('StorageAccountName')]"
+                    },
+                    "AzureFileShareName": {
+                        "value": "[variables('AzureFileShareName')]"
+                    }
                     "StorageAccountType": {
                         "value": "[variables('StorageAccountType')]"
                     },
@@ -378,37 +384,6 @@
                     },
                     "omsWorkspaceName": {
                         "value": "[parameters('omsWorkspaceName')]"
-                    }
-                }
-            }
-        },
-        {
-            "type": "Microsoft.Resources/deployments",
-            "name": "customScripts",
-            "apiVersion": "2018-05-01",
-            "resourcegroup": "[variables('ResourceGroupName')]",
-            "dependsOn": [
-                "virtualMachine",
-                "domainJoin"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('customScriptsTemplate')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "vmCount": {
-                        "value": "[parameters('vmCount')]"
-                    },
-                    "virtualmachineName": {
-                        "value": "[variables('virtualmachineName')]"
-                    },
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "AzureFileShareName": {
-                        "value": "[variables('AzureFileShareName')]"
                     }
                 }
             }
