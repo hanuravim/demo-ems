@@ -7,6 +7,12 @@
         },
         "virtualmachineName": {
             "type": "string"
+        },
+        "StorageAccountName": {
+            "type": "string"
+        },
+        "AzureFileShareName": {
+            "type": "string"
         }
     },
     "variables": {},
@@ -29,7 +35,7 @@
                     "fileUris": [
                         "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/nestedTemplates/customScripts.ps1"
                     ],
-                    "commandToExecute": "powershell.exe -ExecutionPolicy Unrestricted -File customScripts.ps1"
+                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','customScripts.ps1 -SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', parameters('AzureFileShareName')), '2015-06-15').key1)]"
                 }
             }
         }
