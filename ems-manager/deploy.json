@@ -160,6 +160,7 @@
     "variables": {
         "CharactersForvmName": 2,
         "StorageAccountType": "Standard_LRS",
+        "AzureFileShareName": "gavemsfileshare",
         "availabilitySetName": "[tolower(concat(parameters('Application_Acronym'),'-avset'))]",
         "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
         "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'emsstr','00'))]",
@@ -402,6 +403,12 @@
                     },
                     "virtualmachineName": {
                         "value": "[variables('virtualmachineName')]"
+                    },
+                    "StorageAccountName": {
+                        "value": "[variables('StorageAccountName')]"
+                    },
+                    "AzureFileShareName": {
+                        "value": "[variables('AzureFileShareName')]"
                     }
                 }
             }
