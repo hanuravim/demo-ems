@@ -282,12 +282,6 @@
                     "virtualMachineSize": {
                         "value": "[parameters('virtualMachineSize')]"
                     },
-                    "StorageAccountName": {
-                        "value": "[variables('StorageAccountName')]"
-                    },
-                    "AzureFileShareName": {
-                        "value": "[variables('AzureFileShareName')]"
-                    },
                     "StorageAccountType": {
                         "value": "[variables('StorageAccountType')]"
                     },
