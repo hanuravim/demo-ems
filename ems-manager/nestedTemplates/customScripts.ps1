@@ -5,9 +5,9 @@ Param (
   [String]$SAName,
   [String]$share
 )
-Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
+#Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force
 Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
-Install-Module Azure -Confirm:$False
+#Install-Module Azure -Confirm:$False
 Import-Module Azure
 $storageContext = New-AzureStorageContext -StorageAccountName $SAName -StorageAccountKey $SAKey
 $storageContext |  New-AzureStorageShare -Name $share
