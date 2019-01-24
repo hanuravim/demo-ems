@@ -1,6 +1,9 @@
-$SAKey
-$SAName
-$AzureFileShareName
+Param (
+  [Parameter()]
+  [String]$SAKey,
+  [String]$SAName,
+  [String]$AzureFileShareName
+)
 
 #MOUNT AZURE FILE SHARE
 $acctKey = ConvertTo-SecureString -String $SAKey -AsPlainText -Force
