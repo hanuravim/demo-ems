@@ -20,7 +20,7 @@
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
             "name": "[concat(parameters('virtualmachineName'), copyindex(1), '/customscript')]",
-            "apiVersion": "2015-06-15",
+            "apiVersion": "2017-03-30",
             "location": "[resourcegroup().location]",
             "copy": {
                 "name": "customscriptloop",
@@ -29,15 +29,21 @@
             "properties": {
                 "publisher": "Microsoft.Compute",
                 "type": "CustomScriptExtension",
-                "typeHandlerVersion": "1.9",
+                "typeHandlerVersion": "1.8",
                 "autoUpgradeMinorVersion": true,
                 "settings": {
                     "fileUris": [
                         "https://raw.githubusercontent.com/hanuravim/demo-ems/master/ems-manager/nestedTemplates/customScripts.ps1"
                     ],
-                    "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ','customScripts.ps1 -SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', parameters('StorageAccountName')), '2015-06-15').key1)]"
+                    "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ','customScripts.ps1 -share ',parameters('AzureFileShareName'),'-SAName ',concat(parameters('StorageAccountName'),copyindex(1)),'-SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', concat(parameters('StorageAccountName'),copyindex(1))), '2015-06-15').key1)]"
                 }
             }
         }
-    ]
+    ],
+    "outputs": {
+        "firstOutput": {
+            "type": "string",
+            "value": "[concat('powershell -ExecutionPolicy Unrestricted -File ','customScripts.ps1 -share ',parameters('AzureFileShareName'),'-SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', concat(parameters('StorageAccountName'),copyindex(1))), '2015-06-15').key1)]"
+        }
+    }
 }
