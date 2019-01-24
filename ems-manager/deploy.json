@@ -163,7 +163,7 @@
         "AzureFileShareName": "gavemsfileshare",
         "availabilitySetName": "[tolower(concat(parameters('Application_Acronym'),'-avset'))]",
         "ResourceGroupName": "[toupper(concat('GAV-',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Tier_Name'),'-',parameters('Environment_Category'),'-',parameters('Role'),'-',parameters('Tenant'),'-','01','-',parameters('Custom')))]",
-        "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'emsstr','00'))]",
+        "StorageAccountName": "[tolower(concat(parameters('Application_Acronym'),parameters('shortlocation'),parameters('Tier_Name'),parameters('Environment_Category'),'emsstr','001'))]",
         "vnetID": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
         "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
         "networkInterfaceName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nic','-',parameters('Custom'),'-','00'))]",
