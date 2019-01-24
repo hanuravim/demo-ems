@@ -382,6 +382,7 @@
                 }
             }
         }
+       
     ],
     "outputs": {
         "ResourceGroupName": {
