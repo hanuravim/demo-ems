@@ -40,10 +40,5 @@
             }
         }
     ],
-    "outputs": {
-        "firstOutput": {
-            "type": "string",
-            "value": "[concat('powershell -ExecutionPolicy Unrestricted -File ','customScripts.ps1 -share ',parameters('AzureFileShareName'),'-SAName ',parameters('StorageAccountName'),'  -SAKey ', listKeys(resourceId(resourceGroup().name,'Microsoft.Storage/storageAccounts', concat(parameters('StorageAccountName'),copyindex(1))), '2015-06-15').key1)]"
-        }
-    }
+    "outputs": {}
 }
