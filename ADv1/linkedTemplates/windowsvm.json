@@ -172,10 +172,6 @@
                     "name": "[concat(parameters('virtualmachineName'), copyindex(1))]",
                     "apiVersion": "2015-06-15",
                     "location": "[resourcegroup().location]",
-                    "copy": {
-                        "name": "omsAgentloop",
-                        "count": "[parameters('vmCount')]"
-                    },
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
