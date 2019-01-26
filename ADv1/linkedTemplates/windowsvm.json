@@ -166,7 +166,27 @@
                     ]
                 }
             },
-            "resources": []
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "[concat(parameters('virtualmachineName'), copyindex(1),'/omsAgent')]",
+                    "apiVersion": "2015-06-15",
+                    "location": "[resourcegroup().location]",
+                    "dependsOn": "[concat(parameters('virtualmachineName'), copyIndex(1))]",
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
+                        }
+                    }
+                }
+            ]
         }
     ]
 }
