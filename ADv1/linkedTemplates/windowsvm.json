@@ -96,7 +96,7 @@
                     {
                         "name": "ipconfig1",
                         "properties": {
-                            "privateIpAddress": "[if(contains(parameters('virtualmachineName'), 'pdc'),parameters('privateIpAddress')[copyIndex()],parameters('privateIpAddress')[copyIndex(1)])]",
+                            "privateIpAddress": "[parameters('privateIpAddress')]",
                             "privateIpAddressVersion": "IPv4",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
