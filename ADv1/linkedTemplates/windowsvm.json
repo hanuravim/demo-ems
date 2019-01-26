@@ -172,7 +172,9 @@
                     "name": "[concat(parameters('virtualmachineName'),copyindex(1),'/omsAgent')]",
                     "apiVersion": "2015-06-15",
                     "location": "[resourcegroup().location]",
-                    "dependsOn": "[parameters('virtualmachineName')]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualmachineName'),copyindex(1))]"
+                    ],
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
