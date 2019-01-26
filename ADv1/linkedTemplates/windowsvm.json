@@ -169,10 +169,10 @@
             "resources": [
                 {
                     "type": "extensions",
-                    "name": "[concat(parameters('virtualmachineName'), copyindex(1),'/omsAgent')]",
+                    "name": "[concat(parameters('virtualmachineName'),copyindex(1),'/omsAgent')]",
                     "apiVersion": "2015-06-15",
                     "location": "[resourcegroup().location]",
-                    "dependsOn": "[concat(parameters('virtualmachineName'), copyIndex(1))]",
+                    "dependsOn": "[parameters('virtualmachineName')]",
                     "properties": {
                         "publisher": "Microsoft.EnterpriseCloud.Monitoring",
                         "type": "MicrosoftMonitoringAgent",
