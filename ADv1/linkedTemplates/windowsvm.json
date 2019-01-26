@@ -2,267 +2,202 @@
     "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "ResourceGroupCount": {
-            "type": "int",
-            "maxValue": 1,
-            "defaultvalue": 1
-        },
-        "nsgCount": {
-            "type": "int",
-            "maxValue": 1,
-            "defaultvalue": 1
-        },
-        "nicCount": {
-            "type": "int",
-            "defaultvalue": 1
-        },
-        "vmCount": {
-            "type": "int",
-            "maxValue": 1,
-            "defaultvalue": 1
-        },
-        "ResourceGroupLocation": {
-            "type": "string",
-            "defaultValue": "WestUS2"
-        },
-        "shortLocation": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 chars. E.g. East US - EU, West US - WU, East US 2 - EU2"
-            },
-            "defaultValue": "wu2"
-        },
-        "Application_Acronym": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 chars e.g. nxt (Next Net), ems"
-            },
-            "defaultValue": "EMS"
-        },
-        "Environment_Category": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 char. E.g.  DEV, QA, UAT and PRD"
-            },
-            "defaultValue": "DEV"
-        },
-        "Role": {
-            "type": "string",
-            "maxLength": 3,
-            "metadata": {
-                "description": "3 chars e.g. Front end (WEB), Storage (STR), Messaging (MSG), Network (NET), General (GEN) etc."
-            },
-            "defaultValue": "EMS"
-        },
-        "Custom": {
-            "type": "string",
-            "maxLength": 8,
-            "metadata": {
-                "description": "(Product Specific) Space. 8 chars (OPTIONAL)"
-            },
-            "defaultValue": "EFOQA"
-        },
-        "virtualNetworkResourceGroup": {
-            "type": "string",
-            "defaultvalue": "fa-dr-poc"
-        },
-        "virtualNetworkName": {
-            "type": "string",
-            "defaultvalue": "DREFOQAPOC"
-        },
-        "subnet1Name": {
-            "type": "string",
-            "defaultvalue": "default"
-        },
         "AvailabilitySet": {
             "type": "string",
-            "defaultValue": "No",
             "allowedValues": [
                 "Yes",
                 "No"
             ]
         },
+        "availabilitySetName": {
+            "type": "string"
+        },
+        "vmCount": {
+            "type": "int"
+        },
+        "pdc-virtualmachineName": {
+            "type": "string"
+        },
+        "bdc-virtualmachineName": {
+            "type": "string"
+        },
+        "nicCount": {
+            "type": "int"
+        },
         "pdc-networkInterfaceIP": {
-            "type": "string",
-            "defaultvalue": "10.3.1.5"
+            "type": "string"
         },
         "bdc-networkInterfaceIP": {
-            "type": "string",
-            "defaultvalue": "10.3.1.6"
+            "type": "string"
         },
         "virtualMachineSize": {
-            "type": "string",
-            "defaultvalue": "Standard_DS4_v2"
+            "type": "string"
+        },
+        "Subnet1Ref": {
+            "type": "string"
+        },
+        "pdc-networkInterfaceName": {
+            "type": "string"
+        },
+        "bdc-networkInterfaceName": {
+            "type": "string"
+        },
+        "StorageAccountType": {
+            "type": "string"
         },
         "numberOfDataDisks": {
-            "type": "int",
-            "defaultvalue": 1
+            "type": "int"
+        },
+        "osDiskName": {
+            "type": "string"
+        },
+        "dataDiskName": {
+            "type": "string"
         },
         "DataDiskSize": {
-            "type": "int",
-            "defaultvalue": 1
-        },
-        "omsWorkspaceResourceGroup": {
-            "type": "string",
-            "defaultvalue": "fa-dr-poc"
-        },
-        "omsWorkspaceName": {
-            "type": "string",
-            "defaultvalue": "fa-log-analytics"
+            "type": "int"
         },
         "adminUsername": {
-            "type": "string",
-            "defaultvalue": "adAdministrator"
+            "type": "string"
         },
-        "keyVaultResourceGroupName": {
-            "type": "string",
-            "defaultvalue": "hanu-Shared-Resources"
+        "adminPassword": {
+            "type": "securestring"
         },
-        "keyVaultName": {
-            "type": "string",
-            "defaultvalue": "hanu-Shared-Resources"
+        "omsWorkspaceResourceGroup": {
+            "type": "string"
         },
-        "secretName": {
-            "type": "string",
-            "defaultvalue": "localadmin"
-        },
-        "domainName": {
-            "type": "string",
-            "defaultvalue": "drefoqa.com"
-        },
-        "baseUri": {
-            "type": "string",
-            "defaultvalue": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
+        "omsWorkspaceName": {
+            "type": "string"
         }
     },
     "variables": {
-        "CharactersForvmName": 2,
-        "StorageAccountType": "Standard_LRS",
-        "availabilitySetName": "[tolower(concat(parameters('Application_Acronym'),'-avset'))]",
-        "vnetID": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('virtualNetworkResourceGroup'),'/providers/Microsoft.Network/virtualNetworks/',parameters('virtualNetworkName'))]",
-        "subnet1Ref": "[concat(variables('vnetID'),'/subnets/', parameters('subnet1Name'))]",
-        "pdc-networkInterfaceName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','pdc-','nic','-',parameters('Custom'),'-','00'))]",
-        "bdc-networkInterfaceName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','bdc-','nic','-',parameters('Custom'),'-','00'))]",
-        "networkSecurityGroupName": "[tolower(concat('GAV',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-',parameters('Environment_Category'),'-','nsg','-',parameters('Custom'),'-','00'))]",
-        "nsgTemplateURL": "[concat(parameters('baseUri'),'/ems-manager/nestedTemplates/networkSecurityGroup.json')]",
-        "pdc-virtualmachineName": "[tolower(concat(take(parameters('Application_Acronym'),variables('CharactersForvmName')),first(parameters('Environment_Category')),first(parameters('Role')),parameters('Custom'),'pdc','00'))]",
-        "bdc-virtualmachineName": "[tolower(concat(take(parameters('Application_Acronym'),variables('CharactersForvmName')),first(parameters('Environment_Category')),first(parameters('Role')),parameters('Custom'),'bdc','00'))]",
-        "pdc-osDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','pdc-','osd','-','dsk','-',parameters('Role'),'00'))]",
-        "bdc-osDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','pdc-','bdc-','osd','-','dsk','-',parameters('Role'),'00'))]",
-        "pdc-dataDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','dat','-','dsk','-',parameters('Role'),'00'))]",
-        "bdc-dataDiskName": "[tolower(concat('gav',parameters('shortLocation'),'-',parameters('Application_Acronym'),'-','dr','-','pdc-','dat','-','dsk','-',parameters('Role'),'00'))]",
-        "windowsVmTemplateURL": "[concat(parameters('baseUri'),'/ADv1/linkedTemplates/windowsvm.json')]",
-        "CreateADForestTemplate": "[concat(parameters('baseUri'),'/ADv1/linkedTemplates/CreateADForest.json')]",
-        "adPDCModulesURL": "[concat(parameters('baseUri'),'/ADv1/DSC/CreateADPDC.ps1.zip')]",
-        "adPDCConfigurationFunction": "CreateADPDC.ps1\\CreateADPDC",
-        "configureADBDCTemplate": "[concat(parameters('baseUri'),'/ADv1/linkedTemplates/configureADBDC.json')]",
-        "adBDCModulesURL": "[concat(parameters('baseUri'),'/ADv1/DSC/ConfigureADBDC.ps1.zip')]",
-        "adBDCConfigurationFunction": "ConfigureADBDC.ps1\\ConfigureADBDC",
-        "vnetwithDNSTemplateUri": "[concat(parameters('baseUri'),'/ADv1/linkedTemplates/update-vnet-dns.json')]"
+        "availabilitySetId": {
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+        }
     },
     "resources": [
         {
-            "type": "Microsoft.Resources/deployments",
-            "name": "nsg",
-            "apiVersion": "2018-05-01",
-            "dependsOn": [],
+            "condition": "[equals(parameters('AvailabilitySet'), 'Yes')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2017-03-30",
+            "name": "[parameters('availabilitySetName')]",
+            "location": "[resourcegroup().location]",
             "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('nsgTemplateURL')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "ResourceGroupLocation": {
-                        "value": "[parameters('ResourceGroupLocation')]"
-                    },
-                    "nsgCount": {
-                        "value": "[parameters('nsgCount')]"
-                    },
-                    "networkSecurityGroupName": {
-                        "value": "[variables('networkSecurityGroupName')]"
-                    }
-                }
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 3
+            },
+            "sku": {
+                "name": "Aligned"
             }
         },
         {
-            "name": "ADPDC",
-            "type": "Microsoft.Resources/deployments",
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('pdc-networkInterfaceName'), copyindex(1))]",
             "apiVersion": "2018-05-01",
+            "location": "[resourcegroup().location]",
+            "copy": {
+                "name": "pdcnicLoop",
+                "count": "[parameters('nicCount')]"
+            },
             "dependsOn": [],
             "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('windowsVmTemplateURL')]",
-                    "contentVersion": "1.0.0.0"
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIpAddress": "[parameters('pdc-networkInterfaceIP')]",
+                            "privateIpAddressVersion": "IPv4",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[parameters('Subnet1Ref')]"
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('pdc-virtualmachineName'), copyIndex(1))]",
+            "apiVersion": "2018-10-01",
+            "location": "[resourcegroup().location]",
+            "copy": {
+                "name": "virtualMachineLoop",
+                "count": "[parameters('vmCount')]"
+            },
+            "dependsOn": [
+                "pdcnicLoop"
+            ],
+            "properties": {
+                "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
                 },
-                "parameters": {
-                    "vmCount": {
-                        "value": "[parameters('vmCount')]"
+                "osProfile": {
+                    "computerName": "[concat(parameters('pdc-virtualmachineName'),copyIndex(1))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
                     },
-                    "nicCount": {
-                        "value": "[parameters('nicCount')]"
-                    },
-                    "subnet1Ref": {
-                        "value": "[variables('subnet1Ref')]"
-                    },
-                    "pdc-networkInterfaceIP": {
-                        "value": "[parameters('pdc-networkInterfaceIP')]"
-                    },
-                    "pdc-virtualmachineName": {
-                        "value": "[variables('pdc-virtualmachineName')]"
-                    },
-                    "AvailabilitySet": {
-                        "value": "[parameters('AvailabilitySet')]"
-                    },
-                    "availabilitySetName": {
-                        "value": "[variables('availabilitySetName')]"
-                    },
-                    "virtualMachineSize": {
-                        "value": "[parameters('virtualMachineSize')]"
-                    },
-                    "StorageAccountType": {
-                        "value": "[variables('StorageAccountType')]"
-                    },
-                    "pdc-networkInterfaceName": {
-                        "value": "[variables('pdc-networkInterfaceName')]"
-                    },
-                    "osDiskName": {
-                        "value": "[variables('pdc-osDiskName')]"
-                    },
-                    "dataDiskName": {
-                        "value": "[variables('pdc-dataDiskName')]"
-                    },
-                    "numberOfDataDisks": {
-                        "value": "[parameters('numberOfDataDisks')]"
-                    },
-                    "DataDiskSize": {
-                        "value": "[parameters('DataDiskSize')]"
-                    },
-                    "adminUsername": {
-                        "value": "[parameters('adminUsername')]"
-                    },
-                    "adminPassword": {
-                        "reference": {
-                            "keyVault": {
-                                "id": "[resourceId(subscription().subscriptionId,  parameters('keyVaultResourceGroupName'), 'Microsoft.KeyVault/vaults', parameters('keyvaultName'))]"
-                            },
-                            "secretName": "[parameters('secretName')]"
+                    "osDisk": {
+                        "name": "[concat(parameters('osDiskName'), copyIndex(1))]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('StorageAccountType')]"
                         }
                     },
-                    "omsWorkspaceResourceGroup": {
-                        "value": "[parameters('omsWorkspaceResourceGroup')]"
-                    },
-                    "omsWorkspaceName": {
-                        "value": "[parameters('omsWorkspaceName')]"
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[parameters('numberOfDataDisks')]",
+                            "input": {
+                                "caching": "ReadWrite",
+                                "diskSizeGB": "[parameters('DataDiskSize')]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "name": "[concat(parameters('dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
+                                "createOption": "Empty"
+                            }
+                        }
+                    ]
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('pdc-networkInterfaceName'), copyindex(1)))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "Microsoft.EnterpriseCloud.Monitoring",
+                    "apiVersion": "2015-06-15",
+                    "location": "[resourcegroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('pdc-virtualmachineName'),copyindex(1))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
+                        }
                     }
                 }
-            }
+            ]
         }
-      
-    ],
-    "outputs": {}
+    ]
 }
