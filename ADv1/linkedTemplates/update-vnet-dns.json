@@ -27,7 +27,7 @@
         "addressSpace": "[parameters('addressSpace')]",
         "subnets": "[parameters('subnets')]",
         "dhcpOptions": {
-          "dnsServers": "[parameters('dnsServers')[copyIndex()]]"
+          "dnsServers": "[parameters('dnsServers')]"
         }
       }
     }
