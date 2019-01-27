@@ -1,9 +1,73 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "vmName": {
+        "AvailabilitySet": {
+            "type": "string",
+            "allowedValues": [
+                "Yes",
+                "No"
+            ]
+        },
+        "availabilitySetName": {
             "type": "string"
+        },
+        "vmCount": {
+            "type": "int"
+        },
+        "adILBName": {
+            "type": "string"
+        },
+        "pdc-virtualmachineName": {
+            "type": "string"
+        },
+        "bdc-virtualmachineName": {
+            "type": "string"
+        },
+        "nicCount": {
+            "type": "int"
+        },
+        "adInternalLoadBalancerIP": {
+            "type": "string"
+        },
+        "pdc-networkInterfaceIP": {
+            "type": "string"
+        },
+        "bdc-networkInterfaceIP": {
+            "type": "string"
+        },
+        "virtualMachineSize": {
+            "type": "string"
+        },
+        "Subnet1Ref": {
+            "type": "string"
+        },
+        "pdc-networkInterfaceName": {
+            "type": "string"
+        },
+        "bdc-networkInterfaceName": {
+            "type": "string"
+        },
+        "StorageAccountType": {
+            "type": "string"
+        },
+        "numberOfDataDisks": {
+            "type": "int"
+        },
+        "pdc-osDiskName": {
+            "type": "string"
+        },
+        "pdc-dataDiskName": {
+            "type": "string"
+        },
+        "bdc-osDiskName": {
+            "type": "string"
+        },
+        "bdc-dataDiskName": {
+            "type": "string"
+        },
+        "DataDiskSize": {
+            "type": "int"
         },
         "adminUsername": {
             "type": "string"
@@ -11,242 +75,274 @@
         "adminPassword": {
             "type": "securestring"
         },
-        "vmSize": {
-            "type": "string",
-            "defaultValue": "Standard_D2"
+        "omsWorkspaceResourceGroup": {
+            "type": "string"
         },
-        "subnetId": {
-            "type": "string",
-            "defaultValue": "null"
-        },
-        "imagePublisher": {
-            "type": "string",
-            "defaultValue": "MicrosoftWindowsServer"
-        },
-        "imageOffer": {
-            "type": "string",
-            "defaultValue": "WindowsServer"
-        },
-        "imageSku": {
-            "type": "string",
-            "defaultValue": "2016-Datacenter"
-        },
-        "diagStorageAccountId": {
-            "type": "string",
-            "defaultValue": "null"
-        },
-        "assignPublicIP": {
-            "type": "bool",
-            "defaultValue": false
-        },
-        "fixedPrivateIp": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "dataDiskSize": {
-            "type": "int",
-            "defaultValue": 1023
-        },
-        "numberOfDataDisks": {
-            "type": "int",
-            "minValue": 0,
-            "maxValue": 4,
-            "defaultValue": 1
-        },
-        "availabilitySetId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "LoadBalancerBEId": {
-            "type": "string",
-            "defaultValue": ""
-        },
-        "secrets": {
-            "type": "array",
-            "defaultValue": []
+        "omsWorkspaceName": {
+            "type": "string"
         }
     },
     "variables": {
-        "publicipTemplateUrl": "[uri(deployment().properties.templateLink.uri, 'publicip.json')]",
-        "nicName": "[concat(parameters('vmName'),'-nic')]",
-        "genDiagStorageAccountName": "[concat('vmdiag', uniqueString( resourceGroup().id, deployment().name ))]",
-        "genStorageAccountId": "[resourceId('Microsoft.Storage/storageAccounts/', variables('genDiagStorageAccountName'))]",
-        "genVnetName": "[concat(parameters('vmName'),'-vnet')]",
-        "diagStorageAccountId": "[if(equals(parameters('diagStorageAccountId'),'null'), variables('genStorageAccountId'), parameters('diagStorageAccountId'))]",
-        "genVnetid": "[resourceId('Microsoft.Network/virtualNetworks', variables('genVnetName'))]",
-        "genSubnetId": "[concat(variables('genVnetid'), '/subnets/default')]",
-        "subnetId": "[if(equals(parameters('subnetId'),'null'), variables('genSubnetId'), parameters('subnetId'))]",
         "availabilitySetId": {
-            "id": "[parameters('availabilitySetId')]"
-        },
-        "loadBalancerBEIds": [
-            {
-                "id": "[parameters('LoadBalancerBEId')]"
-            }
-        ],
-        "dataDisks": [
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 0,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 1,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 2,
-                "createOption": "Empty"
-            },
-            {
-                "diskSizeGB": "[parameters('dataDiskSize')]",
-                "lun": 3,
-                "createOption": "Empty"
-            }
-        ]
+            "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySetName'))]"
+        }
     },
     "resources": [
         {
-            "type": "Microsoft.Storage/storageAccounts",
-            "name": "[variables('genDiagStorageAccountName')]",
-            "apiVersion": "2016-01-01",
-            "condition": "[equals(parameters('diagStorageAccountId'),'null')]",
-            "location": "[resourceGroup().location]",
-            "sku": {
-                "name": "Standard_LRS"
+            "condition": "[equals(parameters('AvailabilitySet'), 'Yes')]",
+            "type": "Microsoft.Compute/availabilitySets",
+            "apiVersion": "2017-03-30",
+            "name": "[parameters('availabilitySetName')]",
+            "location": "[resourcegroup().location]",
+            "properties": {
+                "platformFaultDomainCount": 2,
+                "platformUpdateDomainCount": 3
             },
-            "kind": "Storage",
-            "properties": {}
+            "sku": {
+                "name": "Aligned"
+            }
         },
         {
-            "name": "[variables('genVnetName')]",
-            "type": "Microsoft.Network/virtualNetworks",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "condition": "[equals(parameters('subnetId'),'null')]",
+            "apiVersion": "2018-08-01",
+            "name": "[parameters('adILBName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().name]",
+            "sku": {
+                "name": "Basic"
+            },
             "dependsOn": [],
             "properties": {
-                "addressSpace": {
-                    "addressPrefixes": [
-                        "10.0.0.0/16"
-                    ]
-                },
-                "subnets": [
+                "frontendIPConfigurations": [
                     {
-                        "name": "default",
-                        "properties" : {
-                            "addressPrefix": "10.0.0.0/24"
+                        "name": "LoadBalancerFrontEnd",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[parameters('Subnet1Ref')]"
+                            },
+                            "privateIPAddress": "[parameters('adInternalLoadBalancerIP')]"
                         }
                     }
                 ]
             }
-        },
+        }
         {
-            "name": "[variables('nicName')]",
             "type": "Microsoft.Network/networkInterfaces",
-            "location": "[resourceGroup().location]",
-            "apiVersion": "2016-03-30",
-            "dependsOn":  [
-                "[variables('genVnetid')]"
-            ],
+            "name": "[concat(parameters('pdc-networkInterfaceName'), copyindex(1))]",
+            "apiVersion": "2018-05-01",
+            "location": "[resourcegroup().location]",
+            "copy": {
+                "name": "pdcnicLoop",
+                "count": "[parameters('nicCount')]"
+            },
+            "dependsOn": [],
             "properties": {
                 "ipConfigurations": [
                     {
                         "name": "ipconfig1",
                         "properties": {
-                            "privateIPAllocationMethod": "[if(empty(parameters('fixedPrivateIp')), 'Dynamic', 'Static')]",
-                            "privateIPAddress": "[parameters('fixedPrivateIp')]",
+                            "privateIpAddress": "[parameters('pdc-networkInterfaceIP')]",
+                            "privateIpAddressVersion": "IPv4",
+                            "privateIPAllocationMethod": "Static",
                             "subnet": {
-                                "id": "[variables('subnetId')]"
-                            },
-                            "loadBalancerBackendAddressPools": "[if(not(empty(parameters('LoadBalancerBEId'))),variables('loadBalancerBEIds'),json('null'))]"
+                                "id": "[parameters('Subnet1Ref')]"
+                            }
                         }
                     }
                 ]
             }
         },
         {
-            "apiVersion": "2017-05-10",
-            "name": "[concat(parameters('vmName'),'-publicip')]",
-            "type": "Microsoft.Resources/deployments",
-            "condition": "[parameters('assignPublicIP')]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Compute/virtualMachines',parameters('vmName'))]"
-            ],
+            "type": "Microsoft.Network/networkInterfaces",
+            "name": "[concat(parameters('bdc-networkInterfaceName'), copyindex(1))]",
+            "apiVersion": "2018-05-01",
+            "location": "[resourcegroup().location]",
+            "copy": {
+                "name": "bdcnicLoop",
+                "count": "[parameters('nicCount')]"
+            },
+            "dependsOn": [],
             "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('publicipTemplateUrl')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "nicName": {
-                        "value": "[variables('nicName')]"
-                    },
-                    "subnetId": {
-                        "value": "[variables('subnetId')]"
+                "ipConfigurations": [
+                    {
+                        "name": "ipconfig1",
+                        "properties": {
+                            "privateIpAddress": "[parameters('bdc-networkInterfaceIP')]",
+                            "privateIpAddressVersion": "IPv4",
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[parameters('Subnet1Ref')]"
+                            }
+                        }
                     }
-                }
+                ]
             }
         },
         {
-            "apiVersion": "2017-03-30",
             "type": "Microsoft.Compute/virtualMachines",
-            "name": "[parameters('vmName')]",
-            "location": "[resourceGroup().location]",
+            "name": "[concat(parameters('pdc-virtualmachineName'), copyIndex(1))]",
+            "apiVersion": "2018-10-01",
+            "location": "[resourcegroup().location]",
+            "copy": {
+                "name": "virtualMachineLoop",
+                "count": "[parameters('vmCount')]"
+            },
             "dependsOn": [
-                "[resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))]",
-                "[variables('genStorageAccountId')]"
+                "pdcnicLoop"
             ],
             "properties": {
-                "availabilitySet": "[if(not(empty(parameters('availabilitySetId'))), variables('availabilitySetId'), json('null'))]",
+                "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
                 "hardwareProfile": {
-                    "vmSize": "[parameters('vmSize')]"
+                    "vmSize": "[parameters('virtualMachineSize')]"
                 },
                 "osProfile": {
-                    "computerName": "[parameters('vmName')]",
+                    "computerName": "[concat(parameters('pdc-virtualmachineName'),copyIndex(1))]",
                     "adminUsername": "[parameters('adminUsername')]",
-                    "adminPassword": "[parameters('adminPassword')]",
-                    "secrets": "[parameters('secrets')]"
+                    "adminPassword": "[parameters('adminPassword')]"
                 },
                 "storageProfile": {
                     "imageReference": {
-                        "publisher": "[parameters('imagePublisher')]",
-                        "offer": "[parameters('imageOffer')]",
-                        "sku": "[parameters('imageSku')]",
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
                         "version": "latest"
                     },
                     "osDisk": {
-                        "createOption": "FromImage"
+                        "name": "[concat(parameters('pdc-osDiskName'), copyIndex(1))]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('StorageAccountType')]"
+                        }
                     },
-                    "dataDisks": "[take(variables('dataDisks'),parameters('numberOfDataDisks'))]"
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[parameters('numberOfDataDisks')]",
+                            "input": {
+                                "caching": "ReadWrite",
+                                "diskSizeGB": "[parameters('DataDiskSize')]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "name": "[concat(parameters('pdc-dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
+                                "createOption": "Empty"
+                            }
+                        }
+                    ]
                 },
                 "networkProfile": {
                     "networkInterfaces": [
                         {
-                            "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('pdc-networkInterfaceName'), copyindex(1)))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "Microsoft.EnterpriseCloud.Monitoring",
+                    "apiVersion": "2015-06-15",
+                    "location": "[resourcegroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('pdc-virtualmachineName'),copyindex(1))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "name": "[concat(parameters('bdc-virtualmachineName'), copyIndex(1))]",
+            "apiVersion": "2018-10-01",
+            "location": "[resourcegroup().location]",
+            "copy": {
+                "name": "virtualMachineLoop",
+                "count": "[parameters('vmCount')]"
+            },
+            "dependsOn": [
+                "bdcnicLoop"
+            ],
+            "properties": {
+                "availabilitySet": "[if(equals(parameters('AvailabilitySet'), 'Yes'), variables('availabilitySetId'), json('null'))]",
+                "hardwareProfile": {
+                    "vmSize": "[parameters('virtualMachineSize')]"
+                },
+                "osProfile": {
+                    "computerName": "[concat(parameters('bdc-virtualmachineName'),copyIndex(1))]",
+                    "adminUsername": "[parameters('adminUsername')]",
+                    "adminPassword": "[parameters('adminPassword')]"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "name": "[concat(parameters('bdc-osDiskName'), copyIndex(1))]",
+                        "caching": "ReadWrite",
+                        "createOption": "FromImage",
+                        "managedDisk": {
+                            "storageAccountType": "[parameters('StorageAccountType')]"
+                        }
+                    },
+                    "copy": [
+                        {
+                            "name": "dataDisks",
+                            "count": "[parameters('numberOfDataDisks')]",
+                            "input": {
+                                "caching": "ReadWrite",
+                                "diskSizeGB": "[parameters('DataDiskSize')]",
+                                "lun": "[copyIndex('dataDisks')]",
+                                "name": "[concat(parameters('bdc-dataDiskName'),copyIndex(1), copyIndex('dataDisks'))]",
+                                "createOption": "Empty"
+                            }
                         }
                     ]
                 },
-                "diagnosticsProfile": {
-                    "bootDiagnostics": {
-                        "enabled": true,
-                        "storageUri": "[reference(variables('diagStorageAccountId'),'2016-01-01').primaryEndpoints.blob]"
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('bdc-networkInterfaceName'), copyindex(1)))]"
+                        }
+                    ]
+                }
+            },
+            "resources": [
+                {
+                    "type": "extensions",
+                    "name": "Microsoft.EnterpriseCloud.Monitoring",
+                    "apiVersion": "2015-06-15",
+                    "location": "[resourcegroup().location]",
+                    "dependsOn": [
+                        "[concat('Microsoft.Compute/virtualMachines/', parameters('bdc-virtualmachineName'),copyindex(1))]"
+                    ],
+                    "properties": {
+                        "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+                        "type": "MicrosoftMonitoringAgent",
+                        "typeHandlerVersion": "1.0",
+                        "autoUpgradeMinorVersion": true,
+                        "settings": {
+                            "workspaceId": "[reference(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').customerId]"
+                        },
+                        "protectedSettings": {
+                            "workspaceKey": "[listKeys(resourceId(parameters('omsWorkspaceResourceGroup'),'Microsoft.OperationalInsights/workspaces/', parameters('omsWorkspaceName')), '2015-03-20').primarySharedKey]"
+                        }
                     }
                 }
-            }
+            ]
         }
-    ],
-    "outputs": {
-        "diagStorageAccountId": {
-            "type": "string",
-            "value": "[variables('diagStorageAccountId')]"
-        },
-        "subnetId": {
-            "type": "string",
-            "value": "[variables('subnetId')]"
-        }
-    }
+    ]
 }
