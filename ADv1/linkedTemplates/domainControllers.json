@@ -30,7 +30,7 @@
         "adInternalLoadBalancerIP": {
             "type": "string"
         },
-        "pdc-networkInterfaceIP": {
+        "pdc_networkInterfaceIP": {
             "type": "string"
         },
         "bdc-networkInterfaceIP": {
@@ -141,7 +141,7 @@
                     {
                         "name": "ipconfig1",
                         "properties": {
-                            "privateIpAddress": "[parameters('pdc-networkInterfaceIP')]",
+                            "privateIpAddress": "[parameters('pdc_networkInterfaceIP')]",
                             "privateIpAddressVersion": "IPv4",
                             "privateIPAllocationMethod": "Static",
                             "subnet": {
