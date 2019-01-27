@@ -15,6 +15,9 @@
         "vmCount": {
             "type": "int"
         },
+        "adILBName": {
+            "type": "string"
+        },
         "pdc-virtualmachineName": {
             "type": "string"
         },
@@ -23,6 +26,9 @@
         },
         "nicCount": {
             "type": "int"
+        },
+        "adInternalLoadBalancerIP": {
+            "type": "string"
         },
         "pdc-networkInterfaceIP": {
             "type": "string"
@@ -96,6 +102,30 @@
                 "name": "Aligned"
             }
         },
+        {
+            "apiVersion": "2018-08-01",
+            "name": "[parameters('adILBName')]",
+            "type": "Microsoft.Network/loadBalancers",
+            "location": "[resourceGroup().name]",
+            "sku": {
+                "name": "Basic"
+            },
+            "dependsOn": [],
+            "properties": {
+                "frontendIPConfigurations": [
+                    {
+                        "name": "LoadBalancerFrontEnd",
+                        "properties": {
+                            "privateIPAllocationMethod": "Static",
+                            "subnet": {
+                                "id": "[parameters('Subnet1Ref')]"
+                            },
+                            "privateIPAddress": "[parameters('adInternalLoadBalancerIP')]"
+                        }
+                    }
+                ]
+            }
+        }
         {
             "type": "Microsoft.Network/networkInterfaces",
             "name": "[concat(parameters('pdc-networkInterfaceName'), copyindex(1))]",
@@ -261,7 +291,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(parameters('bdc-dataDiskName'), copyIndex(1))]",
+                        "name": "[concat(parameters('bdc-osDiskName'), copyIndex(1))]",
                         "caching": "ReadWrite",
                         "createOption": "FromImage",
                         "managedDisk": {
