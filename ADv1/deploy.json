@@ -398,6 +398,9 @@
                 "parameters": {
                     "bdc-virtualmachineName": {
                         "value": "[variables('bdc-virtualmachineName')]"
+                    },
+                    "vmCount": {
+                        "value": "[parameters('vmCount')]"
                     }
                 }
             }
