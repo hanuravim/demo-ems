@@ -1,0 +1,90 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ResourceGroupCount": {
+            "value": 1
+        },
+        "shortLocation": {
+            "value": "wu2"
+        },
+        "nsgCount": {
+            "value": 1
+        },
+        "nicCount": {
+            "value": 1
+        },
+        "vmCount": {
+            "value": 1
+        },
+        "ResourceGroupLocation": {
+            "value": "WestUS2"
+        },
+        "Application_Acronym": {
+            "value": "EMS"
+        },
+        "Environment_Category": {
+            "value": "DEV"
+        },
+        "Role": {
+            "value": "WEB"
+        },
+        "Custom": {
+            "value": "EFOQA"
+        },
+        "virtualNetworkResourceGroup": {
+            "value": "emsSharedResources"
+        },
+        "virtualNetworkName": {
+            "value": "emsVNET"
+        },
+        "subnet1Name": {
+            "value": "AD"
+        },
+        "AvailabilitySet": {
+            "value": "Yes"
+        },
+        "adInternalLoadBalancerIP": {
+            "value": "10.3.1.4"
+        },
+        "pdc_networkInterfaceIP": {
+            "value": "10.3.1.5"
+        },
+        "bdc-networkInterfaceIP": {
+            "value": "10.3.1.6"
+        },
+        "virtualMachineSize": {
+            "value": "Standard_DS1_v2"
+        },
+        "numberOfDataDisks": {
+            "value": 1
+        },
+        "DataDiskSize": {
+            "value": 1024
+        },
+        "omsWorkspaceResourceGroup": {
+            "value": "emsSharedResources"
+        },
+        "omsWorkspaceName": {
+            "value": "emsLogAnalytiks"
+        },
+        "adminUsername": {
+            "value": "adAdministrator"
+        },
+        "keyVaultResourceGroupName": {
+            "value": "emssharedresources"
+        },
+        "keyVaultName": {
+            "value": "emsKeyVault001"
+        },
+        "secretName": {
+            "value": "localadmin"
+        },
+        "domainName": {
+            "value": "drefoqa.com"
+        },
+        "baseUri": {
+            "value": "https://raw.githubusercontent.com/hanuravim/demo-ems/master"
+        }
+    }
+}
