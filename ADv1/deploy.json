@@ -84,7 +84,7 @@
             "type": "string",
             "defaultvalue": "10.3.1.4"
         },
-        "pdc-networkInterfaceIP": {
+        "pdc_networkInterfaceIP": {
             "type": "string",
             "defaultvalue": "10.3.1.5"
         },
@@ -215,8 +215,8 @@
                     "adInternalLoadBalancerIP": {
                         "value": "[parameters('adInternalLoadBalancerIP')]"
                     },
-                    "pdc-networkInterfaceIP": {
-                        "value": "[parameters('pdc-networkInterfaceIP')]"
+                    "pdc_networkInterfaceIP": {
+                        "value": "[parameters('pdc_networkInterfaceIP')]"
                     },
                     "pdc-virtualmachineName": {
                         "value": "[variables('pdc-virtualmachineName')]"
@@ -321,8 +321,8 @@
                     "adInternalLoadBalancerIP": {
                         "value": "[parameters('adInternalLoadBalancerIP')]"
                     },
-                    "pdc-networkInterfaceIP": {
-                        "value": "[parameters('pdc-networkInterfaceIP')]"
+                    "pdc_networkInterfaceIP": {
+                        "value": "[parameters('pdc_networkInterfaceIP')]"
                     },
                     "pdc-virtualmachineName": {
                         "value": "[variables('pdc-virtualmachineName')]"
