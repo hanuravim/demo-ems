@@ -4,13 +4,20 @@
     "parameters": {
         "bdc-virtualmachineName": {
             "type": "string"
+        },
+        "vmCount": {
+            "type": "int"
         }
     },
     "variables": {},
     "resources": [
         {
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('bdc-virtualmachineName'),'/webhook')]",
+            "name": "[concat(parameters('bdc-virtualmachineName'),copyindex(1),'/webhook')]",
+            "copy": {
+                "name": "webhookloop",
+                "count": "[parameters('vmCount')]"
+            },
             "location": "[resourceGroup().location]",
             "apiVersion": "2015-06-15",
             "properties": {
