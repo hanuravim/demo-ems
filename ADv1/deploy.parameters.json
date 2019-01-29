@@ -30,10 +30,10 @@
             "value": "EFOQA"
         },
         "virtualNetworkResourceGroup": {
-            "value": "emsSharedResources"
+            "value": "emsSharedSpace"
         },
         "virtualNetworkName": {
-            "value": "emsVNET"
+            "value": "emsvnet"
         },
         "subnet1Name": {
             "value": "AD"
@@ -42,13 +42,13 @@
             "value": "Yes"
         },
         "adInternalLoadBalancerIP": {
-            "value": "10.3.1.4"
+            "value": "10.4.0.5"
         },
         "pdc_networkInterfaceIP": {
-            "value": "10.3.1.5"
+            "value": "10.4.0.6"
         },
         "bdc-networkInterfaceIP": {
-            "value": "10.3.1.6"
+            "value": "10.4.0.7"
         },
         "virtualMachineSize": {
             "value": "Standard_DS1_v2"
@@ -60,22 +60,22 @@
             "value": 1024
         },
         "omsWorkspaceResourceGroup": {
-            "value": "emsSharedResources"
+            "value": "emsSharedSpace"
         },
         "omsWorkspaceName": {
-            "value": "emsLogAnalytiks"
+            "value": "emsOMS"
         },
         "adminUsername": {
             "value": "adAdministrator"
         },
         "keyVaultResourceGroupName": {
-            "value": "emssharedresources"
+            "value": "emsSharedSpace"
         },
         "keyVaultName": {
-            "value": "emsKeyVault001"
+            "value": "emskeyvault01"
         },
         "secretName": {
-            "value": "localadmin"
+            "value": "admin"
         },
         "domainName": {
             "value": "drefoqa.com"
